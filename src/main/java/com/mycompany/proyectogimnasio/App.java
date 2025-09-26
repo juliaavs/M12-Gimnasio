@@ -10,6 +10,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         try {
+            ConexionBD.probarConexion();
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/primary.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 640, 480);
             stage.setTitle("Proyecto Gimnasio");
