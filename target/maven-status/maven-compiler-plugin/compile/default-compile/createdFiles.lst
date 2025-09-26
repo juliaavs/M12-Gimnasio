@@ -1,5 +1,6 @@
 com/mycompany/proyectogimnasio/PrimaryController.class
 module-info.class
 com/mycompany/proyectogimnasio/App.class
+com/mycompany/proyectogimnasio/ConexionBD.class
 com/mycompany/proyectogimnasio/SecondaryController.class
 com/mycompany/proyectogimnasio/SystemInfo.class

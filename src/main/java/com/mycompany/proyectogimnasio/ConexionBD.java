@@ -23,7 +23,7 @@ public class ConexionBD {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // fuerza carga del driver
             Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-            System.out.println("✅ Conectadooo a la BD gimnasioo");
+            System.out.println("✅ Conectadoo a la BD gimnasioo");
         } catch (Exception e) {
             System.out.println("❌ Error: " + e.getMessage());
             e.printStackTrace();
