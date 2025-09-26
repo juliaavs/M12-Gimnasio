@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/17.0.2"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.mycompany.proyectogimnasio.DashboardController"
+      alignment="CENTER" spacing="10">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label fx:id="welcomeLabel" style="-fx-font-size: 16px;"/>
+    <Label fx:id="roleLabel"/>
+    <Button fx:id="logoutButton" text="Cerrar sesión" onAction="#handleLogout"/>
+</VBox>

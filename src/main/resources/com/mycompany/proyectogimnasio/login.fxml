@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/17.0.2"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.mycompany.proyectogimnasio.LoginController"
+      alignment="CENTER" spacing="10">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Login Administrador" style="-fx-font-size: 16px;"/>
+    <TextField fx:id="dniField" promptText="DNI"/>
+    <PasswordField fx:id="passwordField" promptText="Contraseña"/>
+    <Button text="Entrar" onAction="#handleLogin"/>
+</VBox>
