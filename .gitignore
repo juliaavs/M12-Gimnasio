@@ -2,6 +2,13 @@
 target/
 *.iml
 *.class
+nbproject/private/
+nbuild/
+build/
+dist/
+*.nbattrs
+lib/
+
 
 # IDE
 .idea/
