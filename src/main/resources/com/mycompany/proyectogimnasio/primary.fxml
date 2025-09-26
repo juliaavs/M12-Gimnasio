@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17.0.2"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.mycompany.proyectogimnasio.PrimaryController"
+      alignment="CENTER" spacing="20">
+
+    <Label fx:id="messageLabel" text="Pulsa el botón" />
+    <Button text="Saludaar" onAction="#onHelloButtonClick"/>
+    <Button text="Ir a segunda ventana" onAction="#onNextButtonClick"/>
+</VBox>
