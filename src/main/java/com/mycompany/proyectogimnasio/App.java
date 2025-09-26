@@ -10,7 +10,6 @@ public class App extends Application {
     private static Stage primaryStage;
 
     @Override
-<<<<<<< HEAD
     public void start(Stage stage) throws Exception {
         primaryStage = stage;
         showLogin();
@@ -35,19 +34,6 @@ public class App extends Application {
         primaryStage.setTitle("Dashboard Admin");
         primaryStage.setScene(scene);
         primaryStage.show();
-=======
-    public void start(Stage stage) {
-        try {
-            ConexionBD.probarConexion();
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/primary.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 640, 480);
-            stage.setTitle("Proyecto Gimnasio");
-            stage.setScene(scene);
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
->>>>>>> 257c544780b67625a2462c5a71be182272865fc7
     }
 
     public static void main(String[] args) {

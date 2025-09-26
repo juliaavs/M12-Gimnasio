@@ -1,11 +1,6 @@
 com/mycompany/proyectogimnasio/Database.class
 module-info.class
 com/mycompany/proyectogimnasio/App.class
-<<<<<<< HEAD
 com/mycompany/proyectogimnasio/DashboardController.class
-=======
-com/mycompany/proyectogimnasio/ConexionBD.class
-com/mycompany/proyectogimnasio/SecondaryController.class
->>>>>>> 257c544780b67625a2462c5a71be182272865fc7
 com/mycompany/proyectogimnasio/SystemInfo.class
 com/mycompany/proyectogimnasio/LoginController.class
