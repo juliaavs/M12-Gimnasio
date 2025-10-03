@@ -24,14 +24,23 @@
 
             <Separator style="-fx-background-color: #7f8c8d;" />
 
-            <!-- Menú -->
-            <VBox spacing="15">
-                <Button text="Home" style="-fx-pref-width: 180; -fx-background-color: #1abc9c; -fx-text-fill: white;" />
-                <Button text="Clients" style="-fx-pref-width: 180;" />
-                <Button text="Instructors" style="-fx-pref-width: 180;" />
-                <Button text="Reservations" style="-fx-pref-width: 180;" />
-                <Button text="Statistics" style="-fx-pref-width: 180;" />
-                <Button text="Schedule" style="-fx-pref-width: 180;" />
+            <VBox spacing="15" style="-fx-background-color: #34495e; -fx-padding: 20; -fx-alignment: TOP_CENTER;" prefWidth="200">
+            
+                <!-- Botones de menú -->
+                <Button text="Dashboard" style="-fx-pref-width: 180; -fx-background-color: #1abc9c; -fx-text-fill: white;" />
+                <Button text="Clientes" style="-fx-pref-width: 180;" />
+                <Button text="Instructores" style="-fx-pref-width: 180;" />
+                <Button text="Reservas" style="-fx-pref-width: 180;" />
+                <Button text="Estadisticas" style="-fx-pref-width: 180;" />
+                <Button text="Horario" style="-fx-pref-width: 180;" />
+
+                <!-- Espaciador para empujar logout al fondo -->
+                <Region VBox.vgrow="ALWAYS" />
+
+                <!-- Botón de logout -->
+                <Button fx:id="logoutButton" text="Cerrar sesión"
+                        style="-fx-pref-width: 180; -fx-background-color: #e74c3c; -fx-text-fill: white;"
+                        onAction="#handleLogout"/>
             </VBox>
         </VBox>
     </left>
@@ -47,10 +56,6 @@
             
             <Label text="October 3, 2025" style="-fx-text-fill: #7f8c8d;" />
             <Button text="🔔" style="-fx-background-color: transparent; -fx-font-size: 18;" />
-            <Button fx:id="logoutButton" text="Cerrar sesión" 
-        style="-fx-background-color: #e74c3c; -fx-text-fill: white;" 
-        onAction="#handleLogout"/>
-
         </HBox>
     </top>
 
