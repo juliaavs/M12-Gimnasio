@@ -13,7 +13,7 @@
     </padding>
 
     <Label text="Login Administrador" style="-fx-font-size: 16px;"/>
-    <TextField fx:id="dniField" promptText="DNI"/>
-    <PasswordField fx:id="passwordField" promptText="Contraseña"/>
+    <TextField fx:id="dniField" promptText="DNI" />
+    <PasswordField fx:id="passwordField" promptText="Contraseña" />
     <Button text="Entrar" onAction="#handleLogin"/>
 </VBox>
