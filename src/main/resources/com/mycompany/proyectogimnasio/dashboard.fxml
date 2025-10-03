@@ -3,12 +3,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
-
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.mycompany.proyectogimnasio.DashboardController">
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.mycompany.proyectogimnasio.Controllers.DashboardController">
 
     <!-- Barra superior -->
     <top>
@@ -30,9 +25,9 @@
 
     <!-- Contenido dinámico -->
     <center>
-        <Label text="Aquí va el contenido principal" style="-fx-font-size: 18;" />
+        <StackPane fx:id="contentPane" style="-fx-padding: 20;">
+            <Label text="Aquí va el contenido principal" style="-fx-font-size: 18;" />
+        </StackPane>
     </center>
 
 </BorderPane>
-
-
