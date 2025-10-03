@@ -1,17 +1,9 @@
 com/mycompany/proyectogimnasio/Models/Instructor.class
 com/mycompany/proyectogimnasio/Database.class
-<<<<<<< HEAD
-module-info.class
 com/mycompany/proyectogimnasio/Controllers/DashboardController.class
-com/mycompany/proyectogimnasio/Controllers/LoginController.class
+module-info.class
 com/mycompany/proyectogimnasio/App.class
+com/mycompany/proyectogimnasio/Controllers/LoginController.class
 com/mycompany/proyectogimnasio/SystemInfo.class
 com/mycompany/proyectogimnasio/Service/InstructorService.class
 com/mycompany/proyectogimnasio/Controllers/InstructorController.class
-=======
-com/mycompany/proyectogimnasio/Controllers/DashboardController.class
-module-info.class
-com/mycompany/proyectogimnasio/App.class
-com/mycompany/proyectogimnasio/Controllers/LoginController.class
-com/mycompany/proyectogimnasio/SystemInfo.class
->>>>>>> d31f86cb450ddb77cc83eb12071b6e39bcd26bf2
