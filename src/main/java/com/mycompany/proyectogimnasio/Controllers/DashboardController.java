@@ -1,9 +1,9 @@
-package com.mycompany.proyectogimnasio;
+package com.mycompany.proyectogimnasio.Controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-
+import com.mycompany.proyectogimnasio.*;
 public class DashboardController {
 
     @FXML

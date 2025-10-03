@@ -1,5 +1,6 @@
-package com.mycompany.proyectogimnasio;
+package com.mycompany.proyectogimnasio.Controllers;
 
+import com.mycompany.proyectogimnasio.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;

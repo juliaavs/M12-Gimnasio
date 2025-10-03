@@ -1,6 +1,8 @@
-/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/LoginController.java
-/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Database.java
-/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/DashboardController.java
-/home/asix1/Desktop/M12-Gimnasio/src/main/java/module-info.java
-/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/SystemInfo.java
-/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/App.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Database.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/App.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Models/Instructor.java
+/home/isard/M12-Gimnasio/src/main/java/module-info.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/SystemInfo.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/InstructorController.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/LoginController.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/DashboardController.java
