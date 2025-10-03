@@ -4,6 +4,10 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import com.mycompany.proyectogimnasio.Controllers.*;
+import com.mycompany.proyectogimnasio.Models.*;
+
+
 
 public class App extends Application {
 

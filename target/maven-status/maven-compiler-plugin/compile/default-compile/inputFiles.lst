@@ -1,6 +1,17 @@
+<<<<<<< HEAD
 /Users/julia/NetBeansProjects/ProyectoGimnasio/src/main/java/com/mycompany/proyectogimnasio/LoginController.java
 /Users/julia/NetBeansProjects/ProyectoGimnasio/src/main/java/module-info.java
 /Users/julia/NetBeansProjects/ProyectoGimnasio/src/main/java/com/mycompany/proyectogimnasio/Database.java
 /Users/julia/NetBeansProjects/ProyectoGimnasio/src/main/java/com/mycompany/proyectogimnasio/App.java
 /Users/julia/NetBeansProjects/ProyectoGimnasio/src/main/java/com/mycompany/proyectogimnasio/SystemInfo.java
 /Users/julia/NetBeansProjects/ProyectoGimnasio/src/main/java/com/mycompany/proyectogimnasio/DashboardController.java
+=======
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Database.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/App.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Models/Instructor.java
+/home/isard/M12-Gimnasio/src/main/java/module-info.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/SystemInfo.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/InstructorController.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/LoginController.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/DashboardController.java
+>>>>>>> refs/remotes/origin/main
