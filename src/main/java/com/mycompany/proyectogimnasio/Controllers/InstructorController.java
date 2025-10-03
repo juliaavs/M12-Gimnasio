@@ -1,11 +1,13 @@
 
 package com.mycompany.proyectogimnasio.Controllers;
 
+
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import com.mycompany.proyectogimnasio.Models.Instructor;
-
+import com.mycompany.proyectogimnasio.Service.InstructorService;
+        
 public class InstructorController {
     
     @FXML private TableView<Instructor> tablaInstructores;

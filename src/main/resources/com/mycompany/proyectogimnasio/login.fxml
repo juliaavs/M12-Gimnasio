@@ -5,7 +5,7 @@
 
 <VBox xmlns="http://javafx.com/javafx/17.0.2"
       xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.mycompany.proyectogimnasio.LoginController"
+      fx:controller="com.mycompany.proyectogimnasio.Controllers.LoginController"
       alignment="CENTER" spacing="10">
 
     <padding>

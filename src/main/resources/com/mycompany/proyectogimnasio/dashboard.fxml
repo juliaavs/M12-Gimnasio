@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.mycompany.proyectogimnasio.DashboardController">
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.mycompany.proyectogimnasio.Controllers.DashboardController">
 
     <!-- Barra superior -->
     <top>
