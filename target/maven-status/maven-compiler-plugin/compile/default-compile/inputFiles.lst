@@ -1,3 +1,14 @@
+<<<<<<< HEAD
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Database.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/App.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Models/Instructor.java
+/home/isard/M12-Gimnasio/src/main/java/module-info.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/SystemInfo.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Service/InstructorService.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/InstructorController.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/LoginController.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/DashboardController.java
+=======
 /home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/LoginController.java
 /home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Database.java
 /home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Models/Instructor.java
@@ -5,3 +16,4 @@
 /home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/SystemInfo.java
 /home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/DashboardController.java
 /home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/App.java
+>>>>>>> d31f86cb450ddb77cc83eb12071b6e39bcd26bf2
