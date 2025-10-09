@@ -1,3 +1,4 @@
+
 module com.mycompany.proyectogimnasio {
     requires javafx.controls;
     requires javafx.fxml;
@@ -7,3 +8,4 @@ module com.mycompany.proyectogimnasio {
     opens com.mycompany.proyectogimnasio.Controllers to javafx.fxml;
     exports com.mycompany.proyectogimnasio;
 }
+

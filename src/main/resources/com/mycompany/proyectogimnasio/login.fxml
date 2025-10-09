@@ -1,19 +1,99 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.effect.DropShadow?>
 
-<VBox xmlns="http://javafx.com/javafx/17.0.2"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.mycompany.proyectogimnasio.Controllers.LoginController"
-      alignment="CENTER" spacing="10">
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mycompany.proyectogimnasio.Controllers.LoginController"
+            prefWidth="900" prefHeight="600">
 
-    <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
-    </padding>
+    <!-- Contenedor principal horizontal -->
+    <center>
+        <HBox prefWidth="900" prefHeight="600">
 
-    <Label text="Login Administrador" style="-fx-font-size: 16px;"/>
-    <TextField fx:id="dniField" promptText="DNI" />
-    <PasswordField fx:id="passwordField" promptText="Contraseña" />
-    <Button text="Entrar" onAction="#handleLogin"/>
-</VBox>
+            <!-- Imagen izquierda - mantiene altura 100%, ancho flexible -->
+            <AnchorPane HBox.hgrow="ALWAYS" minWidth="450">
+                <ImageView fitWidth="450" preserveRatio="true">
+                    <image>
+                        <Image url="@images/login.jpg"/>
+                    </image>
+                </ImageView>
+            </AnchorPane>
+
+
+            <!-- Formulario derecho -->
+            <VBox spacing="25" alignment="CENTER" HBox.hgrow="ALWAYS" style="-fx-background-color: linear-gradient(to bottom, #ffffff, #f8f9fa);" minWidth="450">
+                <padding>
+                    <Insets top="60" right="60" bottom="60" left="60"/>
+                </padding>
+                
+                <!-- Título -->
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="¡Bienvenido!" style="-fx-text-fill: #2c3e50;">
+                        <font>
+                            <Font name="System Bold" size="36"/>
+                        </font>
+                    </Label>
+                    <Label text="Inicia sesión en tu cuenta" style="-fx-text-fill: #7f8c8d;">
+                        <font>
+                            <Font size="14"/>
+                        </font>
+                    </Label>
+                </VBox>
+
+                <!-- Formulario -->
+                <VBox spacing="20" alignment="CENTER" maxWidth="350" style="-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 35;">
+                    <effect>
+                        <DropShadow radius="15" offsetY="5" color="#00000020"/>
+                    </effect>
+                    
+                    <!-- Campo DNI -->
+                    <VBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="DNI" style="-fx-text-fill: #2c3e50; -fx-font-weight: bold;">
+                            <font>
+                                <Font size="13"/>
+                            </font>
+                        </Label>
+                        <TextField fx:id="dniField" promptText="Introduce tu DNI" 
+                                   style="-fx-background-color: #f8f9fa; -fx-background-radius: 8; -fx-border-color: #e0e0e0; -fx-border-radius: 8; -fx-padding: 12; -fx-font-size: 14px;"
+                                   prefWidth="280"/>
+                    </VBox>
+
+                    <!-- Campo Contraseña -->
+                    <VBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Contraseña" style="-fx-text-fill: #2c3e50; -fx-font-weight: bold;">
+                            <font>
+                                <Font size="13"/>
+                            </font>
+                        </Label>
+                        <PasswordField fx:id="passwordField" promptText="Introduce tu contraseña"
+                                       style="-fx-background-color: #f8f9fa; -fx-background-radius: 8; -fx-border-color: #e0e0e0; -fx-border-radius: 8; -fx-padding: 12; -fx-font-size: 14px;"
+                                       prefWidth="280"/>
+                    </VBox>
+
+                    <!-- Botón de acceso -->
+                    <Button text="Acceder" onAction="#handleLogin" 
+                            style="-fx-background-color: linear-gradient(to right, #667eea, #764ba2); -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;"
+                            prefWidth="280" prefHeight="45">
+                        <VBox.margin>
+                            <Insets top="10"/>
+                        </VBox.margin>
+                    </Button>
+                </VBox>
+
+                <!-- Texto adicional (opcional) -->
+                <Label text="¿Olvidaste tu contraseña?" style="-fx-text-fill: #667eea; -fx-cursor: hand; -fx-underline: true;">
+                    <font>
+                        <Font size="12"/>
+                    </font>
+                </Label>
+            </VBox>
+        </HBox>
+    </center>
+</BorderPane>
