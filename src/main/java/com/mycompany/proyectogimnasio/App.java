@@ -11,6 +11,10 @@ import com.mycompany.proyectogimnasio.Controllers.*;
 public class App extends Application {
 
     private static Stage primaryStage;
+    private static BorderPane root; // BorderPane principal
+    private static SidebarController sidebarController; // Sidebar persistente
+    private static String usuarioActual; // Nombre del usuario logueado
+    private static String rolActual;     // Rol del usuario
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -30,136 +34,129 @@ public class App extends Application {
         primaryStage.show();
     }
 
-    /** DASHBOARD */
-    public static void showDashboard(String nombre, String rol) throws Exception {
-        // Cargar dashboard
-        FXMLLoader dashboardLoader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/dashboard.fxml"));
-        BorderPane root = dashboardLoader.load();
+    /** Inicializar la ventana principal con Sidebar */
+    private static void initRootWithSidebar() throws Exception {
+        if (root == null) {
+            // Cargamos BorderPane principal vacío
+            FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/dashboard.fxml"));
+            root = loader.load();
 
-        // Controlador del dashboard
-        DashboardController dashboardController = dashboardLoader.getController();
-        dashboardController.setUser(nombre, rol);
+            // Cargamos Sidebar
+            FXMLLoader sidebarLoader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/sidebar.fxml"));
+            VBox sidebar = sidebarLoader.load();
+            sidebarController = sidebarLoader.getController();
+            sidebarController.setUser(usuarioActual, rolActual);
 
-        // Cargar sidebar
-        FXMLLoader sidebarLoader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/sidebar.fxml"));
-        VBox sidebar = sidebarLoader.load();
-        SidebarController sidebarController = sidebarLoader.getController();
-        sidebarController.setUser(nombre, rol);
+            root.setLeft(sidebar);
 
-        // Insertar sidebar en el BorderPane
-        root.setLeft(sidebar);
-
-        // Mostrar escena
-        Scene scene = new Scene(root, 1200, 600);
-        primaryStage.setTitle("Dashboard Admin");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+            // Escena principal
+            Scene scene = new Scene(root, 1200, 600);
+            primaryStage.setScene(scene);
+            primaryStage.setTitle("Dashboard Admin");
+            primaryStage.show();
+        }
     }
 
-    /** CLIENTES */
-    public static void showClientes(String nombre, String rol) throws Exception {
+    /** Mostrar Dashboard */
+    public static void showDashboard(String usuario, String rol) throws Exception {
+        usuarioActual = usuario;
+        rolActual = rol;
+
+        initRootWithSidebar();
+
+        // Cargar contenido central del dashboard
+        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/dashboard.fxml"));
+        VBox center = loader.load();
+
+        DashboardController controller = loader.getController();
+        controller.setUser(usuario, rol);
+
+        root.setCenter(center); // reemplazamos solo el centro
+    }
+
+    /** Mostrar Clientes */
+    public static void showClientes(String usuario, String rol) throws Exception {
+        usuarioActual = usuario;
+        rolActual = rol;
+
+        initRootWithSidebar();
+
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/clientes.fxml"));
-        BorderPane root = loader.load();
+        VBox center = loader.load();
 
         ClientesController controller = loader.getController();
-        controller.setUser(nombre, rol);
+        controller.setUser(usuario, rol);
 
-        // Sidebar
-        FXMLLoader sidebarLoader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/sidebar.fxml"));
-        VBox sidebar = sidebarLoader.load();
-        SidebarController sidebarController = sidebarLoader.getController();
-        sidebarController.setUser(nombre, rol);
-
-        root.setLeft(sidebar);
-
-        Scene scene = new Scene(root, 1200, 600);
+        root.setCenter(center);
         primaryStage.setTitle("Clientes");
-        primaryStage.setScene(scene);
-        primaryStage.show();
     }
 
-    /** INSTRUCTORES */
-    public static void showInstructores(String nombre, String rol) throws Exception {
+    /** Mostrar Instructores */
+    public static void showInstructores(String usuario, String rol) throws Exception {
+        usuarioActual = usuario;
+        rolActual = rol;
+
+        initRootWithSidebar();
+
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/instructores.fxml"));
-        BorderPane root = loader.load();
+        VBox center = loader.load();
 
         InstructoresController controller = loader.getController();
-        controller.setUser(nombre, rol);
+        controller.setUser(usuario, rol);
 
-        FXMLLoader sidebarLoader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/sidebar.fxml"));
-        VBox sidebar = sidebarLoader.load();
-        SidebarController sidebarController = sidebarLoader.getController();
-        sidebarController.setUser(nombre, rol);
-
-        root.setLeft(sidebar);
-
-        Scene scene = new Scene(root, 1200, 600);
+        root.setCenter(center);
         primaryStage.setTitle("Instructores");
-        primaryStage.setScene(scene);
-        primaryStage.show();
     }
 
-    /** RESERVAS */
-    public static void showReservas(String nombre, String rol) throws Exception {
+    /** Mostrar Reservas */
+    public static void showReservas(String usuario, String rol) throws Exception {
+        usuarioActual = usuario;
+        rolActual = rol;
+
+        initRootWithSidebar();
+
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/reservas.fxml"));
-        BorderPane root = loader.load();
+        VBox center = loader.load();
 
         ReservasController controller = loader.getController();
-        controller.setUser(nombre, rol);
+        controller.setUser(usuario, rol);
 
-        FXMLLoader sidebarLoader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/sidebar.fxml"));
-        VBox sidebar = sidebarLoader.load();
-        SidebarController sidebarController = sidebarLoader.getController();
-        sidebarController.setUser(nombre, rol);
-
-        root.setLeft(sidebar);
-
-        Scene scene = new Scene(root, 1200, 600);
+        root.setCenter(center);
         primaryStage.setTitle("Reservas");
-        primaryStage.setScene(scene);
-        primaryStage.show();
     }
 
-    /** ESTADÍSTICAS */
-    public static void showEstadisticas(String nombre, String rol) throws Exception {
+    /** Mostrar Estadísticas */
+    public static void showEstadisticas(String usuario, String rol) throws Exception {
+        usuarioActual = usuario;
+        rolActual = rol;
+
+        initRootWithSidebar();
+
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/estadisticas.fxml"));
-        BorderPane root = loader.load();
+        VBox center = loader.load();
 
         EstadisticasController controller = loader.getController();
-        controller.setUser(nombre, rol);
+        controller.setUser(usuario, rol);
 
-        FXMLLoader sidebarLoader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/sidebar.fxml"));
-        VBox sidebar = sidebarLoader.load();
-        SidebarController sidebarController = sidebarLoader.getController();
-        sidebarController.setUser(nombre, rol);
-
-        root.setLeft(sidebar);
-
-        Scene scene = new Scene(root, 1200, 600);
+        root.setCenter(center);
         primaryStage.setTitle("Estadísticas");
-        primaryStage.setScene(scene);
-        primaryStage.show();
     }
 
-    /** HORARIO */
-    public static void showHorario(String nombre, String rol) throws Exception {
+    /** Mostrar Horario */
+    public static void showHorario(String usuario, String rol) throws Exception {
+        usuarioActual = usuario;
+        rolActual = rol;
+
+        initRootWithSidebar();
+
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/horario.fxml"));
-        BorderPane root = loader.load();
+        VBox center = loader.load();
 
         HorarioController controller = loader.getController();
-        controller.setUser(nombre, rol);
+        controller.setUser(usuario, rol);
 
-        FXMLLoader sidebarLoader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/sidebar.fxml"));
-        VBox sidebar = sidebarLoader.load();
-        SidebarController sidebarController = sidebarLoader.getController();
-        sidebarController.setUser(nombre, rol);
-
-        root.setLeft(sidebar);
-
-        Scene scene = new Scene(root, 1200, 600);
+        root.setCenter(center);
         primaryStage.setTitle("Horario");
-        primaryStage.setScene(scene);
-        primaryStage.show();
     }
 
     public static Stage getPrimaryStage() {

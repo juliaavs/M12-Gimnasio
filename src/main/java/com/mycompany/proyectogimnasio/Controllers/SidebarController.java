@@ -40,8 +40,11 @@ public class SidebarController {
     }
 
     private void openDashboard() {
-        try { App.showDashboard(usuarioActual, rolActual); } catch (Exception e) { e.printStackTrace(); }
+        try {
+            App.showDashboard(usuarioActual, rolActual); // ahora solo cambia el centro
+        } catch (Exception e) { e.printStackTrace(); }
     }
+
 
     private void openClientes() {
         try { App.showClientes(usuarioActual, rolActual); } catch (Exception e) { e.printStackTrace(); }

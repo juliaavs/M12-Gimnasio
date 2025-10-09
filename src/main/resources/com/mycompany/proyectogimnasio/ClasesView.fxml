@@ -19,6 +19,4 @@
         </columns>
     </TableView>
 
-    <Button text="Volver al Dashboard" onAction="#handleVolver"
-            style="-fx-background-color: #1abc9c; -fx-text-fill: white; -fx-pref-width: 200;"/>
 </VBox>
