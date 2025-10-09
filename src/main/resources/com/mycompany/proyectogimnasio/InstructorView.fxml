@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Pos?>
+<?import javafx.scene.shape.Circle?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.mycompany.proyectogimnasio.Controllers.InstructorController"
+            prefWidth="800" prefHeight="500"
+            style="-fx-background-color: #ecf0f1;">
+
+    <!-- Título -->
+    <Label text="Lista de Instructores"
+           layoutX="20" layoutY="20"
+           style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+    <!-- Tabla de instructores -->
+    <TableView fx:id="tablaInstructores"
+               layoutX="20" layoutY="60"
+               prefWidth="760" prefHeight="350">
+        <columns>
+            <TableColumn fx:id="colId" text="ID" prefWidth="50"/>
+            <TableColumn fx:id="colNombre" text="Nombre" prefWidth="150"/>
+            <TableColumn fx:id="colApellido" text="Apellido" prefWidth="150"/>
+            <TableColumn fx:id="colDni" text="DNI" prefWidth="150"/>
+            <TableColumn fx:id="colActivo" text="Activo" prefWidth="60"/>
+        </columns>
+    </TableView>
+
+    <!-- Botón para actualizar tabla -->
+    <Button text="Actualizar Lista"
+            layoutX="650" layoutY="430"
+            onAction="#initializeInstructores"
+            style="-fx-background-color: #1abc9c; -fx-text-fill: white; -fx-font-weight: bold;"/>
+    
+</AnchorPane>

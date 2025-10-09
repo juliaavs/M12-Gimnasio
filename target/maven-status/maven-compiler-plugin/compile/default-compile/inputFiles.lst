@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 /home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/InstructoresController.java
 /home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/SidebarController.java
 /home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Models/Clase.java
@@ -15,3 +16,14 @@
 /home/asix1/Desktop/M12-Gimnasio/src/main/java/login/css.java
 /home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/App.java
 /home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/ClasesController.java
+=======
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Database.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/App.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Models/Instructor.java
+/home/isard/M12-Gimnasio/src/main/java/module-info.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/SystemInfo.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Service/InstructorService.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/InstructorController.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/LoginController.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/DashboardController.java
+>>>>>>> Stashed changes

@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 package com.mycompany.proyectogimnasio;
 
 import javafx.application.Application;
@@ -170,3 +171,81 @@ public class App extends Application {
         launch();
     }
 }
+=======
+package com.mycompany.proyectogimnasio;
+
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import com.mycompany.proyectogimnasio.Controllers.*;
+
+import java.io.IOException;
+
+public class App extends Application {
+
+    private static Stage primaryStage;
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        primaryStage = stage;
+        showLogin(); // Opcional: abrir dashboard al iniciar
+    }
+
+    public static void main(String[] args) {
+        launch();
+    }
+    
+    public static Stage getPrimaryStage() {
+    return primaryStage;
+}
+
+
+    // 🔹 Función para mostrar cualquier FXML en el stage principal
+    public static void showView(String fxmlPath, String title) {
+        try {
+            FXMLLoader loader = new FXMLLoader(App.class.getResource(fxmlPath));
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root);
+            primaryStage.setTitle(title);
+            primaryStage.setScene(scene);
+            primaryStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 🔹 Función específica para mostrar el dashboard
+    public static void showDashboard(String nombre, String rol) {
+        try {
+            FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/dashboard.fxml"));
+            Parent root = loader.load();
+
+            DashboardController controller = loader.getController();
+            controller.setUser(nombre, rol);
+
+            Scene scene = new Scene(root);
+            primaryStage.setTitle("Dashboard");
+            primaryStage.setScene(scene);
+            primaryStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 🔹 Función para mostrar login
+    public static void showLogin() {
+        showView("/com/mycompany/proyectogimnasio/login.fxml", "Login");
+    }
+
+    // 🔹 Función para mostrar instructores
+    public static void showInstructores() {
+        showView("/com/mycompany/proyectogimnasio/InstructorView.fxml", "Instructores");
+    }
+}
+
+>>>>>>> Stashed changes
