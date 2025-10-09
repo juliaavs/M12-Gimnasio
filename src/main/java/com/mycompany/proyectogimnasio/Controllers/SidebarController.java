@@ -2,10 +2,12 @@ package com.mycompany.proyectogimnasio.Controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import com.mycompany.proyectogimnasio.App;
 
 public class SidebarController {
 
+    
     @FXML private Button dashboardLink;
     @FXML private Button clientesLink;
     @FXML private Button instructoresLink;
@@ -17,10 +19,14 @@ public class SidebarController {
     private String usuarioActual;
     private String rolActual;
 
+    @FXML private Label usuarioLabel;
+    @FXML private Label rolLabel;
+
     public void setUser(String usuario, String rol) {
-        this.usuarioActual = usuario;
-        this.rolActual = rol;
+        usuarioLabel.setText(usuario);
+        rolLabel.setText(rol);
     }
+
 
     @FXML
     private void initialize() {

@@ -10,27 +10,26 @@
     <HBox spacing="10" alignment="CENTER_LEFT">
         <Circle radius="20" style="-fx-fill: #1abc9c;" />
         <VBox>
-            <Label text="Usuario" style="-fx-text-fill: white; -fx-font-weight: bold;" />
-            <Label text="Rol" style="-fx-text-fill: #bdc3c7; -fx-font-size: 12;" />
+            <Label fx:id="usuarioLabel" style="-fx-text-fill: white; -fx-font-weight: bold;" />
+            <Label fx:id="rolLabel" style="-fx-text-fill: #bdc3c7; -fx-font-size: 12;" />
+
         </VBox>
     </HBox>
 
     <Separator style="-fx-background-color: #7f8c8d;" />
 
-        <VBox spacing="15" style="-fx-background-color: #34495e; -fx-padding: 20; -fx-alignment: TOP_CENTER;" prefWidth="200">
-
-        <Button fx:id="dashboardLink" text="Dashboard" style="-fx-pref-width: 180; -fx-background-color: white -fx-text-fill: black" />
-        <Button fx:id="clientesLink" text="Clientes" style="-fx-pref-width: 180; -fx-background-color: white -fx-text-fill: black" />
-        <Button fx:id="instructoresLink" text="Instructores" style="-fx-pref-width: 180; -fx-background-color: white -fx-text-fill: black" />
-        <Button fx:id="reservasLink" text="Reservas" style="-fx-pref-width: 180; -fx-background-color: white -fx-text-fill: black" />
-        <Button fx:id="estadisticasLink" text="Estadísticas" style="-fx-pref-width: 180; -fx-background-color: white -fx-text-fill: black" />
-        <Button fx:id="horarioLink" text="Horario" style="-fx-pref-width: 180; -fx-background-color: white -fx-text-fill: black" />
-        <Button text="Clases" style="-fx-pref-width: 180; -fx-background-color: white -fx-text-fill: black" />
+    <VBox spacing="15" style="-fx-background-color: #34495e; -fx-padding: 20; -fx-alignment: TOP_CENTER;" prefWidth="200">
+        <Button fx:id="dashboardLink" text="Dashboard" style="-fx-pref-width: 180; -fx-background-color: white; -fx-text-fill: black" />
+        <Button fx:id="clientesLink" text="Clientes" style="-fx-pref-width: 180; -fx-background-color: white; -fx-text-fill: black" />
+        <Button fx:id="instructoresLink" text="Instructores" style="-fx-pref-width: 180; -fx-background-color: white; -fx-text-fill: black" />
+        <Button fx:id="reservasLink" text="Reservas" style="-fx-pref-width: 180; -fx-background-color: white; -fx-text-fill: black" />
+        <Button fx:id="estadisticasLink" text="Estadísticas" style="-fx-pref-width: 180; -fx-background-color: white; -fx-text-fill: black" />
+        <Button fx:id="horarioLink" text="Horario" style="-fx-pref-width: 180; -fx-background-color: white; -fx-text-fill: black" />
+        <Button text="Clases" style="-fx-pref-width: 180; -fx-background-color: white; -fx-text-fill: black" />
 
         <Region VBox.vgrow="ALWAYS" />
 
         <Button fx:id="logoutLink" text="Cerrar sesión" style="-fx-pref-width: 180; -fx-background-color: #e74c3c; -fx-text-fill: white;" />
-
     </VBox>
 
 </VBox>

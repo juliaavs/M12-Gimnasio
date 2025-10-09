@@ -6,7 +6,7 @@
 
     <!-- Sidebar -->
     <left>
-        <fx:include source="sidebar.fxml" fx:id="sidebar"/>
+        <fx:include fx:id="sidebar" source="sidebar.fxml"/>
     </left>
 
     <!-- Main Content -->
