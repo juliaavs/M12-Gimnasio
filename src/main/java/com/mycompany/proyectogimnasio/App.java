@@ -2,6 +2,7 @@ package com.mycompany.proyectogimnasio;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -24,8 +25,13 @@ public class App extends Application {
 
     /** LOGIN */
     public static void showLogin() throws Exception {
+        // Limpiar root para permitir re-login
+        root = null;
+        usuarioActual = null;
+        rolActual = null;
+
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/login.fxml"));
-        Scene scene = new Scene(loader.load(), 900, 600);
+        Scene scene = new Scene(loader.load(), 900, 800);
 
         primaryStage.setTitle("Login Administrador");
         primaryStage.setScene(scene);
@@ -37,7 +43,6 @@ public class App extends Application {
     /** Inicializar la ventana principal con Sidebar */
     private static void initRootWithSidebar() throws Exception {
         if (root == null) {
-            // Cargamos BorderPane principal vacío
             FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/dashboard.fxml"));
             root = loader.load();
 
@@ -49,8 +54,7 @@ public class App extends Application {
 
             root.setLeft(sidebar);
 
-            // Escena principal
-            Scene scene = new Scene(root, 1200, 600);
+            Scene scene = new Scene(root, 900, 800);
             primaryStage.setScene(scene);
             primaryStage.setTitle("Dashboard Admin");
             primaryStage.show();
@@ -64,14 +68,13 @@ public class App extends Application {
 
         initRootWithSidebar();
 
-        // Cargar contenido central del dashboard
-        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/dashboard.fxml"));
-        VBox center = loader.load();
+        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/dashboard_center.fxml"));
+        Parent center = loader.load();
 
         DashboardController controller = loader.getController();
         controller.setUser(usuario, rol);
 
-        root.setCenter(center); // reemplazamos solo el centro
+        root.setCenter(center);
     }
 
     /** Mostrar Clientes */
@@ -82,7 +85,7 @@ public class App extends Application {
         initRootWithSidebar();
 
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/clientes.fxml"));
-        VBox center = loader.load();
+        Parent center = loader.load();
 
         ClientesController controller = loader.getController();
         controller.setUser(usuario, rol);
@@ -99,7 +102,7 @@ public class App extends Application {
         initRootWithSidebar();
 
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/instructores.fxml"));
-        VBox center = loader.load();
+        Parent center = loader.load();
 
         InstructoresController controller = loader.getController();
         controller.setUser(usuario, rol);
@@ -116,7 +119,7 @@ public class App extends Application {
         initRootWithSidebar();
 
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/reservas.fxml"));
-        VBox center = loader.load();
+        Parent center = loader.load();
 
         ReservasController controller = loader.getController();
         controller.setUser(usuario, rol);
@@ -133,7 +136,7 @@ public class App extends Application {
         initRootWithSidebar();
 
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/estadisticas.fxml"));
-        VBox center = loader.load();
+        Parent center = loader.load();
 
         EstadisticasController controller = loader.getController();
         controller.setUser(usuario, rol);
@@ -150,7 +153,7 @@ public class App extends Application {
         initRootWithSidebar();
 
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/horario.fxml"));
-        VBox center = loader.load();
+        Parent center = loader.load();
 
         HorarioController controller = loader.getController();
         controller.setUser(usuario, rol);
