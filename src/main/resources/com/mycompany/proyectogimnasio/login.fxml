@@ -77,20 +77,14 @@
                                        prefWidth="280"/>
                     </VBox>
 
-                <!-- Botón de acceso -->
-                <Button text="Acceder" onAction="#handleLogin" 
-                        style="-fx-background-color: linear-gradient(to right, #ff7e5f, #feb47b); 
-                               -fx-text-fill: white; 
-                               -fx-font-size: 15px; 
-                               -fx-font-weight: bold; 
-                               -fx-background-radius: 8; 
-                               -fx-cursor: hand;"
-                        prefWidth="280" prefHeight="45">
-                    <VBox.margin>
-                        <Insets top="10"/>
-                    </VBox.margin>
-                </Button>
-
+                    <!-- Botón de acceso -->
+                    <Button text="Acceder" onAction="#handleLogin" 
+                            style="-fx-background-color: linear-gradient(to right, #ff7e5f, #feb47b); -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;"
+                            prefWidth="280" prefHeight="45">
+                        <VBox.margin>
+                            <Insets top="10"/>
+                        </VBox.margin>
+                    </Button>
                 </VBox>
 
                 <!-- Texto adicional (opcional) -->

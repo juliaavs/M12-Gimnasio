@@ -1,32 +1,21 @@
 package com.mycompany.proyectogimnasio.Controllers;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import com.mycompany.proyectogimnasio.*;
+import javafx.scene.layout.VBox; // <-- IMPORT NECESARIO
+import com.mycompany.proyectogimnasio.Controllers.SidebarController;
 
 public class DashboardController {
 
     @FXML
-    private Label welcomeLabel;
+    private VBox sidebar; // fx:id del <fx:include>
 
-    @FXML
-    private Label roleLabel;
-
-    @FXML
-    private Button logoutButton;
+    private SidebarController sidebarController;
 
     public void setUser(String nombre, String rol) {
-        welcomeLabel.setText("Bienvenido, " + nombre + "!");
-        roleLabel.setText("Rol: " + rol);
-    }
-
-    @FXML
-    private void handleLogout() {
-        try {
-            App.showLogin();
-        } catch (Exception e) {
-            e.printStackTrace();
+        // Obtener el controller del include
+        sidebarController = (SidebarController) sidebar.getProperties().get("fx:controller");
+        if (sidebarController != null) {
+            sidebarController.setUser(nombre, rol);
         }
     }
 }
