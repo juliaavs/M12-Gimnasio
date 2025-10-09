@@ -17,16 +17,20 @@
 
     <Separator style="-fx-background-color: #7f8c8d;" />
 
-    <VBox spacing="15" style="-fx-background-color: #34495e; -fx-padding: 20; -fx-alignment: TOP_CENTER;" prefWidth="200">
-        <Hyperlink fx:id="dashboardLink" text="Dashboard" style="-fx-text-fill: white;" />
-        <Hyperlink fx:id="clientesLink" text="Clientes" style="-fx-text-fill: white;" />
-        <Hyperlink fx:id="instructoresLink" text="Instructores" style="-fx-text-fill: white;" />
-        <Hyperlink fx:id="reservasLink" text="Reservas" style="-fx-text-fill: white;" />
-        <Hyperlink fx:id="estadisticasLink" text="Estadísticas" style="-fx-text-fill: white;" />
-        <Hyperlink fx:id="horarioLink" text="Horario" style="-fx-text-fill: white;" />
+        <VBox spacing="15" style="-fx-background-color: #34495e; -fx-padding: 20; -fx-alignment: TOP_CENTER;" prefWidth="200">
+
+        <Button fx:id="dashboardLink" text="Dashboard" style="-fx-pref-width: 180; -fx-background-color: white -fx-text-fill: black" />
+        <Button fx:id="clientesLink" text="Clientes" style="-fx-pref-width: 180; -fx-background-color: white -fx-text-fill: black" />
+        <Button fx:id="instructoresLink" text="Instructores" style="-fx-pref-width: 180; -fx-background-color: white -fx-text-fill: black" />
+        <Button fx:id="reservasLink" text="Reservas" style="-fx-pref-width: 180; -fx-background-color: white -fx-text-fill: black" />
+        <Button fx:id="estadisticasLink" text="Estadísticas" style="-fx-pref-width: 180; -fx-background-color: white -fx-text-fill: black" />
+        <Button fx:id="horarioLink" text="Horario" style="-fx-pref-width: 180; -fx-background-color: white -fx-text-fill: black" />
+        <Button text="Clases" style="-fx-pref-width: 180; -fx-background-color: white -fx-text-fill: black" />
 
         <Region VBox.vgrow="ALWAYS" />
 
-        <Hyperlink fx:id="logoutLink" text="Cerrar sesión" style="-fx-text-fill: #e74c3c;" />
+        <Button fx:id="logoutLink" text="Cerrar sesión" style="-fx-pref-width: 180; -fx-background-color: #e74c3c; -fx-text-fill: white;" />
+
     </VBox>
+
 </VBox>
