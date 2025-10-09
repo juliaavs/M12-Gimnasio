@@ -1,25 +1,18 @@
 com/mycompany/proyectogimnasio/Models/Instructor.class
 com/mycompany/proyectogimnasio/Models/Clase.class
+com/mycompany/proyectogimnasio/Controllers/DashboardController.class
+module-info.class
+com/mycompany/proyectogimnasio/App.class
+com/mycompany/proyectogimnasio/Controllers/LoginController.class
+login/css.class
+com/mycompany/proyectogimnasio/Service/InstructorService.class
+com/mycompany/proyectogimnasio/Controllers/ReservasController.class
 com/mycompany/proyectogimnasio/Controllers/ClientesController.class
 com/mycompany/proyectogimnasio/Controllers/HorarioController.class
 com/mycompany/proyectogimnasio/Database.class
-<<<<<<< Updated upstream
 com/mycompany/proyectogimnasio/Controllers/ClasesController.class
 com/mycompany/proyectogimnasio/Controllers/InstructoresController.class
 com/mycompany/proyectogimnasio/Controllers/SidebarController.class
 com/mycompany/proyectogimnasio/SystemInfo.class
 com/mycompany/proyectogimnasio/Controllers/EstadisticasController.class
-com/mycompany/proyectogimnasio/Controllers/DashboardController.class
-=======
->>>>>>> Stashed changes
-module-info.class
-com/mycompany/proyectogimnasio/Controllers/DashboardController.class
-com/mycompany/proyectogimnasio/Controllers/LoginController.class
-<<<<<<< Updated upstream
-login/css.class
-=======
-com/mycompany/proyectogimnasio/App.class
-com/mycompany/proyectogimnasio/SystemInfo.class
->>>>>>> Stashed changes
-com/mycompany/proyectogimnasio/Service/InstructorService.class
-com/mycompany/proyectogimnasio/Controllers/ReservasController.class
+com/mycompany/proyectogimnasio/Controllers/InstructorController.class
