@@ -1,20 +1,9 @@
-<<<<<<< HEAD
 /Users/julia/NetBeansProjects/ProyectoGimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/DashboardController.java
 /Users/julia/NetBeansProjects/ProyectoGimnasio/src/main/java/module-info.java
 /Users/julia/NetBeansProjects/ProyectoGimnasio/src/main/java/com/mycompany/proyectogimnasio/Models/Instructor.java
+/Users/julia/NetBeansProjects/ProyectoGimnasio/src/main/java/login/css.java
 /Users/julia/NetBeansProjects/ProyectoGimnasio/src/main/java/com/mycompany/proyectogimnasio/Database.java
 /Users/julia/NetBeansProjects/ProyectoGimnasio/src/main/java/com/mycompany/proyectogimnasio/App.java
 /Users/julia/NetBeansProjects/ProyectoGimnasio/src/main/java/com/mycompany/proyectogimnasio/SystemInfo.java
 /Users/julia/NetBeansProjects/ProyectoGimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/LoginController.java
 /Users/julia/NetBeansProjects/ProyectoGimnasio/src/main/java/com/mycompany/proyectogimnasio/Service/InstructorService.java
-=======
-/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/LoginController.java
-/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Database.java
-/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Service/InstructorService.java
-/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Models/Instructor.java
-/home/asix1/Desktop/M12-Gimnasio/src/main/java/module-info.java
-/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/SystemInfo.java
-/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/InstructorController.java
-/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/DashboardController.java
-/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/App.java
->>>>>>> a8d38a3d3289d90759d7a351374e919063059a44

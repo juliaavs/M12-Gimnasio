@@ -29,6 +29,7 @@
                 <!-- Botones de menú -->
                 <Button text="Dashboard" style="-fx-pref-width: 180; -fx-background-color: #1abc9c; -fx-text-fill: white;" />
                 <Button text="Clientes" style="-fx-pref-width: 180;" />
+                <Button text="Clases" style="-fx-pref-width: 180;" />               
                 <Button text="Instructores" style="-fx-pref-width: 180;" />
                 <Button text="Reservas" style="-fx-pref-width: 180;" />
                 <Button text="Estadisticas" style="-fx-pref-width: 180;" />

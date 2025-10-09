@@ -21,7 +21,7 @@
             <AnchorPane HBox.hgrow="ALWAYS" minWidth="450">
                 <ImageView fitWidth="450" preserveRatio="true">
                     <image>
-                        <Image url="@images/login.jpg"/>
+                        <Image url="@images/login.png"/>
                     </image>
                 </ImageView>
             </AnchorPane>
@@ -77,18 +77,24 @@
                                        prefWidth="280"/>
                     </VBox>
 
-                    <!-- Botón de acceso -->
-                    <Button text="Acceder" onAction="#handleLogin" 
-                            style="-fx-background-color: linear-gradient(to right, #667eea, #764ba2); -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;"
-                            prefWidth="280" prefHeight="45">
-                        <VBox.margin>
-                            <Insets top="10"/>
-                        </VBox.margin>
-                    </Button>
+                <!-- Botón de acceso -->
+                <Button text="Acceder" onAction="#handleLogin" 
+                        style="-fx-background-color: linear-gradient(to right, #ff7e5f, #feb47b); 
+                               -fx-text-fill: white; 
+                               -fx-font-size: 15px; 
+                               -fx-font-weight: bold; 
+                               -fx-background-radius: 8; 
+                               -fx-cursor: hand;"
+                        prefWidth="280" prefHeight="45">
+                    <VBox.margin>
+                        <Insets top="10"/>
+                    </VBox.margin>
+                </Button>
+
                 </VBox>
 
                 <!-- Texto adicional (opcional) -->
-                <Label text="¿Olvidaste tu contraseña?" style="-fx-text-fill: #667eea; -fx-cursor: hand; -fx-underline: true;">
+                <Label text="¿Olvidaste tu contraseña?" style="-fx-text-fill: #ff7e5f; -fx-cursor: hand; -fx-underline: true;">
                     <font>
                         <Font size="12"/>
                     </font>
