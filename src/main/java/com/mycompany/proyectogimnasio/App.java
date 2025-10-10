@@ -178,7 +178,7 @@ public class App extends Application {
         initRootWithSidebar();
         sidebarController.setUser(usuario, rol);
 
-        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/horario.fxml"));
+        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/HorarioView.fxml"));
         Parent center = loader.load();
 
         HorarioController controller = loader.getController();
