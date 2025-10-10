@@ -74,17 +74,18 @@ public class App extends Application {
         rolActual = rol;
 
         initRootWithSidebar();
-        sidebarController.setUser(usuario, rol); // 🔹 Actualiza etiquetas
+        sidebarController.setUser(usuario, rol); // Esto sí actualiza el sidebar
 
-        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/dashboard_center.fxml"));
+        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/dashboard.fxml"));
         Parent center = loader.load();
 
-        DashboardController controller = loader.getController();
-        controller.setUser(usuario, rol);
+        // DashboardController controller = loader.getController();
+        // controller.setUser(usuario, rol); ← eliminar esta línea
 
         root.setCenter(center);
         primaryStage.setTitle("Dashboard - FitGym Pro");
     }
+
 
     /** ================================
      * CLIENTES
@@ -114,17 +115,18 @@ public class App extends Application {
         rolActual = rol;
 
         initRootWithSidebar();
-        sidebarController.setUser(usuario, rol);
+        sidebarController.setUser(usuario, rol); // Esto actualiza los labels del sidebar
 
-        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/InstructorView.fxml"));
+        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/InstructoresView.fxml"));
         Parent center = loader.load();
 
-        InstructorController controller = loader.getController();
-        controller.setUser(usuario, rol);
+        // InstructorController controller = loader.getController();
+        // controller.setUser(usuario, rol); // ← Eliminar esta línea
 
         root.setCenter(center);
         primaryStage.setTitle("Instructores - FitGym Pro");
     }
+
 
     /** ================================
      * RESERVAS

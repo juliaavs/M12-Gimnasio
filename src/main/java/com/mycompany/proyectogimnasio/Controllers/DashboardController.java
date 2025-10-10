@@ -17,21 +17,10 @@ public class DashboardController {
     private BorderPane mainPane; // El panel central donde se cargarán las vistas
 
     @FXML
-    private Label welcomeLabel;
-
-    @FXML
-    private Label roleLabel;
-
-    @FXML
     private Button logoutButton;
     
     @FXML
     private Button btnInstructores; // Botón del menú para instructores
-
-    public void setUser(String nombre, String rol) {
-        welcomeLabel.setText("Bienvenido, " + nombre + "!");
-        roleLabel.setText("Rol: " + rol);
-    }
 
     @FXML
     private void handleLogout() {
