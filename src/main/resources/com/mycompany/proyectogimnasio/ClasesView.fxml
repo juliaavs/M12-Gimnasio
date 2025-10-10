@@ -1,20 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?> <!-- CORRECCIÓN: Importación de HBox para evitar error "no existe" -->
 <?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.mycompany.proyectogimnasio.Controllers.ClasesController"
       spacing="15" style="-fx-padding: 20; -fx-background-color: #ecf0f1;">
 
-    <Label text="Gestión de Clases" style="-fx-font-size: 20; -fx-font-weight: bold;" />
+    <Label text="Gestión de Clases" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
 
-    <TableView fx:id="clasesTable" prefHeight="400">
+    <!-- Sección de Entrada de Datos -->
+    <GridPane hgap="10" vgap="10" style="-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 8;">
+        <!-- CORRECCIÓN: Sintaxis estándar para Insets -->
+        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+        
+        <Label text="ID Clase (Auto)" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="txtIdClase" editable="false" promptText="ID" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+        
+        <Label text="ID Instructor" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <TextField fx:id="txtIdInstructor" promptText="Ej: 15" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+        <Label text="Actividad" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="cbActividad" prefWidth="200" promptText="Seleccionar actividad" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+        <Label text="Día" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+        <TextField fx:id="txtDia" promptText="Ej: Lunes" GridPane.rowIndex="0" GridPane.columnIndex="3"/>
+
+        <Label text="Hora Inicio" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+        <TextField fx:id="txtHoraInicio" promptText="Ej: 18:00" GridPane.rowIndex="1" GridPane.columnIndex="3"/>
+
+        <Label text="Status" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+        <TextField fx:id="txtStatus" promptText="Ej: Activa" GridPane.rowIndex="2" GridPane.columnIndex="3"/>
+    </GridPane>
+
+    <!-- Botones de Acción -->
+    <HBox spacing="10">
+        <Button text="Agregar Clase" onAction="#agregarClase" style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold;"/>
+        <Button text="Actualizar Clase" onAction="#actualizarClase" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold;"/>
+        <Button text="Eliminar Clase" onAction="#eliminarClase" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;"/>
+        <Button text="Limpiar Campos" onAction="#limpiarCampos" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold;"/>
+        <Button text="Refrescar Tabla" onAction="#cargarTabla" style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-weight: bold;"/>
+    </HBox>
+
+    <!-- Tabla de Clases (TableView) -->
+    <TableView fx:id="tablaClases" prefHeight="400">
         <columns>
+            <!-- ID CLASE -->
             <TableColumn fx:id="colId" text="ID Clase" prefWidth="80"/>
+            
+            <!-- Nombre de Actividad -->
             <TableColumn fx:id="colActividad" text="Actividad" prefWidth="150"/>
-            <TableColumn fx:id="colInstructor" text="Instructor" prefWidth="150"/>
+            
+            <!-- ID INSTRUCTOR -->
+            <TableColumn fx:id="colIdInstructor" text="ID Instr." prefWidth="100"/>
+            
+            <!-- DÍA -->
             <TableColumn fx:id="colDia" text="Día" prefWidth="100"/>
-            <TableColumn fx:id="colHora" text="Hora Inicio" prefWidth="100"/>
+            
+            <!-- HORA INICIO -->
+            <TableColumn fx:id="colHoraInicio" text="Hora Inicio" prefWidth="100"/>
+            
+            <!-- STATUS -->
             <TableColumn fx:id="colStatus" text="Estado" prefWidth="100"/>
         </columns>
     </TableView>

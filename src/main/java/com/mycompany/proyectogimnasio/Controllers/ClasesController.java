@@ -52,7 +52,7 @@ public class ClasesController {
 
         try {
             // 2. Conexión a la Base de Datos (Asegúrate de cambiar estos datos)
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/tu_base", "usuario", "password");
+            conn = DriverManager.getConnection("jdbc:mysql://centerbeam.proxy.rlwy.net:23892/railway", "root", "ShlYFjtRmPFlizYSEyizwuhZgYpWHijg");
 
             // 3. Cargar datos iniciales
             cargarActividades(); // Llenar ComboBox y el mapa de IDs

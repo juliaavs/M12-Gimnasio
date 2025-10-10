@@ -30,5 +30,34 @@ public class Clase {
     public String getStatus() { return status; }
     public String getNombreActividad() { return nombreActividad; }
 
-    // Setters (omito por brevedad, pero son necesarios para actualizar)
+    public void setIdClase(int idClase) {
+        this.idClase = idClase;
+    }
+
+    public void setIdInstructor(int idInstructor) {
+        this.idInstructor = idInstructor;
+    }
+
+    public void setIdActividad(int idActividad) {
+        this.idActividad = idActividad;
+    }
+
+    public void setDia(String dia) {
+        this.dia = dia;
+    }
+
+    public void setHoraInicio(String horaInicio) {
+        this.horaInicio = horaInicio;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setNombreActividad(String nombreActividad) {
+        this.nombreActividad = nombreActividad;
+    }
+    
+    
+
 }
