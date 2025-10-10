@@ -30,6 +30,7 @@ public class DashboardController {
             e.printStackTrace();
         }
     }
+    
     @FXML
     private void handleDashboard() {
         // Carga el dashboard nuevamente en el mismo Stage

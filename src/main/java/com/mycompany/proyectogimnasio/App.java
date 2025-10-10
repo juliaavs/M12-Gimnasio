@@ -117,7 +117,7 @@ public class App extends Application {
         initRootWithSidebar();
         sidebarController.setUser(usuario, rol); // Esto actualiza los labels del sidebar
 
-        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/InstructoresView.fxml"));
+        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/InstructorView.fxml"));
         Parent center = loader.load();
 
         // InstructorController controller = loader.getController();
