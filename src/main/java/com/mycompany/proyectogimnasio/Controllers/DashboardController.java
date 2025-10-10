@@ -42,11 +42,11 @@ public class DashboardController {
         }
     }
     @FXML
-private void handleDashboard() {
-    // Carga el dashboard nuevamente en el mismo Stage
-    // Puedes pasar datos del usuario si los tienes
-    showDashboardView();
-}
+    private void handleDashboard() {
+        // Carga el dashboard nuevamente en el mismo Stage
+        // Puedes pasar datos del usuario si los tienes
+        showDashboardView();
+    }
 
 // Método para recargar el dashboard (panel central o toda la ventana)
 private void showDashboardView() {

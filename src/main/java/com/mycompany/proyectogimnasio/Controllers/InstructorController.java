@@ -24,15 +24,22 @@ public class InstructorController {
     @FXML private TextField txtDni;
     @FXML private CheckBox chkActivo;
     
+    @FXML
+    private Label welcomeLabel;
+
+    @FXML
+    private Label roleLabel;
     
+    public void setUser(String nombre, String rol) {
+        welcomeLabel.setText("Bienvenido, " + nombre + "!");
+        roleLabel.setText("Rol: " + rol);
+    }
 
     private InstructorService service = new InstructorService();
     private Instructor selectedInstructor;
 
     @FXML
-    
-
-    public void initializeInstructores() {
+    private void initialize() {
         colId.setCellValueFactory(c -> new javafx.beans.property.SimpleIntegerProperty(c.getValue().getIdInstructor()).asObject());
         colNombre.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getNombre()));
         colApellido.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getApellido()));
@@ -43,6 +50,17 @@ public class InstructorController {
 
         tablaInstructores.setOnMouseClicked(this::seleccionarInstructor);
     }
+
+    public void initializeInstructores() {
+        colId.setCellValueFactory(c -> new javafx.beans.property.SimpleIntegerProperty(c.getValue().getIdInstructor()).asObject());
+        colNombre.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getNombre())); 
+        colApellido.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getApellido())); 
+        colDni.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getDni())); 
+        colActivo.setCellValueFactory(c -> new javafx.beans.property.SimpleBooleanProperty(c.getValue().isActivo()).asObject()); cargarTabla(); 
+        tablaInstructores.setOnMouseClicked(this::seleccionarInstructor); 
+    }
+    
+    @FXML
 
     private void cargarTabla() {
         ObservableList<Instructor> lista = service.getAll();

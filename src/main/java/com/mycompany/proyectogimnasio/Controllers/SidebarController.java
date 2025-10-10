@@ -23,9 +23,12 @@ public class SidebarController {
     @FXML private Label rolLabel;
 
     public void setUser(String usuario, String rol) {
+        this.usuarioActual = usuario;
+        this.rolActual = rol;
         usuarioLabel.setText(usuario);
         rolLabel.setText(rol);
     }
+
 
 
     @FXML
@@ -39,6 +42,8 @@ public class SidebarController {
         logoutLink.setOnAction(e -> handleLogout());
     }
 
+
+    
     private void openDashboard() {
         try {
             App.showDashboard(usuarioActual, rolActual); // ahora solo cambia el centro

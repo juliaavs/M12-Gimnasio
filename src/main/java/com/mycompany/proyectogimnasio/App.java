@@ -23,50 +23,58 @@ public class App extends Application {
         showLogin();
     }
 
-    /** LOGIN */
+    /** ================================
+     * LOGIN
+     * ================================ */
     public static void showLogin() throws Exception {
-        // Limpiar root para permitir re-login
+        // Limpiar todo al volver al login
         root = null;
+        sidebarController = null;
         usuarioActual = null;
         rolActual = null;
 
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/login.fxml"));
         Scene scene = new Scene(loader.load(), 900, 800);
 
-        primaryStage.setTitle("Login Administrador");
+        primaryStage.setTitle("FitGym Pro - Login");
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(900);
         primaryStage.setMinHeight(800);
         primaryStage.show();
     }
 
-    /** Inicializar la ventana principal con Sidebar */
+    /** ================================
+     * Inicializar la ventana principal con Sidebar
+     * ================================ */
     private static void initRootWithSidebar() throws Exception {
         if (root == null) {
+            // Cargamos el layout principal (dashboard.fxml con BorderPane vacío)
             FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/dashboard.fxml"));
             root = loader.load();
 
-            // Cargamos Sidebar
+            // Cargar Sidebar solo una vez
             FXMLLoader sidebarLoader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/sidebar.fxml"));
             VBox sidebar = sidebarLoader.load();
             sidebarController = sidebarLoader.getController();
-            sidebarController.setUser(usuarioActual, rolActual);
 
             root.setLeft(sidebar);
 
             Scene scene = new Scene(root, 900, 800);
             primaryStage.setScene(scene);
-            primaryStage.setTitle("Dashboard Admin");
+            primaryStage.setTitle("FitGym Pro");
             primaryStage.show();
         }
     }
 
-    /** Mostrar Dashboard */
+    /** ================================
+     * DASHBOARD
+     * ================================ */
     public static void showDashboard(String usuario, String rol) throws Exception {
         usuarioActual = usuario;
         rolActual = rol;
 
         initRootWithSidebar();
+        sidebarController.setUser(usuario, rol); // 🔹 Actualiza etiquetas
 
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/dashboard_center.fxml"));
         Parent center = loader.load();
@@ -75,14 +83,18 @@ public class App extends Application {
         controller.setUser(usuario, rol);
 
         root.setCenter(center);
+        primaryStage.setTitle("Dashboard - FitGym Pro");
     }
 
-    /** Mostrar Clientes */
+    /** ================================
+     * CLIENTES
+     * ================================ */
     public static void showClientes(String usuario, String rol) throws Exception {
         usuarioActual = usuario;
         rolActual = rol;
 
         initRootWithSidebar();
+        sidebarController.setUser(usuario, rol);
 
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/clientes.fxml"));
         Parent center = loader.load();
@@ -91,32 +103,38 @@ public class App extends Application {
         controller.setUser(usuario, rol);
 
         root.setCenter(center);
-        primaryStage.setTitle("Clientes");
+        primaryStage.setTitle("Clientes - FitGym Pro");
     }
 
-    /** Mostrar Instructores */
+    /** ================================
+     * INSTRUCTORES
+     * ================================ */
     public static void showInstructores(String usuario, String rol) throws Exception {
         usuarioActual = usuario;
         rolActual = rol;
 
         initRootWithSidebar();
+        sidebarController.setUser(usuario, rol);
 
-        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/instructores.fxml"));
+        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/InstructorView.fxml"));
         Parent center = loader.load();
 
-        InstructoresController controller = loader.getController();
+        InstructorController controller = loader.getController();
         controller.setUser(usuario, rol);
 
         root.setCenter(center);
-        primaryStage.setTitle("Instructores");
+        primaryStage.setTitle("Instructores - FitGym Pro");
     }
 
-    /** Mostrar Reservas */
+    /** ================================
+     * RESERVAS
+     * ================================ */
     public static void showReservas(String usuario, String rol) throws Exception {
         usuarioActual = usuario;
         rolActual = rol;
 
         initRootWithSidebar();
+        sidebarController.setUser(usuario, rol);
 
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/reservas.fxml"));
         Parent center = loader.load();
@@ -125,15 +143,18 @@ public class App extends Application {
         controller.setUser(usuario, rol);
 
         root.setCenter(center);
-        primaryStage.setTitle("Reservas");
+        primaryStage.setTitle("Reservas - FitGym Pro");
     }
 
-    /** Mostrar Estadísticas */
+    /** ================================
+     * ESTADÍSTICAS
+     * ================================ */
     public static void showEstadisticas(String usuario, String rol) throws Exception {
         usuarioActual = usuario;
         rolActual = rol;
 
         initRootWithSidebar();
+        sidebarController.setUser(usuario, rol);
 
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/estadisticas.fxml"));
         Parent center = loader.load();
@@ -142,15 +163,18 @@ public class App extends Application {
         controller.setUser(usuario, rol);
 
         root.setCenter(center);
-        primaryStage.setTitle("Estadísticas");
+        primaryStage.setTitle("Estadísticas - FitGym Pro");
     }
 
-    /** Mostrar Horario */
+    /** ================================
+     * HORARIO
+     * ================================ */
     public static void showHorario(String usuario, String rol) throws Exception {
         usuarioActual = usuario;
         rolActual = rol;
 
         initRootWithSidebar();
+        sidebarController.setUser(usuario, rol);
 
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/horario.fxml"));
         Parent center = loader.load();
@@ -159,9 +183,12 @@ public class App extends Application {
         controller.setUser(usuario, rol);
 
         root.setCenter(center);
-        primaryStage.setTitle("Horario");
+        primaryStage.setTitle("Horario - FitGym Pro");
     }
 
+    /** ================================
+     * UTILIDADES
+     * ================================ */
     public static Stage getPrimaryStage() {
         return primaryStage;
     }
