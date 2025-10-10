@@ -25,13 +25,21 @@
             <TableColumn fx:id="colApellido" text="Apellido" prefWidth="150"/>
             <TableColumn fx:id="colDni" text="DNI" prefWidth="150"/>
             <TableColumn fx:id="colActivo" text="Activo" prefWidth="60"/>
+            <TableColumn fx:id="colClase" text="Clases" prefWidth="150"/>
         </columns>
     </TableView>
 
     <!-- Botón para actualizar tabla -->
     <Button text="Actualizar Lista"
             layoutX="650" layoutY="430"
-            onAction="#initializeInstructores"
+            fx:id="instructorLink"
             style="-fx-background-color: #1abc9c; -fx-text-fill: white; -fx-font-weight: bold;"/>
     
+    <Button text="Crear Instructor"
+            layoutX="650" layoutY="530"
+            style="-fx-background-color: #1abc9c; -fx-text-fill: white; -fx-font-weight: bold;"/>
+    
+    <Button text="Editar Instructor"
+            layoutX="650" layoutY="630"
+            style="-fx-background-color: #1abc9c; -fx-text-fill: white; -fx-font-weight: bold;"/>
 </AnchorPane>

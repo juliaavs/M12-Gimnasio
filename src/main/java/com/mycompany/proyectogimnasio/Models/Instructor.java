@@ -31,7 +31,6 @@ public class Instructor {
     public void setApellido(String apellido) { this.apellido = apellido; }
 
 
-
     public String getDni() { return dni; }
     public void setDni(String dni) { this.dni = dni; }
 

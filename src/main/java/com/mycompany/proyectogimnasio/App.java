@@ -8,6 +8,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import com.mycompany.proyectogimnasio.Controllers.*;
+import java.io.IOException;
 
 public class App extends Application {
 
@@ -59,7 +60,7 @@ public class App extends Application {
 
             root.setLeft(sidebar);
 
-            Scene scene = new Scene(root, 900, 800);
+            Scene scene = new Scene(root, 1200, 800);
             primaryStage.setScene(scene);
             primaryStage.setTitle("FitGym Pro");
             primaryStage.show();
@@ -80,12 +81,12 @@ public class App extends Application {
         Parent center = loader.load();
 
         // DashboardController controller = loader.getController();
-        // controller.setUser(usuario, rol); ← eliminar esta línea
+        
+    
 
         root.setCenter(center);
         primaryStage.setTitle("Dashboard - FitGym Pro");
     }
-
 
     /** ================================
      * CLIENTES
@@ -126,7 +127,6 @@ public class App extends Application {
         root.setCenter(center);
         primaryStage.setTitle("Instructores - FitGym Pro");
     }
-
 
     /** ================================
      * RESERVAS

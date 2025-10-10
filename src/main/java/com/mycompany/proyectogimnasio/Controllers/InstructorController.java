@@ -7,6 +7,11 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.beans.property.SimpleStringProperty;
+import java.util.*;
+import java.net.URL;
+import javafx.fxml.Initializable;
+
 
 
 public class InstructorController {
@@ -17,6 +22,8 @@ public class InstructorController {
     @FXML private TableColumn<Instructor, String> colApellido;
     @FXML private TableColumn<Instructor, String> colDni;
     @FXML private TableColumn<Instructor, Boolean> colActivo;
+    @FXML private TableColumn<Instructor, String> colClase;
+    
 
     @FXML private TextField txtId;
     @FXML private TextField txtNombre;
@@ -39,34 +46,53 @@ public class InstructorController {
     private Instructor selectedInstructor;
 
     @FXML
-    private void initialize() {
+    public void initialize(URL url, ResourceBundle rb) {
+    // Configuración de columnas
         colId.setCellValueFactory(c -> new javafx.beans.property.SimpleIntegerProperty(c.getValue().getIdInstructor()).asObject());
         colNombre.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getNombre()));
         colApellido.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getApellido()));
         colDni.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getDni()));
         colActivo.setCellValueFactory(c -> new javafx.beans.property.SimpleBooleanProperty(c.getValue().isActivo()).asObject());
+        colClase.setCellValueFactory(cellData -> {
+            Instructor instructor = cellData.getValue();
+            List<String> clases = service.getClasesPorInstructorId(instructor.getIdInstructor());
+            String clasesTexto = String.join(", ", clases); // si está vacía, muestra ""
+                if (clasesTexto.isEmpty()) clasesTexto = "—";
+                return new SimpleStringProperty(clasesTexto);
+    });
 
-        cargarTabla();
+    // Cargar datos
+    cargarTabla();
 
-        tablaInstructores.setOnMouseClicked(this::seleccionarInstructor);
-    }
+    // Selección de fila
+    tablaInstructores.setOnMouseClicked(this::seleccionarInstructor);
+}
 
     public void initializeInstructores() {
         colId.setCellValueFactory(c -> new javafx.beans.property.SimpleIntegerProperty(c.getValue().getIdInstructor()).asObject());
         colNombre.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getNombre())); 
         colApellido.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getApellido())); 
         colDni.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getDni())); 
-        colActivo.setCellValueFactory(c -> new javafx.beans.property.SimpleBooleanProperty(c.getValue().isActivo()).asObject()); cargarTabla(); 
+        colActivo.setCellValueFactory(c -> new javafx.beans.property.SimpleBooleanProperty(c.getValue().isActivo()).asObject());
+        colClase.setCellValueFactory(cellData -> {
+            Instructor instructor = cellData.getValue();
+            List<String> clases = service.getClasesPorInstructorId(instructor.getIdInstructor());
+            String clasesTexto = String.join(", ", clases); // si está vacía, muestra ""
+            if (clasesTexto.isEmpty()) clasesTexto = "—";
+                return new SimpleStringProperty(clasesTexto);
+        });
+        cargarTabla(); 
         tablaInstructores.setOnMouseClicked(this::seleccionarInstructor); 
     }
     
     @FXML
 
     private void cargarTabla() {
-        ObservableList<Instructor> lista = service.getAll();
-        System.out.println("Número de instructores: " + lista.size());
-        tablaInstructores.setItems(lista);
-    }
+    ObservableList<Instructor> lista = service.getAll();
+    tablaInstructores.setItems(lista);
+    tablaInstructores.refresh(); // fuerza actualización de columnas calculadas
+}
+
 
     @FXML
     private void agregarInstructor() {
@@ -124,4 +150,6 @@ public class InstructorController {
         chkActivo.setSelected(false);
         selectedInstructor = null;
     }
+    
+    
 }
