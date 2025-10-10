@@ -1,0 +1,55 @@
+/* === ESTILOS GENERALES DE LA TABLA === */
+.table-view { -fx-background-color: transparent; -fx-background-radius: 8px; -fx-border-color: #bdc3c7; -fx-border-radius: 8px; }
+#colHora .label { -fx-opacity: 0; }
+.table-view .column-header-background { -fx-background-color: #34495e; -fx-background-radius: 8px 8px 0 0; -fx-padding: 8px; }
+.table-view .column-header .label { -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; }
+#colHora { -fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #7f8c8d; }
+
+/* === ESTILOS PARA LA FUSIÓN DE CELDAS (NUEVA LÓGICA) === */
+
+/* Celda única que no se fusiona */
+.cell-standalone {
+    -fx-background-radius: 6px;
+    -fx-border-color: transparent;
+    -fx-alignment: CENTER;
+    -fx-font-weight: bold;
+}
+
+/* Celda que es el INICIO de un bloque */
+.cell-start {
+    -fx-background-radius: 6px 6px 0 0;
+    -fx-border-color: transparent;
+    -fx-alignment: CENTER;
+    -fx-font-weight: bold;
+}
+
+/* Celda que está en el MEDIO de un bloque */
+.cell-middle {
+    -fx-background-radius: 0;
+    -fx-border-color: transparent;
+}
+
+/* Celda que es el FINAL de un bloque */
+.cell-end {
+    -fx-background-radius: 0 0 6px 6px;
+    -fx-border-color: transparent;
+}
+
+
+/* === COLORES PARA LAS CLASES (CON GRADIENTES Y HOVER) === */
+
+/* --- Yoga --- */
+.class-color-yoga { -fx-background-color: linear-gradient(to top, #c0392b, #e74c3c); -fx-text-fill: white; }
+.class-color-yoga:hover { -fx-background-color: linear-gradient(to top, #e74c3c, #ff6b5a); }
+
+/* --- Crossfit --- */
+.class-color-crossfit { -fx-background-color: linear-gradient(to top, #2980b9, #3498db); -fx-text-fill: white; }
+.class-color-crossfit:hover { -fx-background-color: linear-gradient(to top, #3498db, #5dade2); }
+
+/* --- Spinning --- */
+.class-color-spinning { -fx-background-color: linear-gradient(to top, #f39c12, #f1c40f); -fx-text-fill: #2c3e50; }
+.class-color-spinning:hover { -fx-background-color: linear-gradient(to top, #f1c40f, #f5d033); }
+
+/* --- Zumba --- */
+.class-color-zumba { -fx-background-color: linear-gradient(to top, #8e44ad, #9b59b6); -fx-text-fill: white; }
+.class-color-zumba:hover { -fx-background-color: linear-gradient(to top, #9b59b6, #af7ac5); }
