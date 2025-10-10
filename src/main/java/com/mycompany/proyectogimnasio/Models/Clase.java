@@ -1,13 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.proyectogimnasio.Models;
 
-/**
- *
- * @author julia
- */
 public class Clase {
     private int idClase;
     private int idInstructor;
@@ -15,8 +7,10 @@ public class Clase {
     private String dia;
     private String horaInicio;
     private String status;
-    private String nombreActividad; // opcional, para mostrar en la UI
+    private String nombreActividad; // Para mostrar en la tabla
 
+    // Constructor, Getters y Setters...
+    // Ejemplo de constructor
     public Clase(int idClase, int idInstructor, int idActividad, String dia, String horaInicio, String status, String nombreActividad) {
         this.idClase = idClase;
         this.idInstructor = idInstructor;
@@ -27,6 +21,7 @@ public class Clase {
         this.nombreActividad = nombreActividad;
     }
 
+    // Getters
     public int getIdClase() { return idClase; }
     public int getIdInstructor() { return idInstructor; }
     public int getIdActividad() { return idActividad; }
@@ -35,9 +30,5 @@ public class Clase {
     public String getStatus() { return status; }
     public String getNombreActividad() { return nombreActividad; }
 
-    @Override
-    public String toString() {
-        return dia + " " + horaInicio + " - " + nombreActividad;
-    }
+    // Setters (omito por brevedad, pero son necesarios para actualizar)
 }
-
