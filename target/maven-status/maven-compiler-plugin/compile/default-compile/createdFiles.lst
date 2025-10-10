@@ -1,4 +1,5 @@
 com/mycompany/proyectogimnasio/Models/Clase.class
+<<<<<<< HEAD
 com/mycompany/proyectogimnasio/Models/Instructor.class
 com/mycompany/proyectogimnasio/Database.class
 com/mycompany/proyectogimnasio/Controllers/ClientesController.class
@@ -7,11 +8,22 @@ com/mycompany/proyectogimnasio/Controllers/ClasesController.class
 com/mycompany/proyectogimnasio/Controllers/SidebarController.class
 com/mycompany/proyectogimnasio/SystemInfo.class
 com/mycompany/proyectogimnasio/Controllers/EstadisticasController.class
+=======
+com/mycompany/proyectogimnasio/Controllers/DashboardController.class
+>>>>>>> c2ed4c4728ba782ad516ecf9b8eb48ce9a1131e5
 module-info.class
 com/mycompany/proyectogimnasio/Controllers/DashboardController.class
 com/mycompany/proyectogimnasio/App.class
 com/mycompany/proyectogimnasio/Controllers/LoginController.class
 login/css.class
 com/mycompany/proyectogimnasio/Service/InstructorService.class
-com/mycompany/proyectogimnasio/Controllers/InstructorController.class
 com/mycompany/proyectogimnasio/Controllers/ReservasController.class
+com/mycompany/proyectogimnasio/Controllers/ClientesController.class
+com/mycompany/proyectogimnasio/Controllers/HorarioController.class
+com/mycompany/proyectogimnasio/Database.class
+com/mycompany/proyectogimnasio/Controllers/ClasesController.class
+com/mycompany/proyectogimnasio/Controllers/SidebarController.class
+com/mycompany/proyectogimnasio/Controllers/HorarioController$HorarioBloque.class
+com/mycompany/proyectogimnasio/SystemInfo.class
+com/mycompany/proyectogimnasio/Controllers/EstadisticasController.class
+com/mycompany/proyectogimnasio/Controllers/InstructorController.class
