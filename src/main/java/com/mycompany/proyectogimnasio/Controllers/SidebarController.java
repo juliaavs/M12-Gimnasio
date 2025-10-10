@@ -11,6 +11,7 @@ public class SidebarController {
     @FXML private Button dashboardLink;
     @FXML private Button clientesLink;
     @FXML private Button instructoresLink;
+    @FXML private Button clasesLink; // 
     @FXML private Button reservasLink;
     @FXML private Button estadisticasLink;
     @FXML private Button horarioLink;
@@ -36,6 +37,8 @@ public class SidebarController {
         dashboardLink.setOnAction(e -> openDashboard());
         clientesLink.setOnAction(e -> openClientes());
         instructoresLink.setOnAction(e -> openInstructores());
+        clasesLink.setOnAction(e -> openClases());
+
         reservasLink.setOnAction(e -> openReservas());
         estadisticasLink.setOnAction(e -> openEstadisticas());
         horarioLink.setOnAction(e -> openHorario());
@@ -59,6 +62,7 @@ public class SidebarController {
         try { App.showInstructores(usuarioActual, rolActual); } catch (Exception e) { e.printStackTrace(); }
     }
 
+
     private void openReservas() {
         try { App.showReservas(usuarioActual, rolActual); } catch (Exception e) { e.printStackTrace(); }
     }
@@ -73,5 +77,9 @@ public class SidebarController {
 
     private void handleLogout() {
         try { App.showLogin(); } catch (Exception e) { e.printStackTrace(); }
+    }
+    
+     private void openClases() {
+        try { App.showClases(usuarioActual, rolActual); } catch (Exception e) { e.printStackTrace(); }
     }
 }

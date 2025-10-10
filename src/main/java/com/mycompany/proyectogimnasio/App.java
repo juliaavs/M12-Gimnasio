@@ -107,6 +107,25 @@ public class App extends Application {
         root.setCenter(center);
         primaryStage.setTitle("Clientes - FitGym Pro");
     }
+    
+    public static void showClases(String usuario, String rol) throws Exception{
+        usuarioActual=usuario;
+        rolActual=rol;
+        
+        initRootWithSidebar();
+        sidebarController.setUser(usuario, rol); // Esto actualiza los labels del sidebar
+        
+        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/ClasesView.fxml"));
+        Parent center = loader.load();
+        
+        root.setCenter(center);
+        primaryStage.setTitle("Clases - FitGym Pro");
+
+
+        
+        
+    }
+    
 
     /** ================================
      * INSTRUCTORES
