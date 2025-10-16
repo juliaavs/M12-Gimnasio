@@ -1,5 +1,7 @@
 com/mycompany/proyectogimnasio/Models/Instructor.class
 com/mycompany/proyectogimnasio/Models/Clase.class
+com/mycompany/proyectogimnasio/Controllers/ActividadesController.class
+com/mycompany/proyectogimnasio/Models/Actividad.class
 com/mycompany/proyectogimnasio/Models/ClaseInfo.class
 com/mycompany/proyectogimnasio/Controllers/DashboardController.class
 module-info.class

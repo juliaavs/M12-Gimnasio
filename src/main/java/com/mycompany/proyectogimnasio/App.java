@@ -79,13 +79,9 @@ public class App extends Application {
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/dashboard.fxml"));
         Parent center = loader.load();
 
-        // DashboardController controller = loader.getController();
-        // controller.setUser(usuario, rol); ← eliminar esta línea
-
         root.setCenter(center);
         primaryStage.setTitle("Dashboard - FitGym Pro");
     }
-
 
     /** ================================
      * CLIENTES
@@ -107,25 +103,6 @@ public class App extends Application {
         primaryStage.setTitle("Clientes - FitGym Pro");
     }
     
-    public static void showClases(String usuario, String rol) throws Exception{
-        usuarioActual=usuario;
-        rolActual=rol;
-        
-        initRootWithSidebar();
-        sidebarController.setUser(usuario, rol); // Esto actualiza los labels del sidebar
-        
-        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/ClasesView.fxml"));
-        Parent center = loader.load();
-        
-        root.setCenter(center);
-        primaryStage.setTitle("Clases - FitGym Pro");
-
-
-        
-        
-    }
-    
-
     /** ================================
      * INSTRUCTORES
      * ================================ */
@@ -139,13 +116,45 @@ public class App extends Application {
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/InstructorView.fxml"));
         Parent center = loader.load();
 
-        // InstructorController controller = loader.getController();
-        // controller.setUser(usuario, rol); // ← Eliminar esta línea
-
         root.setCenter(center);
         primaryStage.setTitle("Instructores - FitGym Pro");
     }
 
+    /** ================================
+     * ACTIVIDADES (NUEVO MÉTODO)
+     * ================================ */
+    public static void showActividades(String usuario, String rol) throws Exception {
+        usuarioActual = usuario;
+        rolActual = rol;
+
+        initRootWithSidebar();
+        sidebarController.setUser(usuario, rol);
+
+        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/ActividadesView.fxml"));
+        Parent center = loader.load();
+
+        // El ActividadesController no necesita los datos del usuario, por lo que no se los pasamos.
+        
+        root.setCenter(center);
+        primaryStage.setTitle("Actividades - FitGym Pro");
+    }
+
+    /** ================================
+     * CLASES
+     * ================================ */
+    public static void showClases(String usuario, String rol) throws Exception{
+        usuarioActual = usuario;
+        rolActual = rol;
+        
+        initRootWithSidebar();
+        sidebarController.setUser(usuario, rol); // Esto actualiza los labels del sidebar
+        
+        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/ClasesView.fxml"));
+        Parent center = loader.load();
+        
+        root.setCenter(center);
+        primaryStage.setTitle("Clases - FitGym Pro");
+    }
 
     /** ================================
      * RESERVAS
