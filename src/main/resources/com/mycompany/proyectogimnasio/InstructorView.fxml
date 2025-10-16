@@ -1,45 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
-<?import javafx.geometry.Pos?>
-<?import javafx.scene.shape.Circle?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.mycompany.proyectogimnasio.Controllers.InstructorController"
-            prefWidth="800" prefHeight="500"
-            style="-fx-background-color: #ecf0f1;">
+<BorderPane xmlns="http://javafx.com/javafx/21" 
+            xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="com.mycompany.proyectogimnasio.Controllers.InstructorController">
 
-    <!-- Título -->
-    <Label text="Lista de Instructores"
-           layoutX="20" layoutY="20"
-           style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+    <top>
+        <Label text="Gestión de Instructores" style="-fx-font-size: 24px; -fx-padding: 10;" BorderPane.alignment="CENTER" />
+    </top>
 
-    <!-- Tabla de instructores -->
-    <TableView fx:id="tablaInstructores"
-               layoutX="20" layoutY="60"
-               prefWidth="760" prefHeight="350">
-        <columns>
-            <TableColumn fx:id="colId" text="ID" prefWidth="50"/>
-            <TableColumn fx:id="colNombre" text="Nombre" prefWidth="150"/>
-            <TableColumn fx:id="colApellido" text="Apellido" prefWidth="150"/>
-            <TableColumn fx:id="colDni" text="DNI" prefWidth="150"/>
-            <TableColumn fx:id="colActivo" text="Activo" prefWidth="60"/>
-            <TableColumn fx:id="colClase" text="Clases" prefWidth="150"/>
-        </columns>
-    </TableView>
+    <center>
+        <TableView fx:id="instructorTable" VBox.vgrow="ALWAYS" style="-fx-padding: 10;">
+            <columns>
+                <TableColumn fx:id="idColumn" text="ID" prefWidth="50" />
+                <TableColumn fx:id="nombreColumn" text="Nombre" prefWidth="150" />
+                <TableColumn fx:id="apellidoColumn" text="Apellido" prefWidth="150" />
+                <TableColumn fx:id="dniColumn" text="DNI" prefWidth="100" />
+                <TableColumn fx:id="activoColumn" text="Activo" prefWidth="80" />
+                <TableColumn fx:id="clasesColumn" text="Clases Asociadas" prefWidth="250" />
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+            </columnResizePolicy>
+        </TableView>
+    </center>
 
-    <!-- Botón para actualizar tabla -->
-    <Button text="Actualizar Lista"
-            layoutX="650" layoutY="430"
-            fx:id="instructorLink"
-            style="-fx-background-color: #1abc9c; -fx-text-fill: white; -fx-font-weight: bold;"/>
+    <right>
+        <VBox spacing="10" style="-fx-padding: 20; -fx-border-color: #bdc3c7; -fx-border-width: 0 0 0 1;">
+            <Label text="Detalles del Instructor" style="-fx-font-weight: bold; -fx-font-size: 16px;" />
+
+            <Label text="Nombre"/>
+            <TextField fx:id="nombreField" promptText="Nombre"/>
+
+            <Label text="Apellido"/>
+            <TextField fx:id="apellidoField" promptText="Apellido"/>
+
+            <Label text="DNI"/>
+            <TextField fx:id="dniField" promptText="DNI"/>
+
+            <CheckBox fx:id="activoCheckbox" text="Instructor Activo"/>
+            
+            <HBox spacing="10" style="-fx-padding: 10 0 0 0;">
+                <Button fx:id="saveButton" text="Guardar" onAction="#handleSaveInstructor" style="-fx-background-color: #2ecc71; -fx-text-fill: white;" />
+                
+                <Button text="Nuevo" onAction="#handleNewInstructor" style="-fx-background-color: #3498db; -fx-text-fill: white;" />
+            </HBox>
+            
+            <Button fx:id="deleteButton" text="Eliminar" onAction="#handleDeleteInstructor" disable="true" style="-fx-background-color: #e74c3c; -fx-text-fill: white;" />
+            
+        </VBox>
+    </right>
     
-    <Button text="Crear Instructor"
-            layoutX="650" layoutY="530"
-            style="-fx-background-color: #1abc9c; -fx-text-fill: white; -fx-font-weight: bold;"/>
-    
-    <Button text="Editar Instructor"
-            layoutX="650" layoutY="630"
-            style="-fx-background-color: #1abc9c; -fx-text-fill: white; -fx-font-weight: bold;"/>
-</AnchorPane>
+</BorderPane>

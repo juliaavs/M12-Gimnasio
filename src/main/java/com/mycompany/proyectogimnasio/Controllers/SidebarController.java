@@ -59,7 +59,12 @@ public class SidebarController {
     }
 
     private void openInstructores() {
-        try { App.showInstructores(usuarioActual, rolActual); } catch (Exception e) { e.printStackTrace(); }
+        // Llama al método estático que, a su vez, llama al DashboardController para cambiar el centro
+        try { 
+            App.showInstructores(usuarioActual, rolActual); 
+        } catch (Exception e) { 
+            e.printStackTrace(); 
+        }
     }
 
 

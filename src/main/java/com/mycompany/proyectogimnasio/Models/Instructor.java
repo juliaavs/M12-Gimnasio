@@ -1,39 +1,60 @@
 
 package com.mycompany.proyectogimnasio.Models;
 
-
+import javafx.beans.property.*;
+import java.util.List;
 
 public class Instructor {
+    private final IntegerProperty idInstructor = new SimpleIntegerProperty();
+    private final StringProperty nombre = new SimpleStringProperty();
+    private final StringProperty apellido = new SimpleStringProperty();
+    private final StringProperty dni = new SimpleStringProperty();
+    private final BooleanProperty activo = new SimpleBooleanProperty();
+    
+    // Campo para guardar los nombres de las clases asociadas
+    private List<String> nombresClases; 
 
-    private int idInstructor;
-    private String nombre;
-    private String apellido;
-    private String dni;
-    private boolean activo;
+    // Constructor vacío (necesario para algunas operaciones y librerías)
+    public Instructor() {}
 
+    // Constructor completo
     public Instructor(int idInstructor, String nombre, String apellido, String dni, boolean activo) {
-        this.idInstructor = idInstructor;
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.dni = dni;
-        this.activo = activo;
+        setIdInstructor(idInstructor);
+        setNombre(nombre);
+        setApellido(apellido);
+        setDni(dni);
+        setActivo(activo);
     }
     
+    // --- Métodos Property para JavaFX ---
+    public IntegerProperty idInstructorProperty() { return idInstructor; }
+    public StringProperty nombreProperty() { return nombre; }
+    public StringProperty apellidoProperty() { return apellido; }
+    public StringProperty dniProperty() { return dni; }
+    public BooleanProperty activoProperty() { return activo; }
+    
+    // --- Getters y Setters Estándar ---
+    public int getIdInstructor() { return idInstructor.get(); }
+    public void setIdInstructor(int idInstructor) { this.idInstructor.set(idInstructor); }
 
-    // Getters y setters
-    public int getIdInstructor() { return idInstructor; }
-    public void setIdInstructor(int idInstructor) { this.idInstructor = idInstructor; }
+    public String getNombre() { return nombre.get(); }
+    public void setNombre(String nombre) { this.nombre.set(nombre); }
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    public String getApellido() { return apellido.get(); }
+    public void setApellido(String apellido) { this.apellido.set(apellido); }
 
-    public String getApellido() { return apellido; }
-    public void setApellido(String apellido) { this.apellido = apellido; }
+    public String getDni() { return dni.get(); }
+    public void setDni(String dni) { this.dni.set(dni); }
 
-
-    public String getDni() { return dni; }
-    public void setDni(String dni) { this.dni = dni; }
-
-    public boolean isActivo() { return activo; }
-    public void setActivo(boolean activo) { this.activo = activo; }
+    public boolean isActivo() { return activo.get(); }
+    public void setActivo(boolean activo) { this.activo.set(activo); }
+    
+    // --- Getter y Setter para la lista de clases ---
+    public List<String> getNombresClases() { return nombresClases; }
+    public void setNombresClases(List<String> nombresClases) { this.nombresClases = nombresClases; }
+    
+    // Método auxiliar para mostrar las clases en la vista
+    public String getClasesConcatenadas() {
+        return nombresClases != null ? String.join(", ", nombresClases) : "N/A";
+    }
 }

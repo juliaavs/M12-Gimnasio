@@ -1,10 +1,8 @@
 
 package com.mycompany.proyectogimnasio.Service;
 
+import com.mycompany.proyectogimnasio.Models.Instructor;
 import com.mycompany.proyectogimnasio.Database;
-import com.mycompany.proyectogimnasio.Models.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,112 +10,95 @@ import java.util.List;
 
 public class InstructorService {
     
-     public List<String> getClasesPorInstructorId(int idInstructor) {
-    List<String> clases = new ArrayList<>();
     
-    // SQL: Selecciona el nombre de la actividad de la tabla 'clases' 
-    // donde el 'id_instructor' coincida con el ID proporcionado.
-    String sql = "SELECT nombre FROM actividades a INNER JOIN clases c ON a.id_actividad = c.id_clase INNER JOIN instructores i ON c.id_clase = i.id_instructor " ;
-
-    try (Connection conn = Database.getConnection();
-         PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-        // 1. Establecer el parámetro del ID del instructor
-        stmt.setInt(1, idInstructor);
-
-        // 2. Ejecutar la consulta
-        try (ResultSet rs = stmt.executeQuery()) {
-            
-            // 3. Iterar sobre los resultados
-            while (rs.next()) {
-                // Obtener el nombre de la clase y añadirlo a la lista
-                clases.add(rs.getString("nombre_actividad"));
-            }
-        } // El ResultSet se cierra automáticamente aquí
-
-    } catch (SQLException e) {
-        System.err.println("Error al obtener las clases del instructor con ID: " + idInstructor);
-        e.printStackTrace();
-    }
-    
-    return clases;
-}
-    
-    private List<Clase> listaClases = new ArrayList<>();
-    public ObservableList<Instructor> getAll() {
-        ObservableList<Instructor> lista = FXCollections.observableArrayList();
-        String sql = "SELECT * FROM instructores";
-    
+    // --- R (Read): Listar todos los instructores con sus clases ---
+    public List<Instructor> getAllInstructors() throws SQLException {
+        List<Instructor> instructores = new ArrayList<>();
+        String SQL_SELECT_ALL = "SELECT id_instructor, nombre, apellido, dni, activo FROM instructores";
 
         try (Connection conn = Database.getConnection();
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
+             ResultSet rs = stmt.executeQuery(SQL_SELECT_ALL)) {
+            
             while (rs.next()) {
-                lista.add(new Instructor(
-                        rs.getInt("id_instructor"),
-                        rs.getString("nombre"),
-                        rs.getString("apellido"),
-                        rs.getString("dni"),
-                        rs.getBoolean("activo")
-                ));
+                Instructor instructor = new Instructor(
+                    rs.getInt("id_instructor"),
+                    rs.getString("nombre"),
+                    rs.getString("apellido"),
+                    rs.getString("dni"),
+                    rs.getBoolean("activo")
+                );
+                
+                // Cargar las clases asociadas a este instructor
+                instructor.setNombresClases(getClasesByInstructorId(instructor.getIdInstructor(), conn));
+                instructores.add(instructor);
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-
-        return lista;
-    }
-
-    public void add(Instructor instructor) {
-        String sql = "INSERT INTO instructores (id_instructor, nombre, apellido, dni, activo) VALUES (?, ?, ?, ?, ?, ?)";
-        try (Connection conn = Database.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, instructor.getIdInstructor());
-            stmt.setString(2, instructor.getNombre());
-            stmt.setString(3, instructor.getApellido());
-            stmt.setString(4, instructor.getDni());
-            stmt.setBoolean(5, instructor.isActivo());
-            stmt.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void update(Instructor instructor) {
-        String sql = "UPDATE instructores SET nombre=?, apellido=?, dni=?, activo=? WHERE id_instructor=?";
-        try (Connection conn = Database.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, instructor.getNombre());
-            stmt.setString(2, instructor.getApellido());
-            stmt.setString(3, instructor.getDni());
-            stmt.setBoolean(4, instructor.isActivo());
-            stmt.setInt(5, instructor.getIdInstructor());
-            stmt.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void delete(int idInstructor) {
-        String sql = "DELETE FROM instructores WHERE id_instructor=?";
-        try (Connection conn = Database.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, idInstructor);
-            stmt.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    
+        return instructores;
     }
     
-   
+    // Método auxiliar para obtener los nombres de las clases de un instructor
+    private List<String> getClasesByInstructorId(int idInstructor, Connection conn) throws SQLException {
+        List<String> clases = new ArrayList<>();
+        // JOIN para obtener la actividad (nombre) a través de la clase (id_actividad)
+        String SQL_CLASES = "SELECT a.nombre FROM clases c JOIN actividades a ON c.id_actividad = a.id_actividad WHERE c.id_instructor = ?";
 
+        try (PreparedStatement ps = conn.prepareStatement(SQL_CLASES)) {
+            ps.setInt(1, idInstructor);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    clases.add(rs.getString("nombre"));
+                }
+            }
+        }
+        return clases;
+    }
+
+    // --- C (Create): Insertar un nuevo instructor ---
+    public void addInstructor(Instructor instructor) throws SQLException {
+        String SQL_INSERT = "INSERT INTO instructores (nombre, apellido, dni, activo) VALUES (?, ?, ?, ?)";
+        try (Connection conn = Database.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, instructor.getNombre());
+            ps.setString(2, instructor.getApellido());
+            ps.setString(3, instructor.getDni());
+            ps.setBoolean(4, instructor.isActivo());
+            ps.executeUpdate();
+            
+            // Opcional: obtener el ID generado si se necesita
+            // try (ResultSet rs = ps.getGeneratedKeys()) {
+            //     if (rs.next()) {
+            //         instructor.setIdInstructor(rs.getInt(1));
+            //     }
+            // }
+        }
+    }
+    
+    // --- U (Update): Actualizar un instructor existente ---
+    public void updateInstructor(Instructor instructor) throws SQLException {
+        String SQL_UPDATE = "UPDATE instructores SET nombre = ?, apellido = ?, dni = ?, activo = ? WHERE id_instructor = ?";
+        try (Connection conn = Database.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_UPDATE)) {
+            ps.setString(1, instructor.getNombre());
+            ps.setString(2, instructor.getApellido());
+            ps.setString(3, instructor.getDni());
+            ps.setBoolean(4, instructor.isActivo());
+            ps.setInt(5, instructor.getIdInstructor());
+            ps.executeUpdate();
+        }
+    }
+
+    // --- D (Delete): Eliminar un instructor ---
+    // ¡CUIDADO! La tabla `clases` tiene una clave foránea a `instructores`. 
+    // Necesitas eliminar o reasignar las clases asociadas antes de eliminar al instructor.
+    public void deleteInstructor(int idInstructor) throws SQLException {
+        // En un entorno real, primero se manejarían las dependencias (ej. reasignar clases)
+        // Por simplicidad, asumiremos que no hay clases asociadas o se han gestionado.
+        String SQL_DELETE = "DELETE FROM instructores WHERE id_instructor = ?";
+        try (Connection conn = Database.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_DELETE)) {
+            ps.setInt(1, idInstructor);
+            ps.executeUpdate();
+        }
+    }
 }

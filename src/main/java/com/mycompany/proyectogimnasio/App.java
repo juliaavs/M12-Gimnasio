@@ -8,7 +8,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import com.mycompany.proyectogimnasio.Controllers.*;
-import java.io.IOException;
 
 public class App extends Application {
 
@@ -60,7 +59,7 @@ public class App extends Application {
 
             root.setLeft(sidebar);
 
-            Scene scene = new Scene(root, 1200, 800);
+            Scene scene = new Scene(root, 900, 800);
             primaryStage.setScene(scene);
             primaryStage.setTitle("FitGym Pro");
             primaryStage.show();
@@ -81,12 +80,12 @@ public class App extends Application {
         Parent center = loader.load();
 
         // DashboardController controller = loader.getController();
-        
-    
+        // controller.setUser(usuario, rol); ← eliminar esta línea
 
         root.setCenter(center);
         primaryStage.setTitle("Dashboard - FitGym Pro");
     }
+
 
     /** ================================
      * CLIENTES
@@ -107,25 +106,25 @@ public class App extends Application {
         root.setCenter(center);
         primaryStage.setTitle("Clientes - FitGym Pro");
     }
-    
+   
     public static void showClases(String usuario, String rol) throws Exception{
         usuarioActual=usuario;
         rolActual=rol;
-        
+       
         initRootWithSidebar();
         sidebarController.setUser(usuario, rol); // Esto actualiza los labels del sidebar
-        
+       
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/ClasesView.fxml"));
         Parent center = loader.load();
-        
+       
         root.setCenter(center);
         primaryStage.setTitle("Clases - FitGym Pro");
 
 
-        
-        
+       
+       
     }
-    
+   
 
     /** ================================
      * INSTRUCTORES
@@ -140,12 +139,13 @@ public class App extends Application {
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/InstructorView.fxml"));
         Parent center = loader.load();
 
-        // InstructorController controller = loader.getController();
+        InstructorController controller = loader.getController();
         // controller.setUser(usuario, rol); // ← Eliminar esta línea
 
         root.setCenter(center);
         primaryStage.setTitle("Instructores - FitGym Pro");
     }
+
 
     /** ================================
      * RESERVAS

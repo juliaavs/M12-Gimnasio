@@ -1,4 +1,3 @@
-
 package com.mycompany.proyectogimnasio.Controllers;
 
 import com.mycompany.proyectogimnasio.App;
@@ -6,10 +5,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import java.io.IOException;
-import com.mycompany.proyectogimnasio.Controllers.*;
 
 public class DashboardController {
     
@@ -22,6 +19,8 @@ public class DashboardController {
     @FXML
     private Button btnInstructores; // Botón del menú para instructores
 
+    // --- Métodos de Navegación del Dashboard ---
+
     @FXML
     private void handleLogout() {
         try {
@@ -33,45 +32,46 @@ public class DashboardController {
     
     @FXML
     private void handleDashboard() {
-        // Carga el dashboard nuevamente en el mismo Stage
-        // Puedes pasar datos del usuario si los tienes
+        // Método para recargar la vista del dashboard principal
         showDashboardView();
     }
 
-// Método para recargar el dashboard (panel central o toda la ventana)
-private void showDashboardView() {
-    try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/mycompany/proyectogimnasio/dashboard.fxml"));
-        Parent root = loader.load();
-
-        DashboardController controller = loader.getController();
-        // Si quieres pasar nombre/rol, lo puedes hacer aquí:
-        // controller.setUser(currentUserName, currentUserRole);
-
-        // Reemplaza la escena completa
-        App.getPrimaryStage().getScene().setRoot(root);
-
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-}
-
-    @FXML
-    private void initializeInstructores() {
+    private void showDashboardView() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/mycompany/proyectogimnasio/InstructorView.fxml"));
-            Parent vistaInstructores = loader.load();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/mycompany/proyectogimnasio/dashboard.fxml"));
+            Parent root = loader.load();
 
-            // Obtener el controlador de la vista de instructores
-            InstructorController controller = loader.getController();
-            controller.initializeInstructores(); // Inicializa columnas y carga tabla
-
-            // Colocar la vista en el panel central del dashboard
-            mainPane.setCenter(vistaInstructores);
+            // Reemplaza la escena completa
+            App.getPrimaryStage().getScene().setRoot(root);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-}
 
+    /**
+     * @FXML
+     * Método invocado cuando se presiona el botón "Instructores".
+     * Carga la vista InstructorView.fxml y la coloca en el centro del BorderPane.
+     */
+    @FXML
+    public void handleBtnInstructores() {
+        try {
+            // 1. Cargar el FXML de la vista de instructores
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/mycompany/proyectogimnasio/InstructorView.fxml"));
+            Parent vistaInstructores = loader.load(); // Al cargar, se llama automáticamente a InstructorController.initialize()
+
+            // 2. Opcional: Obtener el controlador si necesitas pasar datos *después* de la inicialización
+            InstructorController controller = loader.getController();
+
+            // 3. Colocar la vista cargada en el panel central del dashboard
+            mainPane.setCenter(vistaInstructores);
+
+        } catch (IOException e) {
+            System.err.println("Error al cargar la vista de Instructores.");
+            e.printStackTrace();
+            // Mostrar un Alert al usuario si la carga falla
+        }
+    }
+
+}
