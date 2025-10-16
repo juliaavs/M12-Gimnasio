@@ -1,124 +1,115 @@
--- ============================================
--- BORRAR TABLAS SI EXISTEN
--- ============================================
+-- DROP TABLES si existen
 DROP TABLE IF EXISTS inscripciones;
 DROP TABLE IF EXISTS clases;
-DROP TABLE IF EXISTS clientes;
-DROP TABLE IF EXISTS administrador;
-DROP TABLE IF EXISTS instructores;
 DROP TABLE IF EXISTS actividades;
+DROP TABLE IF EXISTS clientes;
+DROP TABLE IF EXISTS instructores;
+DROP TABLE IF EXISTS administrador;
 
--- ============================================
--- TABLA: instructores
--- ============================================
+-- TABLA INSTRUCTORES
 CREATE TABLE instructores (
     id_instructor INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    apellido VARCHAR(100) NOT NULL,
-    dni VARCHAR(20) UNIQUE NOT NULL,
-    activo BOOLEAN DEFAULT TRUE
+    nombre VARCHAR(50),
+    apellido VARCHAR(50),
+    dni VARCHAR(20) UNIQUE,
+    activo BOOLEAN
 );
 
--- ============================================
--- TABLA: actividades
--- ============================================
+-- Inserts de prueba
+INSERT INTO instructores (nombre, apellido, dni, activo) VALUES
+('Juan', 'Pérez', '12345678A', TRUE),
+('María', 'Gómez', '87654321B', TRUE),
+('Luis', 'Martínez', '11223344C', FALSE),
+('Ana', 'Rodríguez', '44332211D', TRUE),
+('Carlos', 'Sánchez', '55667788E', TRUE);
+
+-- TABLA ACTIVIDADES
 CREATE TABLE actividades (
     id_actividad INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    descripcion TEXT,
-    aforo INT NOT NULL,
-    duracion INT NOT NULL
+    nombre VARCHAR(50),
+    descripcion VARCHAR(255),
+    aforo INT,
+    duracion INT
 );
 
--- ============================================
--- TABLA: clases
--- ============================================
-CREATE TABLE clases (
-    id_clase INT AUTO_INCREMENT PRIMARY KEY,
-    id_instructor INT NOT NULL,
-    id_actividad INT NOT NULL,
-    dia DATE NOT NULL,
-    hora_inicio TIME NOT NULL,
-    status ENUM('confirmado', 'cancelado') DEFAULT 'confirmado',
+INSERT INTO actividades (nombre, descripcion, aforo, duracion) VALUES
+('Yoga', 'Clase de Yoga para principiantes', 20, 60),
+('Pilates', 'Pilates avanzado', 15, 50),
+('Spinning', 'Bicicleta indoor', 25, 45),
+('Zumba', 'Baile fitness', 30, 40),
+('Crossfit', 'Entrenamiento de alta intensidad', 10, 60);
 
-    CONSTRAINT fk_clase_instructor FOREIGN KEY (id_instructor) REFERENCES instructores(id_instructor),
-    CONSTRAINT fk_clase_actividad FOREIGN KEY (id_actividad) REFERENCES actividades(id_actividad)
-);
-
--- ============================================
--- TABLA: clientes
--- ============================================
+-- TABLA CLIENTES
 CREATE TABLE clientes (
     id_cliente INT AUTO_INCREMENT PRIMARY KEY,
-    dni VARCHAR(20) UNIQUE NOT NULL,
-    nombre VARCHAR(100) NOT NULL,
-    apellido VARCHAR(100) NOT NULL,
-    password VARCHAR(255) NOT NULL,
+    dni VARCHAR(20) UNIQUE,
+    nombre VARCHAR(50),
+    password VARCHAR(50),
+    apellido VARCHAR(50),
     IBAN VARCHAR(34),
     telefono INT,
     cod_postal INT
 );
 
--- ============================================
--- TABLA: administrador
--- ============================================
+INSERT INTO clientes (dni, nombre, password, apellido, IBAN, telefono, cod_postal) VALUES
+('11111111A', 'Pedro', '1234', 'López', 'ES0012345678901234567890', 600123456, 08001),
+('22222222B', 'Lucía', 'abcd', 'García', 'ES0023456789012345678901', 600234567, 08002),
+('33333333C', 'Diego', 'pass', 'Martín', 'ES0034567890123456789012', 600345678, 08003),
+('44444444D', 'Sofía', 'word', 'Fernández', 'ES0045678901234567890123', 600456789, 08004),
+('55555555E', 'Alberto', 'hola', 'Ruiz', 'ES0056789012345678901234', 600567890, 08005);
+
+-- TABLA ADMINISTRADOR
 CREATE TABLE administrador (
     id_admin INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    apellido VARCHAR(100) NOT NULL,
-    dni VARCHAR(20) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    activo BOOLEAN DEFAULT TRUE,
-    rol ENUM('superadmin', 'admin') DEFAULT 'admin'
+    nombre VARCHAR(50),
+    apellido VARCHAR(50),
+    dni VARCHAR(20) UNIQUE,
+    password VARCHAR(50),
+    activo BOOLEAN,
+    rol ENUM('superadmin','admin')
 );
 
--- ============================================
--- TABLA: inscripciones
--- ============================================
-CREATE TABLE inscripciones (
-    id_clase INT NOT NULL,
-    id_cliente INT NOT NULL,
-    status ENUM('confirmado', 'cancelado') DEFAULT 'confirmado',
-    dia_reserva DATE NOT NULL DEFAULT (CURRENT_DATE),
-
-    PRIMARY KEY (id_clase, id_cliente),
-    CONSTRAINT fk_inscripcion_clase FOREIGN KEY (id_clase) REFERENCES clases(id_clase) ON DELETE CASCADE,
-    CONSTRAINT fk_inscripcion_cliente FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente) ON DELETE CASCADE
-);
-
--- ============================================
--- INSERTS DE EJEMPLO
--- ============================================
-
--- Admins
 INSERT INTO administrador (nombre, apellido, dni, password, activo, rol) VALUES
-('Didac', 'Medina', '12345678A', 'admin123', TRUE, 'superadmin'),
-('Julia', 'Avs', '87654321B', 'admin456', TRUE, 'admin');
+('Admin', 'Uno', '99999999A', 'admin123', TRUE, 'superadmin'),
+('Admin', 'Dos', '88888888B', 'admin234', TRUE, 'admin'),
+('Admin', 'Tres', '77777777C', 'admin345', FALSE, 'admin'),
+('Admin', 'Cuatro', '66666666D', 'admin456', TRUE, 'superadmin'),
+('Admin', 'Cinco', '55555555E', 'admin567', TRUE, 'admin');
 
--- Instructores
-INSERT INTO instructores (nombre, apellido, dni, activo) VALUES
-('Carlos', 'Lopez', '11223344C', TRUE),
-('Marta', 'Sanchez', '55667788D', TRUE);
+-- TABLA CLASES
+CREATE TABLE clases (
+    id_clase INT AUTO_INCREMENT PRIMARY KEY,
+    id_instructor INT,
+    id_actividad INT,
+    dia VARCHAR(10), -- lunes, martes, etc.
+    hora_inicio TIME,
+    status ENUM('confirmado','cancelado'),
+    FOREIGN KEY (id_instructor) REFERENCES instructores(id_instructor),
+    FOREIGN KEY (id_actividad) REFERENCES actividades(id_actividad)
+);
 
--- Actividades
-INSERT INTO actividades (nombre, descripcion, aforo, duracion) VALUES
-('Yoga', 'Clase de yoga relajante', 20, 60),
-('Spinning', 'Bicicleta indoor alta intensidad', 15, 45),
-('Pilates', 'Fortalecimiento y flexibilidad', 18, 50);
-
--- Clases
 INSERT INTO clases (id_instructor, id_actividad, dia, hora_inicio, status) VALUES
-(1, 1, '2025-10-05', '10:00:00', 'confirmado'),
-(2, 2, '2025-10-06', '18:30:00', 'confirmado'),
-(1, 3, '2025-10-07', '09:00:00', 'cancelado');
+(1, 1, 'lunes', '09:00:00', 'confirmado'),
+(2, 2, 'martes', '10:00:00', 'cancelado'),
+(3, 3, 'miércoles', '11:00:00', 'confirmado'),
+(4, 4, 'jueves', '12:00:00', 'confirmado'),
+(5, 5, 'viernes', '13:00:00', 'cancelado');
 
--- Clientes
-INSERT INTO clientes (dni, nombre, apellido, password, IBAN, telefono, cod_postal) VALUES
-('44556677E', 'Ana', 'Martinez', 'pass123', 'ES9121000418450200051332', 600123456, 08001),
-('99887766F', 'Luis', 'Fernandez', 'pass456', 'ES7921000813610123456789', 600987654, 08002);
+-- TABLA INSCRIPCIONES
+CREATE TABLE inscripciones (
+    id_clase INT,
+    id_cliente INT,
+    status ENUM('confirmado','cancelado'),
+    dia_reserva DATE,
+    PRIMARY KEY (id_clase, id_cliente),
+    FOREIGN KEY (id_clase) REFERENCES clases(id_clase),
+    FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente)
+);
 
--- Inscripciones
 INSERT INTO inscripciones (id_clase, id_cliente, status, dia_reserva) VALUES
 (1, 1, 'confirmado', '2025-10-01'),
-(2, 2, 'confirmado', '2025-10-02'),
-(3, 1, 'cancelado', '2025-10-02');
+(1, 2, 'confirmado', '2025-10-01'),
+(2, 3, 'cancelado', '2025-10-02'),
+(3, 4, 'confirmado', '2025-10-03'),
+(4, 5, 'confirmado', '2025-10-04');
+

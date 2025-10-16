@@ -12,6 +12,37 @@ import java.util.List;
 
 public class InstructorService {
     
+     public List<String> getClasesPorInstructorId(int idInstructor) {
+    List<String> clases = new ArrayList<>();
+    
+    // SQL: Selecciona el nombre de la actividad de la tabla 'clases' 
+    // donde el 'id_instructor' coincida con el ID proporcionado.
+    String sql = "SELECT nombre FROM actividades a INNER JOIN clases c ON a.id_actividad = c.id_clase INNER JOIN instructores i ON c.id_clase = i.id_instructor " ;
+
+    try (Connection conn = Database.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        // 1. Establecer el parámetro del ID del instructor
+        stmt.setInt(1, idInstructor);
+
+        // 2. Ejecutar la consulta
+        try (ResultSet rs = stmt.executeQuery()) {
+            
+            // 3. Iterar sobre los resultados
+            while (rs.next()) {
+                // Obtener el nombre de la clase y añadirlo a la lista
+                clases.add(rs.getString("nombre_actividad"));
+            }
+        } // El ResultSet se cierra automáticamente aquí
+
+    } catch (SQLException e) {
+        System.err.println("Error al obtener las clases del instructor con ID: " + idInstructor);
+        e.printStackTrace();
+    }
+    
+    return clases;
+}
+    
     private List<Clase> listaClases = new ArrayList<>();
     public ObservableList<Instructor> getAll() {
         ObservableList<Instructor> lista = FXCollections.observableArrayList();
@@ -87,17 +118,6 @@ public class InstructorService {
     
     }
     
-    public List<String> getClasesPorInstructorId(int idInstructor) {
-    List<String> clases = new ArrayList<>();
-    for (Clase c : listaClases) { // listaClases es tu lista de todas las clases
-        if (c.getIdInstructor() == idInstructor) {
-            // Opción 1: solo mostrar el nombre de la actividad
-            clases.add(c.getNombreActividad());
+   
 
-            // Opción 2: mostrar día, hora y nombre
-            // clases.add(c.getDia() + " " + c.getHoraInicio() + " - " + c.getNombreActividad());
-        }
-    }
-    return clases;
-}
 }
