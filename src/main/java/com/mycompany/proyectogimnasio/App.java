@@ -34,11 +34,11 @@ public class App extends Application {
         rolActual = null;
 
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/login.fxml"));
-        Scene scene = new Scene(loader.load(), 900, 800);
+        Scene scene = new Scene(loader.load(), 1200, 800);
 
         primaryStage.setTitle("FitGym Pro - Login");
         primaryStage.setScene(scene);
-        primaryStage.setMinWidth(900);
+        primaryStage.setMinWidth(1200);
         primaryStage.setMinHeight(800);
         primaryStage.show();
     }
@@ -59,7 +59,7 @@ public class App extends Application {
 
             root.setLeft(sidebar);
 
-            Scene scene = new Scene(root, 900, 800);
+            Scene scene = new Scene(root, 1200, 800);
             primaryStage.setScene(scene);
             primaryStage.setTitle("FitGym Pro");
             primaryStage.show();
