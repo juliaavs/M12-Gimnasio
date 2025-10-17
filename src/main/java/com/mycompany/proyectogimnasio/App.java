@@ -45,6 +45,23 @@ public class App extends Application {
     }
 
     /** ================================
+     * ADMINISTRADORES (NUEVO MÉTODO)
+     * ================================ */
+    public static void showAdministradores(String usuario, String rol) throws Exception {
+        usuarioActual = usuario;
+        rolActual = rol;
+
+        initRootWithSidebar();
+        sidebarController.setUser(usuario, rol);
+
+        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/AdminView.fxml"));
+        Parent center = loader.load();
+
+        root.setCenter(center);
+        primaryStage.setTitle("Administradores - FitGym Pro");
+    }
+    
+    /** ================================
      * Inicializar la ventana principal con Sidebar
      * ================================ */
     private static void initRootWithSidebar() throws Exception {

@@ -10,11 +10,12 @@ public class SidebarController {
     @FXML private Button dashboardLink;
     @FXML private Button clientesLink;
     @FXML private Button instructoresLink;
-    @FXML private Button actividadesLink; // BOTÓN NUEVO
+    @FXML private Button actividadesLink;
     @FXML private Button clasesLink;
     @FXML private Button reservasLink;
     @FXML private Button estadisticasLink;
     @FXML private Button horarioLink;
+    @FXML private Button administradoresLink; // Botón para la nueva sección
     @FXML private Button logoutLink;
 
     @FXML private Label usuarioLabel;
@@ -23,11 +24,22 @@ public class SidebarController {
     private String usuarioActual;
     private String rolActual;
 
+    /**
+     * Recibe los datos del usuario y actualiza la UI, incluyendo la visibilidad de los botones.
+     */
     public void setUser(String usuario, String rol) {
         this.usuarioActual = usuario;
         this.rolActual = rol;
         usuarioLabel.setText(usuario);
         rolLabel.setText(rol);
+
+        // --- **LA CORRECCIÓN DEFINITIVA** ---
+        // 1. Comprueba si el rol es exactamente "superadmin" (ignorando mayúsculas/minúsculas).
+        boolean esSuperAdmin = "superadmin".equalsIgnoreCase(rol);
+        
+        // 2. Establece la visibilidad del botón basándose en el resultado.
+        administradoresLink.setVisible(esSuperAdmin);
+        administradoresLink.setManaged(esSuperAdmin); // Importante para que no ocupe espacio si está oculto
     }
 
     @FXML
@@ -35,21 +47,19 @@ public class SidebarController {
         dashboardLink.setOnAction(e -> openDashboard());
         clientesLink.setOnAction(e -> openClientes());
         instructoresLink.setOnAction(e -> openInstructores());
-        actividadesLink.setOnAction(e -> openActividades()); // ACCIÓN NUEVA
+        actividadesLink.setOnAction(e -> openActividades());
         clasesLink.setOnAction(e -> openClases());
         reservasLink.setOnAction(e -> openReservas());
         estadisticasLink.setOnAction(e -> openEstadisticas());
         horarioLink.setOnAction(e -> openHorario());
+        administradoresLink.setOnAction(e -> openAdministradores());
         logoutLink.setOnAction(e -> handleLogout());
     }
     
-    // --- MÉTODO NUEVO PARA ABRIR LA VISTA DE ACTIVIDADES ---
+    // --- Métodos para abrir las diferentes vistas ---
+    
     private void openActividades() {
-        try {
-            App.showActividades(usuarioActual, rolActual);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        try { App.showActividades(usuarioActual, rolActual); } catch (Exception e) { e.printStackTrace(); }
     }
     
     private void openDashboard() {
@@ -61,12 +71,7 @@ public class SidebarController {
     }
 
     private void openInstructores() {
-        // Llama al método estático que, a su vez, llama al DashboardController para cambiar el centro
-        try { 
-            App.showInstructores(usuarioActual, rolActual); 
-        } catch (Exception e) { 
-            e.printStackTrace(); 
-        }
+        try { App.showInstructores(usuarioActual, rolActual); } catch (Exception e) { e.printStackTrace(); }
     }
 
     private void openReservas() {
@@ -87,5 +92,9 @@ public class SidebarController {
     
     private void openClases() {
         try { App.showClases(usuarioActual, rolActual); } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    private void openAdministradores() {
+        try { App.showAdministradores(usuarioActual, rolActual); } catch (Exception e) { e.printStackTrace(); }
     }
 }
