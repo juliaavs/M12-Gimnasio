@@ -18,12 +18,8 @@
         </columnConstraints>
         
         <BarChart fx:id="aforoChart" title="Aforo Máximo por Clase" GridPane.columnIndex="0" GridPane.rowIndex="0">
-            <xAxis>
-                <CategoryAxis fx:id="aforoX" label="Clase (Actividad)" />
-            </xAxis>
-            <yAxis>
-                <NumberAxis fx:id="aforoY" label="Aforo (Personas)" />
-            </yAxis>
+            <xAxis><CategoryAxis fx:id="aforoX" label="Clase (Actividad)" /></xAxis>
+            <yAxis><NumberAxis fx:id="aforoY" label="Aforo (Personas)" /></yAxis>
         </BarChart>
         
         <VBox GridPane.columnIndex="1" GridPane.rowIndex="0" alignment="CENTER" spacing="10">
@@ -35,7 +31,10 @@
              <PieChart fx:id="clasesPorInstructorChart" title="Clases Impartidas por Instructor"/>
         </VBox>
         
-        <Region GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        <BarChart fx:id="ocupacionChart" title="Ocupación de Clases" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <xAxis><CategoryAxis fx:id="ocupacionX" label="Clase (ID)" /></xAxis>
+            <yAxis><NumberAxis fx:id="ocupacionY" label="Cantidad (Personas)" /></yAxis>
+        </BarChart>
 
     </GridPane>
 

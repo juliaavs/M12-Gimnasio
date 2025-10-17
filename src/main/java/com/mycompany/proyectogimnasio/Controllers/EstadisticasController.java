@@ -14,9 +14,10 @@ public class EstadisticasController {
     // Referencias FXML originales (Mantenemos el PieChart)
     @FXML private PieChart clasesPorActividadChart;
     @FXML private Label totalClasesLabel; 
-
+   
     // --- NUEVOS GRÁFICOS ---
     @FXML private BarChart<String, Number> aforoChart;
+    @FXML private BarChart<String, Number> ocupacionChart;
     @FXML private CategoryAxis aforoX;
     @FXML private NumberAxis aforoY;
 
@@ -32,6 +33,8 @@ public class EstadisticasController {
         // Llamada a las nuevas funciones de carga
         loadAforoPorActividadData();
         loadClasesPorInstructorData();
+        loadOcupacionPorClaseData();
+        
     }
 
     // Código de loadClasesPorActividadData (El original, se mantiene)
@@ -92,5 +95,38 @@ public class EstadisticasController {
         } catch (SQLException e) {
             System.err.println("Error al cargar datos de Clases por Instructor: " + e.getMessage());
         }
+    
+    }
+    
+    private void loadOcupacionPorClaseData() {
+    try {
+        Map<String, Map<String, Integer>> data = estadisticasService.getOcupacionPorClase();
+        
+        // Series para los datos de Aforo Máximo
+        XYChart.Series<String, Number> aforoSeries = new XYChart.Series<>();
+        aforoSeries.setName("Aforo Máximo");
+        
+        // Series para los datos de Inscritos
+        XYChart.Series<String, Number> inscritosSeries = new XYChart.Series<>();
+        inscritosSeries.setName("Inscritos Confirmados");
+        
+        // Llenar las series
+        for (Map.Entry<String, Map<String, Integer>> entry : data.entrySet()) {
+            String clase = entry.getKey();
+            Map<String, Integer> ocupacion = entry.getValue();
+            
+            aforoSeries.getData().add(new XYChart.Data<>(clase, ocupacion.get("AFORO")));
+            inscritosSeries.getData().add(new XYChart.Data<>(clase, ocupacion.get("INSCRITOS")));
+        }
+
+        ocupacionChart.getData().clear();
+        ocupacionChart.getData().addAll(aforoSeries, inscritosSeries);
+        ocupacionChart.setTitle("Ocupación de Clases");
+
+    } catch (SQLException e) {
+        System.err.println("Error al cargar datos de Ocupación por Clase: " + e.getMessage());
+    }
     }
 }
+    
+    

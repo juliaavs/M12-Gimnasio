@@ -62,4 +62,38 @@ public class EstadisticasService {
         }
         return data;
     }
+    
+    // --- NUEVA FUNCIÓN 3: Ocupación por Clase (Inscripciones vs. Aforo) ---
+public Map<String, Map<String, Integer>> getOcupacionPorClase() throws SQLException {
+    // Usaremos un Map anidado: NombreClase -> { "INSCRITOS": N, "AFORO": M }
+    Map<String, Map<String, Integer>> data = new HashMap<>();
+
+    String SQL = "SELECT " +
+                 "c.id_clase, " +
+                 "a.nombre AS nombre_actividad, " +
+                 "a.aforo AS aforo_maximo, " +
+                 "COUNT(CASE WHEN i.status = 'confirmado' THEN 1 END) AS inscripciones_confirmadas " +
+                 "FROM clases c " +
+                 "JOIN actividades a ON c.id_actividad = a.id_actividad " +
+                 "LEFT JOIN inscripciones i ON c.id_clase = i.id_clase " +
+                 "GROUP BY c.id_clase, a.nombre, a.aforo";
+
+    try (Connection conn = Database.getConnection(); // Usando tu conector
+         Statement stmt = conn.createStatement();
+         ResultSet rs = stmt.executeQuery(SQL)) {
+
+        while (rs.next()) {
+            // Generamos una clave única para la clase: "Actividad (Día Hora)"
+            // Nota: Aquí solo estoy usando el nombre de la actividad para simplificar la clave, pero es mejor usar el día y la hora también si hay múltiples clases de la misma actividad
+            String claveClase = rs.getString("nombre_actividad") + " (ID: " + rs.getInt("id_clase") + ")";
+            
+            Map<String, Integer> ocupacionData = new HashMap<>();
+            ocupacionData.put("AFORO", rs.getInt("aforo_maximo"));
+            ocupacionData.put("INSCRITOS", rs.getInt("inscripciones_confirmadas"));
+            
+            data.put(claveClase, ocupacionData);
+        }
+    }
+    return data;
+}
 }
