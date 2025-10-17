@@ -6,6 +6,6 @@ module com.mycompany.proyectogimnasio {
     
     opens com.mycompany.proyectogimnasio to javafx.fxml;
     opens com.mycompany.proyectogimnasio.Models to javafx.base;
-    opens com.mycompany.proyectogimnasio.Controllers to javafx.fxml;
+    opens com.mycompany.proyectogimnasio.Controllers to javafx.fxml, javafx.base;
     exports com.mycompany.proyectogimnasio;
 }

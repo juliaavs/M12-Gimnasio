@@ -216,7 +216,7 @@ public class App extends Application {
         Parent center = loader.load();
 
         HorarioController controller = loader.getController();
-        controller.setUser(usuario, rol);
+        //controller.setUser(usuario, rol);
 
         root.setCenter(center);
         primaryStage.setTitle("Horario - FitGym Pro");
