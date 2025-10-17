@@ -87,20 +87,26 @@ public class App extends Application {
      * CLIENTES
      * ================================ */
     public static void showClientes(String usuario, String rol) throws Exception {
+        // Guarda los datos del usuario actual
         usuarioActual = usuario;
         rolActual = rol;
 
+        // Asegúrate de que la ventana principal con el sidebar esté inicializada
         initRootWithSidebar();
+        
+        // Actualiza el nombre y rol que se muestran en el sidebar
         sidebarController.setUser(usuario, rol);
 
-        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/clientes.fxml"));
+        // Carga el archivo FXML de la vista de clientes
+        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/ClientesView.fxml"));
         Parent center = loader.load();
 
-        ClientesController controller = loader.getController();
-        controller.setUser(usuario, rol);
+        // No es necesario pasarle el usuario al ClientesController,
+        // ya que la gestión de clientes no depende del usuario logueado.
 
+        // Coloca la vista de clientes en el centro de la ventana principal
         root.setCenter(center);
-        primaryStage.setTitle("Clientes - FitGym Pro");
+        primaryStage.setTitle("Gestión de Clientes - FitGym Pro");
     }
 
 
@@ -117,10 +123,6 @@ public class App extends Application {
        
         root.setCenter(center);
         primaryStage.setTitle("Clases - FitGym Pro");
-
-
-       
-       
     }
    
     /** ================================
