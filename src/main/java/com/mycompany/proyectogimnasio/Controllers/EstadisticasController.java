@@ -16,10 +16,12 @@ public class EstadisticasController {
     @FXML private Label totalClasesLabel; 
    
     // --- NUEVOS GRÁFICOS ---
-    @FXML private BarChart<String, Number> aforoChart;
+    
     @FXML private BarChart<String, Number> ocupacionChart;
-    @FXML private CategoryAxis aforoX;
-    @FXML private NumberAxis aforoY;
+    @FXML private CategoryAxis ocupacionX;
+    @FXML private BarChart<String, Number> estadoInscripcionesBarChart;
+    @FXML private CategoryAxis estadoInscripcionesX;
+    @FXML private NumberAxis estadoInscripcionesY;
 
     @FXML private PieChart clasesPorInstructorChart;
     // --- FIN NUEVOS GRÁFICOS ---
@@ -31,7 +33,7 @@ public class EstadisticasController {
         estadisticasService = new EstadisticasService();
         loadClasesPorActividadData();
         // Llamada a las nuevas funciones de carga
-        loadAforoPorActividadData();
+        loadInscripcionesPorEstadoData();
         loadClasesPorInstructorData();
         loadOcupacionPorClaseData();
         
@@ -58,26 +60,8 @@ public class EstadisticasController {
         }
     }
     
-    // --- NUEVA FUNCIÓN DE CARGA 1: Aforo por Clase ---
-    private void loadAforoPorActividadData() {
-        try {
-            Map<String, Integer> data = estadisticasService.getAforoPorActividad();
-            
-            XYChart.Series<String, Number> series = new XYChart.Series<>();
-            series.setName("Aforo Máximo");
-
-            for (Map.Entry<String, Integer> entry : data.entrySet()) {
-                series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
-            }
-
-            aforoChart.getData().clear();
-            aforoChart.getData().add(series);
-            aforoChart.setTitle("Aforo Máximo por Tipo de Clase");
-
-        } catch (SQLException e) {
-            System.err.println("Error al cargar datos de Aforo por Actividad: " + e.getMessage());
-        }
-    }
+   
+   
     
     // --- NUEVA FUNCIÓN DE CARGA 2: Clases por Instructor (Pie Chart) ---
     private void loadClasesPorInstructorData() {
@@ -102,31 +86,66 @@ public class EstadisticasController {
     try {
         Map<String, Map<String, Integer>> data = estadisticasService.getOcupacionPorClase();
         
-        // Series para los datos de Aforo Máximo
         XYChart.Series<String, Number> aforoSeries = new XYChart.Series<>();
         aforoSeries.setName("Aforo Máximo");
         
-        // Series para los datos de Inscritos
         XYChart.Series<String, Number> inscritosSeries = new XYChart.Series<>();
         inscritosSeries.setName("Inscritos Confirmados");
         
         // Llenar las series
         for (Map.Entry<String, Map<String, Integer>> entry : data.entrySet()) {
-            String clase = entry.getKey();
+            String claveUnica = entry.getKey(); 
+            
+            // 🚨 LIMPIEZA DE LA ETIQUETA: Muestra solo el nombre de la actividad
+            // Busca la primera aparición de "(ID: X)" y lo reemplaza por una cadena vacía.
+            String etiquetaLimpia = claveUnica.replaceFirst("\\s*\\(ID:\\s*\\d+\\)$", "");
+            
             Map<String, Integer> ocupacion = entry.getValue();
             
-            aforoSeries.getData().add(new XYChart.Data<>(clase, ocupacion.get("AFORO")));
-            inscritosSeries.getData().add(new XYChart.Data<>(clase, ocupacion.get("INSCRITOS")));
+            aforoSeries.getData().add(new XYChart.Data<>(etiquetaLimpia, ocupacion.get("AFORO")));
+            inscritosSeries.getData().add(new XYChart.Data<>(etiquetaLimpia, ocupacion.get("INSCRITOS")));
         }
 
         ocupacionChart.getData().clear();
         ocupacionChart.getData().addAll(aforoSeries, inscritosSeries);
-        ocupacionChart.setTitle("Ocupación de Clases");
+        ocupacionChart.setTitle("Ocupación de Clases (por Instancia)");
+        
+        // Ajustamos la etiqueta del eje X para reflejar la simplificación
+        ocupacionX.setLabel("Actividad");
 
     } catch (SQLException e) {
         System.err.println("Error al cargar datos de Ocupación por Clase: " + e.getMessage());
     }
+        }
+    
+    private void loadInscripcionesPorEstadoData() {
+    try {
+        Map<String, Integer> data = estadisticasService.getInscripcionesPorEstado();
+        
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Reservas por Estado");
+        
+        int total = 0;
+        for (Map.Entry<String, Integer> entry : data.entrySet()) {
+            String estado = entry.getKey().toUpperCase();
+            int count = entry.getValue();
+            
+            // Creamos los datos del gráfico de barras
+            series.getData().add(new XYChart.Data<>(estado, count));
+            total += count;
+        }
+
+        estadoInscripcionesBarChart.getData().clear();
+        estadoInscripcionesBarChart.getData().add(series);
+        
+        // Título del gráfico de barras
+        estadoInscripcionesBarChart.setTitle("Reservas por Estado (Total: " + total + ")");
+        
+    } catch (SQLException e) {
+        System.err.println("Error al cargar datos de Inscripciones por Estado: " + e.getMessage());
     }
 }
+    }
+
     
     

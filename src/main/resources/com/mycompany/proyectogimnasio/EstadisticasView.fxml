@@ -17,10 +17,15 @@
             <ColumnConstraints percentWidth="50" hgrow="ALWAYS"/>
         </columnConstraints>
         
-        <BarChart fx:id="aforoChart" title="Aforo Máximo por Clase" GridPane.columnIndex="0" GridPane.rowIndex="0">
-            <xAxis><CategoryAxis fx:id="aforoX" label="Clase (Actividad)" /></xAxis>
-            <yAxis><NumberAxis fx:id="aforoY" label="Aforo (Personas)" /></yAxis>
+        <BarChart fx:id="estadoInscripcionesBarChart" title="Tasa de Cancelación General" GridPane.columnIndex="0" GridPane.rowIndex="0">
+            <xAxis>
+                <CategoryAxis fx:id="estadoInscripcionesX" label="Estado de la Reserva" />
+            </xAxis>
+            <yAxis>
+                <NumberAxis fx:id="estadoInscripcionesY" label="Cantidad de Inscripciones" />
+            </yAxis>
         </BarChart>
+
         
         <VBox GridPane.columnIndex="1" GridPane.rowIndex="0" alignment="CENTER" spacing="10">
              <Label fx:id="totalClasesLabel" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
@@ -35,7 +40,8 @@
             <xAxis><CategoryAxis fx:id="ocupacionX" label="Clase (ID)" /></xAxis>
             <yAxis><NumberAxis fx:id="ocupacionY" label="Cantidad (Personas)" /></yAxis>
         </BarChart>
-
+        
+    
     </GridPane>
 
 </VBox>

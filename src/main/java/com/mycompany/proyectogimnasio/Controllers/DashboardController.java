@@ -1,3 +1,4 @@
+
 package com.mycompany.proyectogimnasio.Controllers;
 
 import com.mycompany.proyectogimnasio.App;
@@ -85,5 +86,5 @@ public class DashboardController {
             e.printStackTrace();
     }
 }
-
 }
+

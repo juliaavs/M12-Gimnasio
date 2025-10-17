@@ -25,21 +25,25 @@ public class EstadisticasService {
 
     // --- NUEVA FUNCIÓN 1: Aforo por Nombre de Clase (Actividad) ---
     // Muestra el aforo máximo de cada tipo de actividad
-    public Map<String, Integer> getAforoPorActividad() throws SQLException {
-        Map<String, Integer> data = new HashMap<>();
-        // Consulta la tabla 'actividades' que contiene el nombre y el aforo
-        String SQL = "SELECT nombre, aforo FROM actividades";
-
-        try (Connection conn = Database.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(SQL)) {
-            
-            while (rs.next()) {
-                data.put(rs.getString("nombre"), rs.getInt("aforo"));
-            }
+    public Map<String, Integer> getInscripcionesPorEstado() throws SQLException {
+    Map<String, Integer> data = new HashMap<>();
+    
+    // Consulta para contar las inscripciones agrupadas por la columna 'status'
+    String SQL = "SELECT status, COUNT(status) AS count " +
+                 "FROM inscripciones " +
+                 "GROUP BY status"; 
+    
+    try (Connection conn = Database.getConnection(); // Usando tu conector
+         Statement stmt = conn.createStatement();
+         ResultSet rs = stmt.executeQuery(SQL)) {
+        
+        while (rs.next()) {
+            // La clave será el estado (ej: 'confirmado', 'cancelado')
+            data.put(rs.getString("status"), rs.getInt("count"));
         }
-        return data;
     }
+    return data;
+}
 
     // --- NUEVA FUNCIÓN 2: Cantidad de Clases por Instructor ---
     // Muestra cuántas clases imparte cada instructor (activo o inactivo)
@@ -64,18 +68,19 @@ public class EstadisticasService {
     }
     
     // --- NUEVA FUNCIÓN 3: Ocupación por Clase (Inscripciones vs. Aforo) ---
-public Map<String, Map<String, Integer>> getOcupacionPorClase() throws SQLException {
-    // Usaremos un Map anidado: NombreClase -> { "INSCRITOS": N, "AFORO": M }
+    public Map<String, Map<String, Integer>> getOcupacionPorClase() throws SQLException {
     Map<String, Map<String, Integer>> data = new HashMap<>();
 
     String SQL = "SELECT " +
                  "c.id_clase, " +
                  "a.nombre AS nombre_actividad, " +
+                 // Eliminamos c.dia y c.hora_inicio de la consulta
                  "a.aforo AS aforo_maximo, " +
                  "COUNT(CASE WHEN i.status = 'confirmado' THEN 1 END) AS inscripciones_confirmadas " +
                  "FROM clases c " +
                  "JOIN actividades a ON c.id_actividad = a.id_actividad " +
                  "LEFT JOIN inscripciones i ON c.id_clase = i.id_clase " +
+                 // Agrupamos por lo necesario para evitar errores de agregación
                  "GROUP BY c.id_clase, a.nombre, a.aforo";
 
     try (Connection conn = Database.getConnection(); // Usando tu conector
@@ -83,17 +88,17 @@ public Map<String, Map<String, Integer>> getOcupacionPorClase() throws SQLExcept
          ResultSet rs = stmt.executeQuery(SQL)) {
 
         while (rs.next()) {
-            // Generamos una clave única para la clase: "Actividad (Día Hora)"
-            // Nota: Aquí solo estoy usando el nombre de la actividad para simplificar la clave, pero es mejor usar el día y la hora también si hay múltiples clases de la misma actividad
-            String claveClase = rs.getString("nombre_actividad") + " (ID: " + rs.getInt("id_clase") + ")";
+            // Creamos una clave única usando el nombre y el ID
+            // EJEMPLO: "Yoga (ID: 1)" y "Yoga (ID: 6)"
+            String claveUnica = rs.getString("nombre_actividad") + " (ID: " + rs.getInt("id_clase") + ")";
             
             Map<String, Integer> ocupacionData = new HashMap<>();
             ocupacionData.put("AFORO", rs.getInt("aforo_maximo"));
             ocupacionData.put("INSCRITOS", rs.getInt("inscripciones_confirmadas"));
             
-            data.put(claveClase, ocupacionData);
+            data.put(claveUnica, ocupacionData);
         }
-    }
+        }
     return data;
 }
 }

@@ -1,3 +1,4 @@
+
 package com.mycompany.proyectogimnasio;
 
 import javafx.application.Application;

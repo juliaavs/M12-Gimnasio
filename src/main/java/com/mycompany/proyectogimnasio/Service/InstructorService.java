@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
 public class InstructorService {
     
     
@@ -78,13 +79,18 @@ public class InstructorService {
     public void updateInstructor(Instructor instructor) throws SQLException {
         String SQL_UPDATE = "UPDATE instructores SET nombre = ?, apellido = ?, dni = ?, activo = ? WHERE id_instructor = ?";
         try (Connection conn = Database.getConnection();
-             PreparedStatement ps = conn.prepareStatement(SQL_UPDATE)) {
+
+            PreparedStatement ps = conn.prepareStatement(SQL_UPDATE)) {
             ps.setString(1, instructor.getNombre());
             ps.setString(2, instructor.getApellido());
             ps.setString(3, instructor.getDni());
             ps.setBoolean(4, instructor.isActivo());
             ps.setInt(5, instructor.getIdInstructor());
             ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+
         }
     }
 
