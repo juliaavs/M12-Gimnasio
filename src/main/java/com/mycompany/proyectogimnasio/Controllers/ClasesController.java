@@ -6,6 +6,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import java.sql.*;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.beans.property.SimpleStringProperty;
@@ -18,59 +20,54 @@ public class ClasesController {
     @FXML private TableColumn<ObservableList<String>, String> colDia;
     @FXML private TableColumn<ObservableList<String>, String> colHoraInicio;
     @FXML private TableColumn<ObservableList<String>, String> colActividad;
-    @FXML private TableColumn<ObservableList<String>, String> colIdInstructor; // Muestra el nombre completo
+    @FXML private TableColumn<ObservableList<String>, String> colIdInstructor;
     @FXML private TableColumn<ObservableList<String>, String> colStatus;
 
     // --- Componentes FXML para la Entrada de Datos ---
-    // @FXML private TextField txtDia; // ELIMINADO: Reemplazado por ComboBox cbDia
-    @FXML private ComboBox<String> cbDia; // NUEVO: ComboBox para el día de la semana
+    @FXML private ComboBox<String> cbDia;
     @FXML private TextField txtHoraInicio;
-    @FXML private TextField txtIdClase; 
-    
-    @FXML private ComboBox<String> cbActividad; 
-    @FXML private ComboBox<String> cbInstructor; // Nuevo ComboBox para seleccionar el instructor por nombre
-    @FXML private ComboBox<String> cbStatus;     // Nuevo ComboBox para seleccionar el estado
+    @FXML private TextField txtIdClase;
+    @FXML private ComboBox<String> cbActividad;
+    @FXML private ComboBox<String> cbInstructor;
+    @FXML private ComboBox<String> cbStatus;
 
     // --- Variables de Conexión y Mapeo ---
     private Connection conn;
-    // Mapa para traducir Nombre de Actividad a su ID
     private Map<String, Integer> actividadesMap;
-    // Nuevo mapa para traducir Nombre Completo de Instructor a su ID
+    private Map<String, Integer> actividadesDuracionMap;
     private Map<String, Integer> instructoresMap;
-    // La clase seleccionada en la tabla
     private ObservableList<String> selectedClaseData;
+    
+    // --- Constantes para los horarios del gimnasio ---
+    private static final LocalTime APERTURA_MANANA = LocalTime.of(7, 0);
+    private static final LocalTime CIERRE_MANANA = LocalTime.of(13, 0);
+    private static final LocalTime APERTURA_TARDE = LocalTime.of(15, 0);
+    private static final LocalTime CIERRE_TARDE = LocalTime.of(19, 0);
 
     @FXML
     public void initialize() {
-        // Inicializar los mapas
         actividadesMap = new HashMap<>();
         instructoresMap = new HashMap<>();
-        
-        // El estado de la clase ahora se carga desde la base de datos.
-        
-        // 1. Configurar las CellValueFactory (indices inalterados)
-        colId.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(0)));      // ID_CLASE
-        colDia.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(1)));     // DIA
-        colHoraInicio.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(2))); // HORA
-        colActividad.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(3)));  // NOMBRE_ACTIVIDAD
-        colIdInstructor.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(4))); // NOMBRE COMPLETO INSTRUCTOR
-        colStatus.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(5)));  // STATUS
+        actividadesDuracionMap = new HashMap<>(); 
+
+        colId.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(0)));
+        colDia.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(1)));
+        colHoraInicio.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(2)));
+        colActividad.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(3)));
+        colIdInstructor.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(4)));
+        colStatus.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(5)));
 
         try {
-            // 2. Conexión a la Base de Datos
             conn = DriverManager.getConnection("jdbc:mysql://centerbeam.proxy.rlwy.net:23892/railway", "root", "ShlYFjtRmPFlizYSEyizwuhZgYpWHijg");
 
-            // 3. Cargar datos iniciales
-            cargarActividades();    // Llenar cbActividad
-            cargarInstructores();   // Llenar cbInstructor
-            cargarEstadosClase();   // NUEVO: Llenar cbStatus desde la DB
-            cargarDiasSemana();     // NUEVO: Llenar cbDia con los días de la semana
-            cargarTabla();          // Llenar TableView
+            cargarActividades();
+            cargarInstructores();
+            cargarEstadosClase();
+            cargarDiasSemana();
+            cargarTabla();
 
-            // 4. Configurar el evento de selección en la tabla
             tablaClases.setOnMouseClicked(this::seleccionarClase);
-            
-            // 5. Deshabilitar y ocultar el campo ID: Es autoincremental y solo de lectura/edición.
+
             if (txtIdClase != null) {
                 txtIdClase.setDisable(true);
                 txtIdClase.setVisible(false);
@@ -82,160 +79,35 @@ public class ClasesController {
         }
     }
 
-    /**
-     * NUEVO: Carga los días de la semana en el ComboBox cbDia.
-     */
-    private void cargarDiasSemana() {
-        if (cbDia == null) return;
-        ObservableList<String> dias = FXCollections.observableArrayList(
-            "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"
-        );
-        cbDia.setItems(dias);
-    }
-
-    // --- Métodos de Carga de Datos Existentes/Modificados ---
-    
-    /**
-     * Consulta la base de datos para obtener los distintos estados de clase 
-     * y los carga en el ComboBox cbStatus.
-     */
-    private void cargarEstadosClase() throws SQLException {
-        if (cbStatus == null) return; // Añadido check de nulidad
-        cbStatus.getItems().clear();
-        // Consulta los estados ÚNICOS existentes en la tabla de clases
-        String sql = "SELECT DISTINCT status FROM clases";
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                // Asume que los únicos estados en la DB serán "Confirmada" y "Cancelada"
-                cbStatus.getItems().add(rs.getString("status"));
-            }
-        }
-    }
-
-    private void cargarInstructores() throws SQLException {
-        // Carga los nombres completos de instructores y mapea Nombre Completo -> ID
-        instructoresMap.clear();
-        if (cbInstructor == null) return; // Añadido check de nulidad
-        cbInstructor.getItems().clear();
-        String sql = "SELECT id_instructor, nombre, apellido FROM instructores";
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                int id = rs.getInt("id_instructor");
-                // Concatenar nombre y apellido para el ComboBox
-                String nombreCompleto = rs.getString("nombre") + " " + rs.getString("apellido");
-                
-                cbInstructor.getItems().add(nombreCompleto);
-                instructoresMap.put(nombreCompleto, id); // Guardar el mapeo
-            }
-        }
-    }
-
-    private void cargarActividades() throws SQLException {
-        // Carga los nombres de actividades en el ComboBox y mapea Nombre -> ID
-        actividadesMap.clear();
-        if (cbActividad == null) return; // Añadido check de nulidad
-        String sql = "SELECT id_actividad, nombre FROM actividades";
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                int id = rs.getInt("id_actividad");
-                String nombre = rs.getString("nombre");
-                
-                cbActividad.getItems().add(nombre);
-                actividadesMap.put(nombre, id); 
-            }
-        }
-    }
-
-    @FXML
-    private void cargarTabla() {
-        ObservableList<ObservableList<String>> data = FXCollections.observableArrayList();
-        
-        // Consulta SQL para obtener nombre completo del instructor y ID para uso interno (índice 6)
-        String sql = "SELECT c.id_clase, c.dia, c.hora_inicio, a.nombre AS nombre_actividad, " +
-                     "i.nombre AS instructor_nombre, i.apellido AS instructor_apellido, c.status, c.id_instructor " +
-                     "FROM clases c " +
-                     "JOIN actividades a ON c.id_actividad = a.id_actividad " +
-                     "JOIN instructores i ON c.id_instructor = i.id_instructor";
-        
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            
-            while (rs.next()) {
-                ObservableList<String> row = FXCollections.observableArrayList();
-                
-                String nombreCompletoInstructor = rs.getString("instructor_nombre") + " " + rs.getString("instructor_apellido");
-                
-                // ORDEN DE DATOS:
-                row.add(String.valueOf(rs.getInt("id_clase")));      // 0: ID_CLASE
-                row.add(rs.getString("dia"));                        // 1: DIA
-                row.add(rs.getString("hora_inicio"));                // 2: HORA
-                row.add(rs.getString("nombre_actividad"));           // 3: NOMBRE_ACTIVIDAD
-                row.add(nombreCompletoInstructor);                   // 4: NOMBRE COMPLETO INSTRUCTOR (VISIBLE)
-                row.add(rs.getString("status"));                     // 5: STATUS
-                row.add(String.valueOf(rs.getInt("id_instructor"))); // 6: ID_INSTRUCTOR (OCULTO/INTERNO)
-                
-                data.add(row);
-            }
-            if (tablaClases != null) { // Añadido check de nulidad
-                tablaClases.setItems(data);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo cargar la tabla de clases.");
-        }
-    }
-
-    // --- Métodos de CRUD Modificados ---
+    // --- Métodos de CRUD (Crear, Leer, Actualizar, Borrar) ---
 
     @FXML
     private void agregarClase() {
-        // Validar que todos los componentes esenciales estén cargados
-        if (cbActividad == null || cbInstructor == null || cbStatus == null || cbDia == null || txtHoraInicio == null) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error de Interfaz", "Error al cargar la interfaz. Revise el archivo FXML.");
+        String nombreActividad = cbActividad.getSelectionModel().getSelectedItem();
+        String nombreInstructor = cbInstructor.getSelectionModel().getSelectedItem();
+        String status = cbStatus.getSelectionModel().getSelectedItem();
+        String dia = cbDia.getSelectionModel().getSelectedItem();
+        String horaInicio = txtHoraInicio.getText();
+
+        if (nombreActividad == null || nombreInstructor == null || status == null || dia == null || horaInicio.trim().isEmpty()) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Campos Vacíos", "Todos los campos son obligatorios para crear una clase.");
             return;
+        }
+        
+        // Llama a la validación central antes de insertar
+        if (!validarHorarioClase(dia, horaInicio, nombreActividad, -1)) {
+            return; // La validación falló y ya mostró una alerta
         }
 
         try {
-            // 1. Validar y obtener ID de Actividad
-            String nombreActividad = cbActividad.getSelectionModel().getSelectedItem();
-            if (nombreActividad == null) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Advertencia", "Debe seleccionar una actividad.");
-                return;
-            }
-            int idActividad = actividadesMap.get(nombreActividad); 
-
-            // 2. Validar y obtener ID de Instructor (usando el mapa)
-            String nombreInstructor = cbInstructor.getSelectionModel().getSelectedItem();
-            if (nombreInstructor == null) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Advertencia", "Debe seleccionar un instructor.");
-                return;
-            }
-            int idInstructor = instructoresMap.get(nombreInstructor); // Obtener ID real
-
-            // 3. Validar y obtener Status
-            String status = cbStatus.getSelectionModel().getSelectedItem();
-            if (status == null) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Advertencia", "Debe seleccionar un estado.");
-                return;
-            }
-            
-            // 4. Validar y obtener Día (desde el ComboBox)
-            String dia = cbDia.getSelectionModel().getSelectedItem();
-            if (dia == null) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Advertencia", "Debe seleccionar un día de la semana.");
-                return;
-            }
-
-            String horaInicio = txtHoraInicio.getText();
+            int idActividad = actividadesMap.get(nombreActividad);
+            int idInstructor = instructoresMap.get(nombreInstructor);
 
             String sql = "INSERT INTO clases (id_instructor, id_actividad, dia, hora_inicio, status) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setInt(1, idInstructor);
                 ps.setInt(2, idActividad);
-                ps.setString(3, dia); // Usar el valor del ComboBox
+                ps.setString(3, dia);
                 ps.setString(4, horaInicio);
                 ps.setString(5, status);
                 ps.executeUpdate();
@@ -254,57 +126,38 @@ public class ClasesController {
 
     @FXML
     private void actualizarClase() {
-        // Se añade verificación de nulidad de txtIdClase, solucionando el potencial error al editar
-        if (selectedClaseData == null || txtIdClase == null || cbActividad == null || cbInstructor == null || cbStatus == null || cbDia == null) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Advertencia", "Debe seleccionar una clase y la interfaz debe cargarse correctamente.");
+        if (selectedClaseData == null || txtIdClase == null || txtIdClase.getText().isEmpty()) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Advertencia", "Debe seleccionar una clase de la tabla para poder actualizarla.");
             return;
         }
-        
+
+        String nombreActividad = cbActividad.getSelectionModel().getSelectedItem();
+        String nombreInstructor = cbInstructor.getSelectionModel().getSelectedItem();
+        String status = cbStatus.getSelectionModel().getSelectedItem();
+        String dia = cbDia.getSelectionModel().getSelectedItem();
+        String horaInicio = txtHoraInicio.getText();
+
+        if (nombreActividad == null || nombreInstructor == null || status == null || dia == null || horaInicio.trim().isEmpty()) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Campos Vacíos", "Todos los campos deben estar completos para actualizar.");
+            return;
+        }
+
         try {
-            int idClase = Integer.parseInt(txtIdClase.getText()); 
+            int idClase = Integer.parseInt(txtIdClase.getText());
 
-            // 1. Validar y obtener ID de Actividad
-            String nombreActividad = cbActividad.getSelectionModel().getSelectedItem();
-            if (nombreActividad == null) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Advertencia", "Debe seleccionar una actividad.");
-                return;
+            // Llama a la validación, excluyendo la propia clase de la comprobación
+            if (!validarHorarioClase(dia, horaInicio, nombreActividad, idClase)) {
+                return; // La validación falló
             }
+
             int idActividad = actividadesMap.get(nombreActividad);
-            
-            // 2. Validar y obtener ID de Instructor (usando el mapa)
-            String nombreInstructor = cbInstructor.getSelectionModel().getSelectedItem();
-            if (nombreInstructor == null) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Advertencia", "Debe seleccionar un instructor.");
-                return;
-            }
-            int idInstructor = instructoresMap.get(nombreInstructor); // Obtener ID real
-            
-            // 3. Validar y obtener Status
-            String status = cbStatus.getSelectionModel().getSelectedItem();
-            if (status == null) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Advertencia", "Debe seleccionar un estado.");
-                return;
-            }
-            
-            // 4. Validar y obtener Día (desde el ComboBox)
-            String dia = cbDia.getSelectionModel().getSelectedItem();
-            if (dia == null) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Advertencia", "Debe seleccionar un día de la semana.");
-                return;
-            }
-            
-            if (txtHoraInicio == null) {
-                mostrarAlerta(Alert.AlertType.ERROR, "Error de Interfaz", "Faltan campos de texto requeridos.");
-                return;
-            }
-
-            String horaInicio = txtHoraInicio.getText();
+            int idInstructor = instructoresMap.get(nombreInstructor);
 
             String sql = "UPDATE clases SET id_instructor = ?, id_actividad = ?, dia = ?, hora_inicio = ?, status = ? WHERE id_clase = ?";
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setInt(1, idInstructor);
                 ps.setInt(2, idActividad);
-                ps.setString(3, dia); // Usar el valor del ComboBox
+                ps.setString(3, dia);
                 ps.setString(4, horaInicio);
                 ps.setString(5, status);
                 ps.setInt(6, idClase);
@@ -317,7 +170,7 @@ public class ClasesController {
             limpiarCampos();
 
         } catch (NumberFormatException e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error de Entrada", "El ID de Clase debe ser un número válido.");
+            mostrarAlerta(Alert.AlertType.ERROR, "Error de Entrada", "El ID de la clase no es válido.");
         } catch (SQLException e) {
             e.printStackTrace();
             mostrarAlerta(Alert.AlertType.ERROR, "Error SQL", "Error al actualizar la clase: " + e.getMessage());
@@ -326,83 +179,224 @@ public class ClasesController {
 
     @FXML
     private void eliminarClase() {
-        // Se añade verificación de nulidad de txtIdClase para evitar la NPE reportada
-        if (selectedClaseData == null || txtIdClase == null) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Advertencia", "Debe seleccionar una clase y la interfaz debe cargarse correctamente.");
+        if (selectedClaseData == null || txtIdClase == null || txtIdClase.getText().isEmpty()) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Advertencia", "Debe seleccionar una clase de la tabla para eliminar.");
             return;
         }
 
         try {
-            // Línea donde ocurría la NPE: Se protege con la verificación anterior.
             int idClase = Integer.parseInt(txtIdClase.getText());
             String sql = "DELETE FROM clases WHERE id_clase = ?";
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setInt(1, idClase);
-                ps.executeUpdate();
+                int affectedRows = ps.executeUpdate();
                 
-                mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Clase eliminada correctamente.");
+                if (affectedRows > 0) {
+                    mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Clase eliminada correctamente.");
+                } else {
+                    mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se encontró la clase a eliminar.");
+                }
             }
 
             cargarTabla();
             limpiarCampos();
 
         } catch (NumberFormatException e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error de Entrada", "El campo ID de Clase debe ser un número.");
+            mostrarAlerta(Alert.AlertType.ERROR, "Error de Entrada", "El ID de la clase no es válido.");
         } catch (SQLException e) {
             e.printStackTrace();
             mostrarAlerta(Alert.AlertType.ERROR, "Error SQL", "Error al eliminar la clase: " + e.getMessage());
         }
     }
 
-    // --- Métodos de Utilidad Modificados ---
+    // --- Lógica de Validación de Horario ---
 
+    /**
+     * Valida si el horario para una nueva clase o una actualización es válido.
+     * Comprueba: 1. Formato de hora, 2. Horarios del gimnasio, 3. Solapamiento con otras clases.
+     * @param idClaseAExcluir ID de la clase a ignorar (para modo actualización). Usar -1 para crear una nueva.
+     * @return `true` si el horario es válido, `false` si no lo es.
+     */
+    private boolean validarHorarioClase(String dia, String horaInicioStr, String nombreActividad, int idClaseAExcluir) {
+        LocalTime nuevaHoraInicio;
+        LocalTime nuevaHoraFin;
+        try {
+            nuevaHoraInicio = LocalTime.parse(horaInicioStr);
+            if (!actividadesDuracionMap.containsKey(nombreActividad)) {
+                mostrarAlerta(Alert.AlertType.ERROR, "Error de Datos", "No se encontró la duración para la actividad seleccionada.");
+                return false;
+            }
+            int duracion = actividadesDuracionMap.get(nombreActividad);
+            nuevaHoraFin = nuevaHoraInicio.plusMinutes(duracion);
+        } catch (DateTimeParseException e) {
+            mostrarAlerta(Alert.AlertType.ERROR, "Formato de Hora Inválido", "La hora debe tener el formato HH:mm (ej: 09:00 o 18:30).");
+            return false;
+        }
+
+        boolean enHorarioManana = !nuevaHoraInicio.isBefore(APERTURA_MANANA) && !nuevaHoraFin.isAfter(CIERRE_MANANA);
+        boolean enHorarioTarde = !nuevaHoraInicio.isBefore(APERTURA_TARDE) && !nuevaHoraFin.isAfter(CIERRE_TARDE);
+
+        if (!enHorarioManana && !enHorarioTarde) {
+            mostrarAlerta(Alert.AlertType.ERROR, "Horario No Permitido",
+                "La clase (de " + nuevaHoraInicio + " a " + nuevaHoraFin + ") debe impartirse completamente dentro de los siguientes horarios:\n" +
+                "Mañana: de " + APERTURA_MANANA + " a " + CIERRE_MANANA + "\n" +
+                "Tarde: de " + APERTURA_TARDE + " a " + CIERRE_TARDE);
+            return false;
+        }
+
+        String sql = "SELECT c.id_clase, c.hora_inicio, a.duracion, a.nombre AS nombre_actividad_existente " +
+                     "FROM clases c " +
+                     "JOIN actividades a ON c.id_actividad = a.id_actividad " +
+                     "WHERE c.dia = ? AND UPPER(c.status) != 'CANCELADA'";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, dia);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                if (rs.getInt("id_clase") == idClaseAExcluir) {
+                    continue; // No nos comparamos con nosotros mismos
+                }
+
+                LocalTime existenteHoraInicio = rs.getTime("hora_inicio").toLocalTime();
+                LocalTime existenteHoraFin = existenteHoraInicio.plusMinutes(rs.getInt("duracion"));
+                String nombreActividadExistente = rs.getString("nombre_actividad_existente");
+
+                if (nuevaHoraInicio.isBefore(existenteHoraFin) && nuevaHoraFin.isAfter(existenteHoraInicio)) {
+                    mostrarAlerta(Alert.AlertType.ERROR, "Conflicto de Horario",
+                        "La sala ya está ocupada por la clase '" + nombreActividadExistente + "' que se imparte de " +
+                        existenteHoraInicio + " a " + existenteHoraFin + ".\n\n" +
+                        "El horario que intentas registrar (" + nuevaHoraInicio + " - " + nuevaHoraFin + ") se solapa.");
+                    return false;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            mostrarAlerta(Alert.AlertType.ERROR, "Error de Validación", "No se pudo validar la disponibilidad del horario en la base de datos.");
+            return false;
+        }
+
+        return true;
+    }
+
+    // --- Métodos de Carga de Datos y UI ---
+
+    private void cargarActividades() throws SQLException {
+        actividadesMap.clear();
+        actividadesDuracionMap.clear();
+        if (cbActividad == null) return;
+        
+        String sql = "SELECT id_actividad, nombre, duracion FROM actividades";
+        
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                int id = rs.getInt("id_actividad");
+                String nombre = rs.getString("nombre");
+                int duracion = rs.getInt("duracion");
+                
+                cbActividad.getItems().add(nombre);
+                actividadesMap.put(nombre, id);
+                actividadesDuracionMap.put(nombre, duracion);
+            }
+        }
+    }
+    
+    @FXML
+    private void cargarTabla() {
+        ObservableList<ObservableList<String>> data = FXCollections.observableArrayList();
+        String sql = "SELECT c.id_clase, c.dia, c.hora_inicio, a.nombre AS nombre_actividad, " +
+                         "CONCAT(i.nombre, ' ', i.apellido) AS instructor_completo, c.status " +
+                         "FROM clases c " +
+                         "JOIN actividades a ON c.id_actividad = a.id_actividad " +
+                         "JOIN instructores i ON c.id_instructor = i.id_instructor";
+        
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                ObservableList<String> row = FXCollections.observableArrayList();
+                row.add(rs.getString("id_clase"));
+                row.add(rs.getString("dia"));
+                row.add(rs.getString("hora_inicio"));
+                row.add(rs.getString("nombre_actividad"));
+                row.add(rs.getString("instructor_completo"));
+                row.add(rs.getString("status"));
+                data.add(row);
+            }
+            if (tablaClases != null) {
+                tablaClases.setItems(data);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo cargar la tabla de clases.");
+        }
+    }
+    
     private void seleccionarClase(MouseEvent event) {
         selectedClaseData = tablaClases.getSelectionModel().getSelectedItem();
         
-        // Se añade verificación de nulidad para evitar NPEs si la interfaz no cargó correctamente
-        if (selectedClaseData != null && 
-            txtIdClase != null && cbDia != null && txtHoraInicio != null &&
-            cbActividad != null && cbInstructor != null && cbStatus != null) {
-            
-            // Mostrar el campo ID cuando se selecciona una clase
+        if (selectedClaseData != null) {
             txtIdClase.setVisible(true);
-
-            // Llenar los campos con los datos de la fila seleccionada
-            txtIdClase.setText(selectedClaseData.get(0));     // 0: ID_CLASE
-            
-            // 1: DIA -> Seleccionar en cbDia (Combox para el día)
+            txtIdClase.setText(selectedClaseData.get(0));
             cbDia.getSelectionModel().select(selectedClaseData.get(1));
-            
-            txtHoraInicio.setText(selectedClaseData.get(2));  // 2: HORA
-            
-            // 3: NOMBRE_ACTIVIDAD -> Seleccionar en cbActividad
+            txtHoraInicio.setText(selectedClaseData.get(2));
             cbActividad.getSelectionModel().select(selectedClaseData.get(3));
-            
-            // 4: NOMBRE COMPLETO INSTRUCTOR -> Seleccionar en cbInstructor
-            cbInstructor.getSelectionModel().select(selectedClaseData.get(4)); 
-            
-            // 5: STATUS -> Seleccionar en cbStatus
-            cbStatus.getSelectionModel().select(selectedClaseData.get(5)); 
+            cbInstructor.getSelectionModel().select(selectedClaseData.get(4));
+            cbStatus.getSelectionModel().select(selectedClaseData.get(5));
         }
     }
 
     @FXML
     private void limpiarCampos() {
-        // Se añaden verificaciones de nulidad para evitar la NPE en la limpieza de campos reportada
         if (txtIdClase != null) {
             txtIdClase.clear();
-            // Ocultar el campo ID al limpiar campos (listo para "nueva clase")
-            txtIdClase.setVisible(false); 
+            txtIdClase.setVisible(false);
         }
+        cbDia.getSelectionModel().clearSelection();
+        txtHoraInicio.clear();
+        cbActividad.getSelectionModel().clearSelection();
+        cbInstructor.getSelectionModel().clearSelection();
+        cbStatus.getSelectionModel().clearSelection();
         
-        // Limpiar ComboBoxes y campo de hora
-        if (cbDia != null) cbDia.getSelectionModel().clearSelection(); // Limpiar selección del día
-        if (txtHoraInicio != null) txtHoraInicio.clear();
-        if (cbActividad != null) cbActividad.getSelectionModel().clearSelection();
-        if (cbInstructor != null) cbInstructor.getSelectionModel().clearSelection();
-        if (cbStatus != null) cbStatus.getSelectionModel().clearSelection();
-        
+        tablaClases.getSelectionModel().clearSelection();
         selectedClaseData = null;
+    }
+
+    private void cargarDiasSemana() {
+        if (cbDia == null) return;
+        ObservableList<String> dias = FXCollections.observableArrayList(
+            "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"
+        );
+        cbDia.setItems(dias);
+    }
+    
+    private void cargarEstadosClase() throws SQLException {
+        if (cbStatus == null) return;
+        cbStatus.getItems().clear();
+        String sql = "SELECT DISTINCT status FROM clases";
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                cbStatus.getItems().add(rs.getString("status"));
+            }
+        }
+    }
+
+    private void cargarInstructores() throws SQLException {
+        instructoresMap.clear();
+        if (cbInstructor == null) return;
+        cbInstructor.getItems().clear();
+        String sql = "SELECT id_instructor, nombre, apellido FROM instructores";
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                int id = rs.getInt("id_instructor");
+                String nombreCompleto = rs.getString("nombre") + " " + rs.getString("apellido");
+                
+                cbInstructor.getItems().add(nombreCompleto);
+                instructoresMap.put(nombreCompleto, id);
+            }
+        }
     }
 
     private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {

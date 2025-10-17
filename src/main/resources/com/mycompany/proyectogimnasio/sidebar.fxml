@@ -25,6 +25,7 @@
         <Button fx:id="reservasLink" text="Reservas" style="-fx-pref-width: 180; -fx-background-color: white; -fx-text-fill: black" />
         <Button fx:id="estadisticasLink" text="Estadísticas" style="-fx-pref-width: 180; -fx-background-color: white; -fx-text-fill: black" />
         <Button fx:id="horarioLink" text="Horario" style="-fx-pref-width: 180; -fx-background-color: white; -fx-text-fill: black" />
+        <Button fx:id="actividadesLink" text="Actividades" style="-fx-pref-width: 180; -fx-background-color: white; -fx-text-fill: black" />
         <Button fx:id="clasesLink" text="Clases" style="-fx-pref-width: 180; -fx-background-color: white; -fx-text-fill: black" />
 
         <Region VBox.vgrow="ALWAYS" />

@@ -79,13 +79,9 @@ public class App extends Application {
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/dashboard.fxml"));
         Parent center = loader.load();
 
-        // DashboardController controller = loader.getController();
-        // controller.setUser(usuario, rol); ← eliminar esta línea
-
         root.setCenter(center);
         primaryStage.setTitle("Dashboard - FitGym Pro");
     }
-
 
     /** ================================
      * CLIENTES
@@ -106,6 +102,7 @@ public class App extends Application {
         root.setCenter(center);
         primaryStage.setTitle("Clientes - FitGym Pro");
     }
+
    
     public static void showClases(String usuario, String rol) throws Exception{
         usuarioActual=usuario;
@@ -126,6 +123,7 @@ public class App extends Application {
     }
    
 
+
     /** ================================
      * INSTRUCTORES
      * ================================ */
@@ -142,11 +140,34 @@ public class App extends Application {
         InstructorController controller = loader.getController();
         // controller.setUser(usuario, rol); // ← Eliminar esta línea
 
+
         root.setCenter(center);
         primaryStage.setTitle("Instructores - FitGym Pro");
     }
 
+    /** ================================
+     * ACTIVIDADES (NUEVO MÉTODO)
+     * ================================ */
+    public static void showActividades(String usuario, String rol) throws Exception {
+        usuarioActual = usuario;
+        rolActual = rol;
 
+        initRootWithSidebar();
+        sidebarController.setUser(usuario, rol);
+
+        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/ActividadesView.fxml"));
+        Parent center = loader.load();
+
+        // El ActividadesController no necesita los datos del usuario, por lo que no se los pasamos.
+        
+        root.setCenter(center);
+        primaryStage.setTitle("Actividades - FitGym Pro");
+    }
+
+    /** ================================
+     * CLASES
+     * ================================ */
+   
     /** ================================
      * RESERVAS
      * ================================ */

@@ -5,6 +5,7 @@ module com.mycompany.proyectogimnasio {
     requires java.sql;
     
     opens com.mycompany.proyectogimnasio to javafx.fxml;
+    opens com.mycompany.proyectogimnasio.Models to javafx.base;
     opens com.mycompany.proyectogimnasio.Controllers to javafx.fxml;
     exports com.mycompany.proyectogimnasio;
 }
