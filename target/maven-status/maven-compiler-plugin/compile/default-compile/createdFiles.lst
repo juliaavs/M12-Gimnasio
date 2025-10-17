@@ -19,5 +19,7 @@ com/mycompany/proyectogimnasio/Controllers/HorarioController$HorarioBloque.class
 com/mycompany/proyectogimnasio/SystemInfo.class
 com/mycompany/proyectogimnasio/Controllers/EstadisticasController.class
 com/mycompany/proyectogimnasio/Service/ClaseService.class
+com/mycompany/proyectogimnasio/Service/ClienteService.class
+com/mycompany/proyectogimnasio/Models/Cliente.class
 com/mycompany/proyectogimnasio/Controllers/HorarioController$EditableMergedCell.class
 com/mycompany/proyectogimnasio/Controllers/InstructorController.class

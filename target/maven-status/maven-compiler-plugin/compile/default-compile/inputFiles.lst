@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/ActividadesController.java
 /home/isard/M12-Gimnasio/src/main/java/module-info.java
 /home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/SystemInfo.java
@@ -19,3 +20,28 @@
 /home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Models/Clase.java
 /home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/InstructorController.java
 /home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/DashboardController.java
+=======
+/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/SidebarController.java
+/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Models/Clase.java
+/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Service/InstructorService.java
+/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/HorarioController.java
+/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Models/Instructor.java
+/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Models/ClaseInfo.java
+/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/ClientesController.java
+/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Models/Cliente.java
+/home/asix1/Desktop/M12-Gimnasio/src/main/java/module-info.java
+/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Service/ClaseService.java
+/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/SystemInfo.java
+/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/InstructorController.java
+/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/DashboardController.java
+/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/ReservasController.java
+/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Service/ClienteService.java
+/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/LoginController.java
+/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Database.java
+/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/EstadisticasController.java
+/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Service/EstadisticasService.java
+/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Models/Actividad.java
+/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/ActividadesController.java
+/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/App.java
+/home/asix1/Desktop/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/ClasesController.java
+>>>>>>> 44f097fe794b7d325c61b196fd4e6b688719a6f0

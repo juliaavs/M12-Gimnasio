@@ -28,9 +28,6 @@
                </rowConstraints>
                
                <!-- Fila 0: ID Clase (Oculto/Visible por código) y Actividad -->
-               <Label text="ID Clase:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-               <TextField fx:id="txtIdClase" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-
                <Label text="Actividad:" GridPane.columnIndex="2" GridPane.rowIndex="0" />
                <ComboBox fx:id="cbActividad" prefWidth="250.0" GridPane.columnIndex="3" GridPane.rowIndex="0" />
 
