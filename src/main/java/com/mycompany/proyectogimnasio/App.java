@@ -34,11 +34,11 @@ public class App extends Application {
         rolActual = null;
 
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/login.fxml"));
-        Scene scene = new Scene(loader.load(), 900, 800);
+        Scene scene = new Scene(loader.load(), 1200, 800);
 
         primaryStage.setTitle("FitGym Pro - Login");
         primaryStage.setScene(scene);
-        primaryStage.setMinWidth(900);
+        primaryStage.setMinWidth(1200);
         primaryStage.setMinHeight(800);
         primaryStage.show();
     }
@@ -59,7 +59,7 @@ public class App extends Application {
 
             root.setLeft(sidebar);
 
-            Scene scene = new Scene(root, 900, 800);
+            Scene scene = new Scene(root, 1200, 800);
             primaryStage.setScene(scene);
             primaryStage.setTitle("FitGym Pro");
             primaryStage.show();
@@ -103,6 +103,7 @@ public class App extends Application {
         primaryStage.setTitle("Clientes - FitGym Pro");
     }
 
+
    
     public static void showClases(String usuario, String rol) throws Exception{
         usuarioActual=usuario;
@@ -122,8 +123,6 @@ public class App extends Application {
        
     }
    
-
-
     /** ================================
      * INSTRUCTORES
      * ================================ */
@@ -137,9 +136,9 @@ public class App extends Application {
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/InstructorView.fxml"));
         Parent center = loader.load();
 
+
         InstructorController controller = loader.getController();
         // controller.setUser(usuario, rol); // ← Eliminar esta línea
-
 
         root.setCenter(center);
         primaryStage.setTitle("Instructores - FitGym Pro");
@@ -164,9 +163,7 @@ public class App extends Application {
         primaryStage.setTitle("Actividades - FitGym Pro");
     }
 
-    /** ================================
-     * CLASES
-     * ================================ */
+
    
     /** ================================
      * RESERVAS
