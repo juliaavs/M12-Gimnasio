@@ -2,6 +2,7 @@
 /home/isard/M12-Gimnasio/src/main/java/module-info.java
 /home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/SystemInfo.java
 /home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/ClientesController.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Service/EstadisticasService.java
 /home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/LoginController.java
 /home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/SidebarController.java
 /home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Controllers/EstadisticasController.java

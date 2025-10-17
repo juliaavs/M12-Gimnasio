@@ -73,5 +73,17 @@ public class DashboardController {
             // Mostrar un Alert al usuario si la carga falla
         }
     }
+    
+    @FXML
+    private void handleBtnEstadisticas() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/mycompany/proyectogimnasio/EstadisticasView.fxml"));
+            Parent vistaEstadisticas = loader.load(); 
+            mainPane.setCenter(vistaEstadisticas);
+        } catch (IOException e) {
+            // Manejo de error
+            e.printStackTrace();
+    }
+}
 
 }

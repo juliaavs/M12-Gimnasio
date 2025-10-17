@@ -34,11 +34,11 @@ public class App extends Application {
         rolActual = null;
 
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/login.fxml"));
-        Scene scene = new Scene(loader.load(), 1200, 800);
+        Scene scene = new Scene(loader.load(), 900, 800);
 
         primaryStage.setTitle("FitGym Pro - Login");
         primaryStage.setScene(scene);
-        primaryStage.setMinWidth(1200);
+        primaryStage.setMinWidth(900);
         primaryStage.setMinHeight(800);
         primaryStage.show();
     }
@@ -195,11 +195,8 @@ public class App extends Application {
         initRootWithSidebar();
         sidebarController.setUser(usuario, rol);
 
-        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/estadisticas.fxml"));
+        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/EstadisticasView.fxml"));
         Parent center = loader.load();
-
-        EstadisticasController controller = loader.getController();
-        controller.setUser(usuario, rol);
 
         root.setCenter(center);
         primaryStage.setTitle("Estadísticas - FitGym Pro");

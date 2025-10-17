@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="20" style="-fx-padding: 20;" 
+      xmlns="http://javafx.com/javafx/21" 
+      xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="com.mycompany.proyectogimnasio.Controllers.EstadisticasController">
+
+    <Label text="Panel de Estadísticas del Gimnasio" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+    
+    <GridPane hgap="20" vgap="20">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="50" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="50" hgrow="ALWAYS"/>
+        </columnConstraints>
+        
+        <BarChart fx:id="aforoChart" title="Aforo Máximo por Clase" GridPane.columnIndex="0" GridPane.rowIndex="0">
+            <xAxis>
+                <CategoryAxis fx:id="aforoX" label="Clase (Actividad)" />
+            </xAxis>
+            <yAxis>
+                <NumberAxis fx:id="aforoY" label="Aforo (Personas)" />
+            </yAxis>
+        </BarChart>
+        
+        <VBox GridPane.columnIndex="1" GridPane.rowIndex="0" alignment="CENTER" spacing="10">
+             <Label fx:id="totalClasesLabel" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+             <PieChart fx:id="clasesPorActividadChart" title="Distribución de Clases por Tipo"/>
+        </VBox>
+        
+        <VBox GridPane.columnIndex="0" GridPane.rowIndex="1" alignment="CENTER" spacing="10">
+             <PieChart fx:id="clasesPorInstructorChart" title="Clases Impartidas por Instructor"/>
+        </VBox>
+        
+        <Region GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+    </GridPane>
+
+</VBox>
