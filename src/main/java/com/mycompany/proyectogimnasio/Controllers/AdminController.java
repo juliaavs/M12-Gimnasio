@@ -26,11 +26,10 @@ public class AdminController {
     //</editor-fold>
 
     private final AdminService adminService = new AdminService();
-    private Admin adminSeleccionado; // Esta variable controla si estamos editando o creando
+    private Admin adminSeleccionado;
 
     @FXML
     public void initialize() {
-        // 1. Configurar las columnas de la tabla
         colDni.setCellValueFactory(cellData -> cellData.getValue().dniProperty());
         colNombre.setCellValueFactory(cellData -> cellData.getValue().nombreProperty());
         colApellido.setCellValueFactory(cellData -> cellData.getValue().apellidoProperty());
@@ -38,16 +37,13 @@ public class AdminController {
         colActivo.setCellValueFactory(cellData -> cellData.getValue().activoProperty());
         colActivo.setCellFactory(CheckBoxTableCell.forTableColumn(colActivo));
 
-        // 2. Configurar el ComboBox de roles
         comboRol.setItems(FXCollections.observableArrayList("admin", "superadmin"));
 
-        // 3. Listener para cuando se selecciona un admin en la tabla
         tablaAdmins.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldSelection, newSelection) -> mostrarDetallesAdmin(newSelection));
         
-        // 4. Cargar los datos iniciales
         cargarAdmins();
-        handleLimpiar(); // Limpiar el formulario al iniciar
+        handleLimpiar();
     }
 
     private void cargarAdmins() {
@@ -57,7 +53,6 @@ public class AdminController {
     private void mostrarDetallesAdmin(Admin admin) {
         this.adminSeleccionado = admin;
         if (admin != null) {
-            // Modo "Edición": Rellenar el formulario con los datos del admin seleccionado
             txtDni.setText(admin.getDni());
             txtNombre.setText(admin.getNombre());
             txtApellido.setText(admin.getApellido());
@@ -69,24 +64,23 @@ public class AdminController {
     @FXML
     private void handleGuardar() {
         if (!validarCampos()) {
-            return; // Si la validación falla, no hacer nada
+            return;
         }
 
-        String dni = txtDni.getText().toUpperCase();
+        // **CAMBIO CLAVE**: Limpiar y estandarizar DNI antes de usarlo
+        String dni = txtDni.getText().trim().toUpperCase(); 
         String nombre = txtNombre.getText();
         String apellido = txtApellido.getText();
-        String password = dni; // La contraseña por defecto es el DNI
+        String password = dni; 
         String rol = comboRol.getValue();
         boolean activo = checkActivo.isSelected();
         
         boolean exito;
-        // La lógica es simple: si 'adminSeleccionado' es nulo, creamos uno nuevo.
         if (adminSeleccionado == null) {
             Admin nuevoAdmin = new Admin(0, dni, nombre, apellido, password, rol, activo);
             exito = adminService.agregarAdmin(nuevoAdmin);
             mostrarAlerta(exito, "Administrador Creado", "Nuevo administrador añadido con éxito.");
         } else {
-            // Si no es nulo, actualizamos el que ya existe.
             Admin adminActualizado = new Admin(adminSeleccionado.getIdAdmin(), dni, nombre, apellido, password, rol, activo);
             exito = adminService.actualizarAdmin(adminActualizado);
             mostrarAlerta(exito, "Administrador Actualizado", "Datos actualizados correctamente.");
@@ -104,7 +98,6 @@ public class AdminController {
             mostrarAlerta(false, "Acción Inválida", "Por favor, selecciona un administrador de la tabla para eliminarlo.");
             return;
         }
-
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmar Eliminación");
         alert.setHeaderText("¿Estás seguro de que quieres eliminar a " + adminSeleccionado.getNombre() + "?");
@@ -123,43 +116,87 @@ public class AdminController {
 
     @FXML
     private void handleLimpiar() {
-        // Limpiar pone la aplicación en modo "Crear"
         tablaAdmins.getSelectionModel().clearSelection();
-        adminSeleccionado = null; // ¡Esta línea es la más importante!
+        adminSeleccionado = null;
         
         txtDni.clear();
         txtNombre.clear();
         txtApellido.clear();
         comboRol.getSelectionModel().clearSelection();
         comboRol.setPromptText("Seleccionar rol");
-        checkActivo.setSelected(true); // Por defecto, un nuevo admin está activo
+        checkActivo.setSelected(true);
     }
 
+    /**
+     * **MÉTODO VALIDAR CAMPOS (MODIFICADO)**
+     * Ahora usa la nueva función de validación de DNI que devuelve mensajes.
+     */
     private boolean validarCampos() {
-        if (txtDni.getText().isEmpty() || !esDniValido(txtDni.getText())) {
-            mostrarAlerta(false, "Error de Validación", "El DNI introducido no es válido.");
+        String mensajeError = "";
+        
+        // **CAMBIO CLAVE**: Llamamos al nuevo validador que devuelve un mensaje de error
+        String errorDni = getDniValidationError(txtDni.getText());
+        if (errorDni != null) {
+            mensajeError += errorDni + "\n";
+        }
+        
+        if (txtNombre.getText() == null || txtNombre.getText().trim().isEmpty()) mensajeError += "El Nombre es obligatorio.\n";
+        if (txtApellido.getText() == null || txtApellido.getText().trim().isEmpty()) mensajeError += "El Apellido es obligatorio.\n";
+        if (comboRol.getValue() == null) mensajeError += "Debes seleccionar un rol.\n";
+        
+        if (mensajeError.isEmpty()) {
+            return true;
+        } else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Campos Inválidos");
+            alert.setHeaderText("Por favor, corrige los siguientes errores:");
+            alert.setContentText(mensajeError);
+            alert.showAndWait();
             return false;
         }
-        if (txtNombre.getText().isEmpty() || txtApellido.getText().isEmpty()) {
-            mostrarAlerta(false, "Error de Validación", "El nombre y el apellido son campos obligatorios.");
-            return false;
-        }
-        if (comboRol.getValue() == null) {
-            mostrarAlerta(false, "Error de Validación", "Debes seleccionar un rol para el administrador.");
-            return false;
-        }
-        return true;
     }
+    
+    /**
+     * **MÉTODO DE VALIDACIÓN DE DNI (MODIFICADO)**
+     * Ahora devuelve un String con el error específico, o null si es válido.
+     * @param dni El DNI a validar.
+     * @return Un String con el mensaje de error, or null si es válido.
+     */
+    private String getDniValidationError(String dni) {
+        if (dni == null || dni.trim().isEmpty()) {
+            return "El DNI es obligatorio.";
+        }
+        
+        String dniLimpio = dni.trim().toUpperCase();
 
-    private boolean esDniValido(String dni) {
-        if (dni == null || dni.length() != 9) return false;
-        String parteNumerica = dni.substring(0, 8);
-        char letra = Character.toUpperCase(dni.charAt(8));
-        if (!parteNumerica.matches("\\d{8}") || !Character.isLetter(letra)) return false;
+        if (dniLimpio.length() != 9) {
+            return "El DNI debe tener 9 caracteres (ej: 12345678A).";
+        }
+
+        String parteNumerica = dniLimpio.substring(0, 8);
+        char letra = dniLimpio.charAt(8);
+
+        if (!parteNumerica.matches("\\d{8}")) {
+            return "Los primeros 8 caracteres del DNI deben ser números.";
+        }
+
+        if (!Character.isLetter(letra)) {
+            return "El último carácter del DNI debe ser una letra.";
+        }
+
         try {
-            int numDni = Integer.parseInt(parteNumerica);
-            return letra == "TRWAGMYFPDXBNJZSQVHLCKE".charAt(numDni % 23);
-        } catch (NumberFormatException e) { return false; }
+            int numeroDni = Integer.parseInt(parteNumerica);
+            String letras = "TRWAGMYFPDXBNJZSQVHLCKE";
+            char letraCalculada = letras.charAt(numeroDni % 23);
+
+            if (letra != letraCalculada) {
+                return "La letra '" + letra + "' no es correcta para ese número. Debería ser '" + letraCalculada + "'.";
+            }
+        } catch (NumberFormatException e) {
+            return "Error interno al validar el número de DNI."; 
+        }
+        
+        return null; // DNI Válido
     }
 
     private void mostrarAlerta(boolean exito, String titulo, String mensaje) {
