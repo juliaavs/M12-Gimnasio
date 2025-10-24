@@ -22,7 +22,7 @@
                 <CategoryAxis fx:id="estadoInscripcionesX" label="Estado de la Reserva" />
             </xAxis>
             <yAxis>
-                <NumberAxis fx:id="estadoInscripcionesY" label="Cantidad de Inscripciones" />
+                <NumberAxis fx:id="estadoInscripcionesY" label="Cantidad de Inscripciones" tickUnit="1" />
             </yAxis>
         </BarChart>
 

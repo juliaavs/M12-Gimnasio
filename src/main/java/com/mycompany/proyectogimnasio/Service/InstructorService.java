@@ -107,4 +107,25 @@ public class InstructorService {
             ps.executeUpdate();
         }
     }
+    
+    public boolean cambiarEstadoActivo(int idInstructor, boolean nuevoEstado) throws SQLException {
+        String SQL = "UPDATE instructores SET activo = ? WHERE id_instructor = ?";
+        
+        try (Connection conn = Database.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+            
+            // 1. Establecer el nuevo estado (el booleano se convierte a 1 o 0 en MySQL)
+            pstmt.setBoolean(1, nuevoEstado);
+            
+            // 2. Establecer el ID del instructor
+            pstmt.setInt(2, idInstructor);
+            
+            // Ejecutar la actualización y devolver true si se modificó al menos 1 fila
+            return pstmt.executeUpdate() > 0;
+            
+        } catch (SQLException e) {
+            System.err.println("Error al cambiar el estado del instructor ID " + idInstructor + ": " + e.getMessage());
+            throw e; // Relanzar para que el controlador lo maneje
+        }
+    }
 }

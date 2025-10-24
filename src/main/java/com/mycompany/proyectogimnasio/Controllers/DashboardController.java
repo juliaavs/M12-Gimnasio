@@ -37,6 +37,8 @@ public class DashboardController {
     @FXML private BarChart<String, Number> ocupacionChart;
     
     @FXML private CategoryAxis ocupacionX;
+    
+    
 
     private EstadisticasService estadisticasService;
     // --- Métodos de Navegación del Dashboard ---

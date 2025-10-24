@@ -46,10 +46,13 @@
                 <Button fx:id="saveButton" text="Guardar" onAction="#handleSaveInstructor" style="-fx-background-color: #2ecc71; -fx-text-fill: white;" />
                 
                 <Button text="Nuevo" onAction="#handleNewInstructor" style="-fx-background-color: #3498db; -fx-text-fill: white;" />
+                
+                <Button fx:id="deleteButton" text="Eliminar" onAction="#handleDeleteInstructor" disable="true" style="-fx-background-color: #e74c3c; -fx-text-fill: white;" />
+            
+                <Button fx:id="btnCambiarEstado" text="Activar/Desactivar" onAction="#handleCambiarEstado"/>
             </HBox>
             
-            <Button fx:id="deleteButton" text="Eliminar" onAction="#handleDeleteInstructor" disable="true" style="-fx-background-color: #e74c3c; -fx-text-fill: white;" />
-            
+           
         </VBox>
     </right>
     
