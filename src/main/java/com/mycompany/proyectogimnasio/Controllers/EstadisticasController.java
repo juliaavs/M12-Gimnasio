@@ -14,9 +14,6 @@ public class EstadisticasController {
     // Referencias FXML originales (Mantenemos el PieChart)
     @FXML private PieChart clasesPorActividadChart;
     @FXML private Label totalClasesLabel; 
-   
-    // --- NUEVOS GRÁFICOS ---
-    
     @FXML private BarChart<String, Number> ocupacionChart;
     @FXML private CategoryAxis ocupacionX;
     @FXML private BarChart<String, Number> estadoInscripcionesBarChart;
@@ -24,7 +21,7 @@ public class EstadisticasController {
     @FXML private NumberAxis estadoInscripcionesY;
 
     @FXML private PieChart clasesPorInstructorChart;
-    // --- FIN NUEVOS GRÁFICOS ---
+    
     
     private EstadisticasService estadisticasService;
 
@@ -145,7 +142,7 @@ public class EstadisticasController {
         System.err.println("Error al cargar datos de Inscripciones por Estado: " + e.getMessage());
     }
 }
-    }
+}
 
     
     

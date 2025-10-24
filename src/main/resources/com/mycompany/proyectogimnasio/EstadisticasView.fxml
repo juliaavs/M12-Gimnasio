@@ -26,20 +26,18 @@
             </yAxis>
         </BarChart>
 
-        
-        <VBox GridPane.columnIndex="1" GridPane.rowIndex="0" alignment="CENTER" spacing="10">
-             <Label fx:id="totalClasesLabel" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
-             <PieChart fx:id="clasesPorActividadChart" title="Distribución de Clases por Tipo"/>
-        </VBox>
-        
         <VBox GridPane.columnIndex="0" GridPane.rowIndex="1" alignment="CENTER" spacing="10">
              <PieChart fx:id="clasesPorInstructorChart" title="Clases Impartidas por Instructor"/>
         </VBox>
         
-        <BarChart fx:id="ocupacionChart" title="Ocupación de Clases" GridPane.columnIndex="1" GridPane.rowIndex="1">
+        <BarChart fx:id="ocupacionChart" title="Ocupación de Clases" GridPane.columnIndex="1" GridPane.rowIndex="0">
             <xAxis><CategoryAxis fx:id="ocupacionX" label="Clase (ID)" /></xAxis>
             <yAxis><NumberAxis fx:id="ocupacionY" label="Cantidad (Personas)" /></yAxis>
         </BarChart>
+        <VBox GridPane.columnIndex="1" GridPane.rowIndex="1" alignment="CENTER" spacing="10">
+             <Label fx:id="totalClasesLabel" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+             <PieChart fx:id="clasesPorActividadChart" title="Distribución de Clases por Tipo"/>
+        </VBox>
         
     
     </GridPane>

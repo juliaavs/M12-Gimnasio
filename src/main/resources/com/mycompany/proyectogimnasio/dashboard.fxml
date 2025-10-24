@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
@@ -35,13 +37,20 @@
             <VBox spacing="10">
                 <HBox alignment="CENTER_LEFT" spacing="10">
                     <Label text="Today's Schedule" style="-fx-font-size: 18; -fx-font-weight: bold;" />
-                    <Button text="+ Add Class" style="-fx-background-color: #1abc9c; -fx-text-fill: white;" />
                 </HBox>
 
                 <ListView fx:id="scheduleList" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 10;">
                     <!-- Aquí puedes llenar dinámicamente las clases desde el controlador -->
                 </ListView>
+                
+                
+                <BarChart fx:id="ocupacionChart" title="Ocupación de Clases">
+                    <xAxis><CategoryAxis fx:id="ocupacionX" label="Clase (ID)" /></xAxis>
+                    <yAxis><NumberAxis fx:id="ocupacionY" label="Cantidad (Personas)" /></yAxis>
+                </BarChart>
+                
             </VBox>
+            
         </VBox>
     </center>
 
