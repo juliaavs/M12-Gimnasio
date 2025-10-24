@@ -32,7 +32,7 @@ public class AdminService {
 
     public boolean agregarAdmin(Admin admin) {
         // <-- CAMBIO CLAVE: Añadido 'activo' al INSERT -->
-        String sql = "INSERT INTO administradores(dni, nombre, apellido, password, rol, activo) VALUES(?,?,?,?,?,?)";
+        String sql = "INSERT INTO administrador (dni, nombre, apellido, password, rol, activo) VALUES(?,?,?,?,?,?)";
         try (Connection conn = Database.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, admin.getDni());
@@ -47,7 +47,7 @@ public class AdminService {
     
     public boolean actualizarAdmin(Admin admin) {
         // <-- CAMBIO CLAVE: Añadido 'activo' al UPDATE -->
-        String sql = "UPDATE administradores SET dni = ?, nombre = ?, apellido = ?, password = ?, rol = ?, activo = ? WHERE id_admin = ?";
+        String sql = "UPDATE administrador SET dni = ?, nombre = ?, apellido = ?, password = ?, rol = ?, activo = ? WHERE id_admin = ?";
         try (Connection conn = Database.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, admin.getDni());
