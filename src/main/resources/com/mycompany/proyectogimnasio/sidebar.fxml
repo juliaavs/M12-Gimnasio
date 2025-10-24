@@ -27,7 +27,7 @@
         <Button fx:id="horarioLink" text="Horario" style="-fx-pref-width: 180; -fx-background-color: white; -fx-text-fill: black" />
         <Button fx:id="actividadesLink" text="Actividades" style="-fx-pref-width: 180; -fx-background-color: white; -fx-text-fill: black" />
         <Button fx:id="clasesLink" text="Clases" style="-fx-pref-width: 180; -fx-background-color: white; -fx-text-fill: black" />
-
+        <Button fx:id="administradoresLink" text="Administradores" style="-fx-pref-width: 180; -fx-background-color: white; -fx-text-fill: black" />
         <Region VBox.vgrow="ALWAYS" />
 
         <Button fx:id="logoutLink" text="Cerrar sesión" style="-fx-pref-width: 180; -fx-background-color: #e74c3c; -fx-text-fill: white;" />

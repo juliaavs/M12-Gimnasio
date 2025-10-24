@@ -1,13 +1,15 @@
 com/mycompany/proyectogimnasio/Models/Instructor.class
 com/mycompany/proyectogimnasio/Models/Clase.class
 com/mycompany/proyectogimnasio/Controllers/ActividadesController.class
+com/mycompany/proyectogimnasio/Controllers/AdminController.class
 com/mycompany/proyectogimnasio/Models/Actividad.class
 com/mycompany/proyectogimnasio/Service/EstadisticasService.class
+com/mycompany/proyectogimnasio/Service/AdminService.class
 com/mycompany/proyectogimnasio/Models/ClaseInfo.class
-module-info.class
 com/mycompany/proyectogimnasio/Controllers/DashboardController.class
-com/mycompany/proyectogimnasio/Controllers/LoginController.class
+module-info.class
 com/mycompany/proyectogimnasio/App.class
+com/mycompany/proyectogimnasio/Controllers/LoginController.class
 com/mycompany/proyectogimnasio/Service/InstructorService.class
 com/mycompany/proyectogimnasio/Controllers/ReservasController.class
 com/mycompany/proyectogimnasio/Controllers/ClientesController.class
@@ -21,5 +23,6 @@ com/mycompany/proyectogimnasio/Controllers/EstadisticasController.class
 com/mycompany/proyectogimnasio/Service/ClaseService.class
 com/mycompany/proyectogimnasio/Service/ClienteService.class
 com/mycompany/proyectogimnasio/Models/Cliente.class
+com/mycompany/proyectogimnasio/Models/Admin.class
 com/mycompany/proyectogimnasio/Controllers/HorarioController$EditableMergedCell.class
 com/mycompany/proyectogimnasio/Controllers/InstructorController.class
