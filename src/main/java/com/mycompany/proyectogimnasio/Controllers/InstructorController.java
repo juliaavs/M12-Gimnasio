@@ -30,6 +30,7 @@ public class InstructorController {
     @FXML private Button saveButton;
     @FXML private Button deleteButton;
     @FXML private Button btnCambiarEstado; // El botón en tu FXML
+    
 
     private InstructorService instructorService;
     private ObservableList<Instructor> instructorList;
@@ -144,37 +145,43 @@ public class InstructorController {
     }
     
     @FXML
-    private void handleCambiarEstado() {
-        Instructor selectedInstructor = instructorTable.getSelectionModel().getSelectedItem();
+private void handleCambiarEstado() {
+    Instructor selectedInstructor = instructorTable.getSelectionModel().getSelectedItem();
+    
+    if (selectedInstructor != null) {
         
-        if (selectedInstructor != null) {
+        // El nuevo estado es el opuesto al estado actual
+        boolean nuevoEstado = !selectedInstructor.isActivo(); 
+        String accion = nuevoEstado ? "activado" : "desactivado";
+        
+        try {
+            // 1. Llamar al servicio para actualizar la BD
+            boolean success = instructorService.cambiarEstadoActivo(selectedInstructor.getIdInstructor(), nuevoEstado);
             
-            // El nuevo estado es el opuesto al estado actual
-            boolean nuevoEstado = !selectedInstructor.isActivo(); 
-            String accion = nuevoEstado ? "ACTIVAR" : "DESACTIVAR";
-            
-            try {
-                // 1. Llamar al servicio para actualizar la BD
-                boolean success = instructorService.cambiarEstadoActivo(selectedInstructor.getIdInstructor(), nuevoEstado);
+            if (success) {
+                // 2. Actualizar el modelo en memoria (importante para que se refleje en la tabla)
+                selectedInstructor.setActivo(nuevoEstado);
+                instructorTable.refresh(); // Refrescar la vista de la tabla
                 
-                if (success) {
-                    // 2. Actualizar el modelo en memoria (importante para que se refleje en la tabla)
-                    selectedInstructor.setActivo(nuevoEstado);
-                    instructorTable.refresh(); // Refrescar la vista de la tabla
-                    
-                    showAlert("Éxito", "El estado del instructor ha sido cambiado correctamente.", Alert.AlertType.INFORMATION);
-                } else {
-                    showAlert("Fallo", "No se pudo " + accion + " el instructor. Inténtelo de nuevo.", Alert.AlertType.INFORMATION);
-                }
-                
-            } catch (SQLException e) {
-                showAlert("Error de BD", "Error al comunicarse con la base de datos: " + e.getMessage(), Alert.AlertType.ERROR);
+                // Llamada a showAlert
+                showAlert("Éxito", "El instructor ha sido " + accion + " correctamente.", Alert.AlertType.INFORMATION);
+            } else {
+                // Llamada a showAlert
+                showAlert("Fallo", "No se pudo " + accion + " el instructor. Inténtelo de nuevo.", Alert.AlertType.WARNING);
             }
             
-        } else {
-            showAlert("Sin Selección", "Por favor, selecciona un instructor de la tabla.", Alert.AlertType.ERROR);
+        } catch (SQLException e) {
+            // Llamada a showAlert
+            showAlert("Error de BD", "Error al comunicarse con la base de datos: " + e.getMessage(), Alert.AlertType.ERROR);
         }
+        
+    } else {
+        // 🚨 ÚNICA CORRECCIÓN NECESARIA: Asegurarse que el nombre del método y los parámetros sean correctos aquí también.
+        showAlert("Sin Selección", "Por favor, selecciona un instructor de la tabla.", Alert.AlertType.WARNING);
     }
+}
+    
+    
     
     private void clearFields() {
         selectedInstructor = null;
