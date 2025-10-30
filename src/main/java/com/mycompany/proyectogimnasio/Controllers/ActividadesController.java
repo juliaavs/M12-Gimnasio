@@ -32,7 +32,7 @@ public class ActividadesController {
         inicializarComboBoxDuracion();
 
         try {
-            conn = DriverManager.getConnection("jdbc:mysql://centerbeam.proxy.rlwy.net:23892/railway", "root", "ShlYFjtRmPFlizYSEyizwuhZgYpWHijg");
+            conn = DriverManager.getConnection("jdbc:mysql://gondola.proxy.rlwy.net:51831/railway", "root", "dZLeazCTzEKkPnAQFANrKCxyZlNywudL");
             
             cargarTablaActividades();
             
