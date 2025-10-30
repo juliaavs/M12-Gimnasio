@@ -3,8 +3,6 @@ package com.mycompany.proyectogimnasio.Service;
 import com.mycompany.proyectogimnasio.Database;
 import com.mycompany.proyectogimnasio.Models.Cliente;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -12,7 +10,8 @@ public class ClienteService {
 
     public ObservableList<Cliente> getAllClientes() {
         ObservableList<Cliente> clientes = FXCollections.observableArrayList();
-        String sql = "SELECT id_cliente, dni, nombre, apellido, password, IBAN FROM clientes";
+        // **ACTUALIZADO**: Añadidos los nuevos campos
+        String sql = "SELECT id_cliente, dni, nombre, apellido, password, IBAN, telefono, cod_postal, activo FROM clientes";
         try (Connection conn = Database.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -23,7 +22,10 @@ public class ClienteService {
                     rs.getString("nombre"),
                     rs.getString("apellido"),
                     rs.getString("password"),
-                    rs.getString("IBAN")
+                    rs.getString("IBAN"),
+                    rs.getString("telefono"),
+                    rs.getString("cod_postal"),
+                    rs.getInt("activo") == 0 // 0 = Activo (true)
                 ));
             }
         } catch (SQLException e) {
@@ -32,8 +34,31 @@ public class ClienteService {
         return clientes;
     }
 
+    /**
+     * **MÉTODO QUE FALTABA**
+     * Comprueba si un DNI ya existe en la base de datos.
+     * @param dni El DNI a comprobar.
+     * @return true si el DNI ya existe, false en caso contrario.
+     */
+    public boolean dniExiste(String dni) {
+        String sql = "SELECT COUNT(*) FROM clientes WHERE dni = ?";
+        try (Connection conn = Database.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, dni);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public boolean agregarCliente(Cliente cliente) {
-        String sql = "INSERT INTO clientes(dni, nombre, apellido, password, IBAN) VALUES(?,?,?,?,?)";
+        // **ACTUALIZADO**: Añadidos los nuevos campos
+        String sql = "INSERT INTO clientes(dni, nombre, apellido, password, IBAN, telefono, cod_postal, activo) VALUES(?,?,?,?,?,?,?,0)";
         try (Connection conn = Database.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, cliente.getDni());
@@ -41,6 +66,9 @@ public class ClienteService {
             pstmt.setString(3, cliente.getApellido());
             pstmt.setString(4, cliente.getPassword());
             pstmt.setString(5, cliente.getIban());
+            pstmt.setString(6, cliente.getTelefono());
+            pstmt.setString(7, cliente.getCodPostal());
+            // 'activo' se inserta como 0 (activo) por defecto
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -49,7 +77,8 @@ public class ClienteService {
     }
     
     public boolean actualizarCliente(Cliente cliente) {
-        String sql = "UPDATE clientes SET dni = ?, nombre = ?, apellido = ?, password = ?, IBAN = ? WHERE id_cliente = ?";
+        // **ACTUALIZADO**: Añadidos los nuevos campos (sin incluir 'activo')
+        String sql = "UPDATE clientes SET dni = ?, nombre = ?, apellido = ?, password = ?, IBAN = ?, telefono = ?, cod_postal = ? WHERE id_cliente = ?";
         try (Connection conn = Database.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, cliente.getDni());
@@ -57,7 +86,9 @@ public class ClienteService {
             pstmt.setString(3, cliente.getApellido());
             pstmt.setString(4, cliente.getPassword());
             pstmt.setString(5, cliente.getIban());
-            pstmt.setInt(6, cliente.getIdCliente());
+            pstmt.setString(6, cliente.getTelefono());
+            pstmt.setString(7, cliente.getCodPostal());
+            pstmt.setInt(8, cliente.getIdCliente());
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -65,8 +96,12 @@ public class ClienteService {
         }
     }
 
-    public boolean eliminarCliente(int idCliente) {
-        String sql = "DELETE FROM clientes WHERE id_cliente = ?";
+    /**
+     * **MÉTODO ACTUALIZADO**
+     * Desactiva un cliente poniendo su estado 'activo' a 1.
+     */
+    public boolean desactivarCliente(int idCliente) {
+        String sql = "UPDATE clientes SET activo = 1 WHERE id_cliente = ?";
         try (Connection conn = Database.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, idCliente);
