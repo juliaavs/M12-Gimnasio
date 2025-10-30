@@ -7,10 +7,12 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import java.sql.*;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.layout.HBox;
 
 public class ClasesController {
 
@@ -25,11 +27,16 @@ public class ClasesController {
 
     // --- Componentes FXML para la Entrada de Datos ---
     @FXML private ComboBox<String> cbDia;
-    @FXML private TextField txtHoraInicio;
+    @FXML private ComboBox<String> cbHoraInicio;
     @FXML private TextField txtIdClase;
     @FXML private ComboBox<String> cbActividad;
     @FXML private ComboBox<String> cbInstructor;
-    @FXML private ComboBox<String> cbStatus;
+    
+    @FXML private HBox hboxCrear;
+    @FXML private HBox hboxEditar;
+    
+    // **CAMBIO CLAVE**: Un solo botón de estado
+    @FXML private Button btnToggleStatus; 
 
     // --- Variables de Conexión y Mapeo ---
     private Connection conn;
@@ -43,6 +50,7 @@ public class ClasesController {
     private static final LocalTime CIERRE_MANANA = LocalTime.of(13, 0);
     private static final LocalTime APERTURA_TARDE = LocalTime.of(15, 0);
     private static final LocalTime CIERRE_TARDE = LocalTime.of(19, 0);
+    private static final int INTERVALO_MINUTOS = 15;
 
     @FXML
     public void initialize() {
@@ -62,16 +70,19 @@ public class ClasesController {
 
             cargarActividades();
             cargarInstructores();
-            cargarEstadosClase();
             cargarDiasSemana();
+            cargarHorariosDisponibles();
             cargarTabla();
 
-            tablaClases.setOnMouseClicked(this::seleccionarClase);
+            tablaClases.getSelectionModel().selectedItemProperty().addListener(
+                (obs, oldSelection, newSelection) -> mostrarDetallesClase(newSelection));
 
             if (txtIdClase != null) {
                 txtIdClase.setDisable(true);
                 txtIdClase.setVisible(false);
             }
+            
+            setEstadoFormulario(false);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -82,142 +93,122 @@ public class ClasesController {
     // --- Métodos de CRUD (Crear, Leer, Actualizar, Borrar) ---
 
     @FXML
-    private void agregarClase() {
+    private void handleGuardar() {
         String nombreActividad = cbActividad.getSelectionModel().getSelectedItem();
         String nombreInstructor = cbInstructor.getSelectionModel().getSelectedItem();
-        String status = cbStatus.getSelectionModel().getSelectedItem();
         String dia = cbDia.getSelectionModel().getSelectedItem();
-        String horaInicio = txtHoraInicio.getText();
+        String horaInicio = cbHoraInicio.getSelectionModel().getSelectedItem();
 
-        if (nombreActividad == null || nombreInstructor == null || status == null || dia == null || horaInicio.trim().isEmpty()) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Campos Vacíos", "Todos los campos son obligatorios para crear una clase.");
+        if (nombreActividad == null || nombreInstructor == null || dia == null || horaInicio == null) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Campos Vacíos", "Todos los campos son obligatorios.");
             return;
         }
         
-        // Llama a la validación central antes de insertar
-        if (!validarHorarioClase(dia, horaInicio, nombreActividad, -1)) {
-            return; // La validación falló y ya mostró una alerta
-        }
-
         try {
             int idActividad = actividadesMap.get(nombreActividad);
             int idInstructor = instructoresMap.get(nombreInstructor);
 
-            String sql = "INSERT INTO clases (id_instructor, id_actividad, dia, hora_inicio, status) VALUES (?, ?, ?, ?, ?)";
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setInt(1, idInstructor);
-                ps.setInt(2, idActividad);
-                ps.setString(3, dia);
-                ps.setString(4, horaInicio);
-                ps.setString(5, status);
-                ps.executeUpdate();
-                
-                mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Clase agregada correctamente.");
+            if (selectedClaseData == null || txtIdClase.getText().isEmpty()) {
+                // --- MODO CREAR ---
+                if (!validarHorarioClase(dia, horaInicio, nombreActividad, -1)) return; 
+                String sql = "INSERT INTO clases (id_instructor, id_actividad, dia, hora_inicio, status) VALUES (?, ?, ?, ?, 'confirmado')";
+                try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                    ps.setInt(1, idInstructor);
+                    ps.setInt(2, idActividad);
+                    ps.setString(3, dia);
+                    ps.setString(4, horaInicio);
+                    ps.executeUpdate();
+                    mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Clase agregada correctamente.");
+                }
+            } else {
+                // --- MODO ACTUALIZAR ---
+                int idClase = Integer.parseInt(txtIdClase.getText());
+                if (!validarHorarioClase(dia, horaInicio, nombreActividad, idClase)) return;
+                String sql = "UPDATE clases SET id_instructor = ?, id_actividad = ?, dia = ?, hora_inicio = ? WHERE id_clase = ?";
+                try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                    ps.setInt(1, idInstructor);
+                    ps.setInt(2, idActividad);
+                    ps.setString(3, dia);
+                    ps.setString(4, horaInicio);
+                    ps.setInt(5, idClase);
+                    ps.executeUpdate();
+                    mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Datos de la clase actualizados.");
+                }
             }
-
             cargarTabla();
-            limpiarCampos();
-
+            handleLimpiar();
         } catch (SQLException e) {
             e.printStackTrace();
-            mostrarAlerta(Alert.AlertType.ERROR, "Error SQL", "Error al agregar la clase: " + e.getMessage());
-        }
-    }
-
-    @FXML
-    private void actualizarClase() {
-        if (selectedClaseData == null || txtIdClase == null || txtIdClase.getText().isEmpty()) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Advertencia", "Debe seleccionar una clase de la tabla para poder actualizarla.");
-            return;
-        }
-
-        String nombreActividad = cbActividad.getSelectionModel().getSelectedItem();
-        String nombreInstructor = cbInstructor.getSelectionModel().getSelectedItem();
-        String status = cbStatus.getSelectionModel().getSelectedItem();
-        String dia = cbDia.getSelectionModel().getSelectedItem();
-        String horaInicio = txtHoraInicio.getText();
-
-        if (nombreActividad == null || nombreInstructor == null || status == null || dia == null || horaInicio.trim().isEmpty()) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Campos Vacíos", "Todos los campos deben estar completos para actualizar.");
-            return;
-        }
-
-        try {
-            int idClase = Integer.parseInt(txtIdClase.getText());
-
-            // Llama a la validación, excluyendo la propia clase de la comprobación
-            if (!validarHorarioClase(dia, horaInicio, nombreActividad, idClase)) {
-                return; // La validación falló
-            }
-
-            int idActividad = actividadesMap.get(nombreActividad);
-            int idInstructor = instructoresMap.get(nombreInstructor);
-
-            String sql = "UPDATE clases SET id_instructor = ?, id_actividad = ?, dia = ?, hora_inicio = ?, status = ? WHERE id_clase = ?";
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setInt(1, idInstructor);
-                ps.setInt(2, idActividad);
-                ps.setString(3, dia);
-                ps.setString(4, horaInicio);
-                ps.setString(5, status);
-                ps.setInt(6, idClase);
-                ps.executeUpdate();
-
-                mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Clase actualizada correctamente.");
-            }
-
-            cargarTabla();
-            limpiarCampos();
-
+            mostrarAlerta(Alert.AlertType.ERROR, "Error SQL", "Error al guardar la clase: " + e.getMessage());
         } catch (NumberFormatException e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error de Entrada", "El ID de la clase no es válido.");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            mostrarAlerta(Alert.AlertType.ERROR, "Error SQL", "Error al actualizar la clase: " + e.getMessage());
+            mostrarAlerta(Alert.AlertType.ERROR, "Error de Datos", "El ID de la clase no es válido.");
         }
     }
 
-    @FXML
-    private void eliminarClase() {
-        if (selectedClaseData == null || txtIdClase == null || txtIdClase.getText().isEmpty()) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Advertencia", "Debe seleccionar una clase de la tabla para eliminar.");
-            return;
-        }
 
+    @FXML
+    private void handleEliminar() {
+        if (!validarSeleccion()) return;
         try {
             int idClase = Integer.parseInt(txtIdClase.getText());
             String sql = "DELETE FROM clases WHERE id_clase = ?";
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setInt(1, idClase);
                 int affectedRows = ps.executeUpdate();
-                
                 if (affectedRows > 0) {
-                    mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Clase eliminada correctamente.");
-                } else {
-                    mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se encontró la clase a eliminar.");
+                    mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Clase eliminada permanentemente.");
                 }
             }
-
             cargarTabla();
-            limpiarCampos();
-
-        } catch (NumberFormatException e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error de Entrada", "El ID de la clase no es válido.");
-        } catch (SQLException e) {
-            e.printStackTrace();
+            handleLimpiar();
+        } catch (Exception e) {
             mostrarAlerta(Alert.AlertType.ERROR, "Error SQL", "Error al eliminar la clase: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * **NUEVO MÉTODO**
+     * Maneja el clic del botón de estado dinámico.
+     */
+    @FXML
+    private void handleToggleStatus() {
+        if (!validarSeleccion()) return;
+
+        String statusActual = selectedClaseData.get(5);
+        String nuevoStatus;
+
+        // Determina la acción opuesta
+        if ("confirmado".equalsIgnoreCase(statusActual)) {
+            nuevoStatus = "cancelado";
+        } else {
+            nuevoStatus = "confirmado";
+        }
+        
+        actualizarStatus(nuevoStatus);
+    }
+    
+    private void actualizarStatus(String nuevoStatus) {
+        if (!validarSeleccion()) return;
+        try {
+            int idClase = Integer.parseInt(txtIdClase.getText());
+            String sql = "UPDATE clases SET status = ? WHERE id_clase = ?";
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, nuevoStatus);
+                ps.setInt(2, idClase);
+                ps.executeUpdate();
+                mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Estado de la clase actualizado a: " + nuevoStatus);
+            }
+            cargarTabla();
+            handleLimpiar();
+        } catch (Exception e) {
+            mostrarAlerta(Alert.AlertType.ERROR, "Error SQL", "Error al actualizar el estado: " + e.getMessage());
         }
     }
 
     // --- Lógica de Validación de Horario ---
-
-    /**
-     * Valida si el horario para una nueva clase o una actualización es válido.
-     * Comprueba: 1. Formato de hora, 2. Horarios del gimnasio, 3. Solapamiento con otras clases.
-     * @param idClaseAExcluir ID de la clase a ignorar (para modo actualización). Usar -1 para crear una nueva.
-     * @return `true` si el horario es válido, `false` si no lo es.
-     */
+    
     private boolean validarHorarioClase(String dia, String horaInicioStr, String nombreActividad, int idClaseAExcluir) {
+        // ... (Este método no cambia)
         LocalTime nuevaHoraInicio;
         LocalTime nuevaHoraFin;
         try {
@@ -247,21 +238,16 @@ public class ClasesController {
         String sql = "SELECT c.id_clase, c.hora_inicio, a.duracion, a.nombre AS nombre_actividad_existente " +
                      "FROM clases c " +
                      "JOIN actividades a ON c.id_actividad = a.id_actividad " +
-                     "WHERE c.dia = ? AND UPPER(c.status) != 'CANCELADA'";
+                     "WHERE c.dia = ? AND UPPER(c.status) != 'CANCELADO";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, dia);
             ResultSet rs = ps.executeQuery();
-
             while (rs.next()) {
-                if (rs.getInt("id_clase") == idClaseAExcluir) {
-                    continue; // No nos comparamos con nosotros mismos
-                }
-
+                if (rs.getInt("id_clase") == idClaseAExcluir) continue; 
                 LocalTime existenteHoraInicio = rs.getTime("hora_inicio").toLocalTime();
                 LocalTime existenteHoraFin = existenteHoraInicio.plusMinutes(rs.getInt("duracion"));
                 String nombreActividadExistente = rs.getString("nombre_actividad_existente");
-
                 if (nuevaHoraInicio.isBefore(existenteHoraFin) && nuevaHoraFin.isAfter(existenteHoraInicio)) {
                     mostrarAlerta(Alert.AlertType.ERROR, "Conflicto de Horario",
                         "La sala ya está ocupada por la clase '" + nombreActividadExistente + "' que se imparte de " +
@@ -272,29 +258,27 @@ public class ClasesController {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            mostrarAlerta(Alert.AlertType.ERROR, "Error de Validación", "No se pudo validar la disponibilidad del horario en la base de datos.");
+            mostrarAlerta(Alert.AlertType.ERROR, "Error de Validación", "No se pudo validar la disponibilidad del horario.");
             return false;
         }
-
         return true;
     }
+
 
     // --- Métodos de Carga de Datos y UI ---
 
     private void cargarActividades() throws SQLException {
+        // ... (Este método no cambia)
         actividadesMap.clear();
         actividadesDuracionMap.clear();
         if (cbActividad == null) return;
-        
         String sql = "SELECT id_actividad, nombre, duracion FROM actividades";
-        
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 int id = rs.getInt("id_actividad");
                 String nombre = rs.getString("nombre");
                 int duracion = rs.getInt("duracion");
-                
                 cbActividad.getItems().add(nombre);
                 actividadesMap.put(nombre, id);
                 actividadesDuracionMap.put(nombre, duracion);
@@ -304,13 +288,13 @@ public class ClasesController {
     
     @FXML
     private void cargarTabla() {
+        // ... (Este método no cambia)
         ObservableList<ObservableList<String>> data = FXCollections.observableArrayList();
         String sql = "SELECT c.id_clase, c.dia, c.hora_inicio, a.nombre AS nombre_actividad, " +
                          "CONCAT(i.nombre, ' ', i.apellido) AS instructor_completo, c.status " +
                          "FROM clases c " +
                          "JOIN actividades a ON c.id_actividad = a.id_actividad " +
                          "JOIN instructores i ON c.id_instructor = i.id_instructor";
-        
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -332,57 +316,99 @@ public class ClasesController {
         }
     }
     
-    private void seleccionarClase(MouseEvent event) {
-        selectedClaseData = tablaClases.getSelectionModel().getSelectedItem();
+    /**
+     * **MÉTODO MODIFICADO**
+     * Actualiza el texto y estilo del botón de estado.
+     */
+    private void mostrarDetallesClase(ObservableList<String> claseData) {
+        selectedClaseData = claseData;
         
         if (selectedClaseData != null) {
-            txtIdClase.setVisible(true);
-            txtIdClase.setText(selectedClaseData.get(0));
+            if (txtIdClase != null) {
+                txtIdClase.setVisible(true);
+                txtIdClase.setText(selectedClaseData.get(0));
+            }
             cbDia.getSelectionModel().select(selectedClaseData.get(1));
-            txtHoraInicio.setText(selectedClaseData.get(2));
+            try {
+                LocalTime time = LocalTime.parse(selectedClaseData.get(2)); 
+                String formattedTime = time.format(DateTimeFormatter.ofPattern("HH:mm"));
+                cbHoraInicio.setValue(formattedTime);
+            } catch (Exception e) {
+                cbHoraInicio.setValue(null);
+            }
             cbActividad.getSelectionModel().select(selectedClaseData.get(3));
             cbInstructor.getSelectionModel().select(selectedClaseData.get(4));
-            cbStatus.getSelectionModel().select(selectedClaseData.get(5));
+            
+            // --- **LÓGICA DEL BOTÓN DINÁMICO** ---
+            String status = selectedClaseData.get(5);
+            if ("confirmado".equalsIgnoreCase(status)) {
+                btnToggleStatus.setText("Cancelar");
+                btnToggleStatus.setStyle("-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-weight: bold;"); // Naranja
+            } else {
+                // Para "cancelada" o cualquier otro estado
+                btnToggleStatus.setText("Confirmar");
+                btnToggleStatus.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;"); // Verde
+            }
+            
+            setEstadoFormulario(true); // Modo "Editar"
         }
     }
 
     @FXML
-    private void limpiarCampos() {
+    private void handleLimpiar() {
         if (txtIdClase != null) {
             txtIdClase.clear();
             txtIdClase.setVisible(false);
         }
         cbDia.getSelectionModel().clearSelection();
-        txtHoraInicio.clear();
+        cbHoraInicio.getSelectionModel().clearSelection();
         cbActividad.getSelectionModel().clearSelection();
         cbInstructor.getSelectionModel().clearSelection();
-        cbStatus.getSelectionModel().clearSelection();
         
         tablaClases.getSelectionModel().clearSelection();
         selectedClaseData = null;
+        
+        setEstadoFormulario(false); // Modo "Crear"
+    }
+    
+    private void cargarHorariosDisponibles() {
+        // ... (Este método no cambia)
+        if (cbHoraInicio == null) return;
+        ObservableList<String> horarios = FXCollections.observableArrayList();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        LocalTime hora = APERTURA_MANANA;
+        while (hora.isBefore(CIERRE_MANANA)) {
+            horarios.add(hora.format(formatter));
+            hora = hora.plusMinutes(INTERVALO_MINUTOS);
+        }
+        hora = APERTURA_TARDE;
+        while (hora.isBefore(CIERRE_TARDE)) {
+            horarios.add(hora.format(formatter));
+            hora = hora.plusMinutes(INTERVALO_MINUTOS);
+        }
+        cbHoraInicio.setItems(horarios);
+    }
+    
+    private void setEstadoFormulario(boolean isEditing) {
+        if (hboxCrear != null && hboxEditar != null) {
+            hboxCrear.setVisible(!isEditing);
+            hboxCrear.setManaged(!isEditing);
+            hboxEditar.setVisible(isEditing);
+            hboxEditar.setManaged(isEditing);
+        }
     }
 
     private void cargarDiasSemana() {
+        // ... (Este método no cambia)
         if (cbDia == null) return;
         ObservableList<String> dias = FXCollections.observableArrayList(
             "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"
         );
         cbDia.setItems(dias);
     }
-    
-    private void cargarEstadosClase() throws SQLException {
-        if (cbStatus == null) return;
-        cbStatus.getItems().clear();
-        String sql = "SELECT DISTINCT status FROM clases";
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                cbStatus.getItems().add(rs.getString("status"));
-            }
-        }
-    }
 
     private void cargarInstructores() throws SQLException {
+        // ... (Este método no cambia)
         instructoresMap.clear();
         if (cbInstructor == null) return;
         cbInstructor.getItems().clear();
@@ -392,7 +418,6 @@ public class ClasesController {
             while (rs.next()) {
                 int id = rs.getInt("id_instructor");
                 String nombreCompleto = rs.getString("nombre") + " " + rs.getString("apellido");
-                
                 cbInstructor.getItems().add(nombreCompleto);
                 instructoresMap.put(nombreCompleto, id);
             }
@@ -405,5 +430,13 @@ public class ClasesController {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
+    }
+    
+    private boolean validarSeleccion() {
+        if (selectedClaseData == null || txtIdClase == null || txtIdClase.getText().isEmpty()) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Acción Inválida", "Debe seleccionar una clase de la tabla primero.");
+            return false;
+        }
+        return true;
     }
 }

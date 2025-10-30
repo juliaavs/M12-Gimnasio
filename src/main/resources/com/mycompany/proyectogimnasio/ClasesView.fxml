@@ -13,7 +13,8 @@
                   <Font name="System Bold" size="24.0" />
                </font>
             </Label>
-            <GridPane hgap="10.0" prefHeight="130.0" vgap="10.0">
+            
+            <GridPane hgap="10.0" prefHeight="90.0" vgap="10.0">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="10.0" prefWidth="100.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="250.0" minWidth="10.0" prefWidth="250.0" />
@@ -23,39 +24,39 @@
                <rowConstraints>
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
-               
-               <!-- Fila 0: ID Clase (Oculto/Visible por código) y Actividad -->
-               <Label text="Actividad:" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-               <ComboBox fx:id="cbActividad" prefWidth="250.0" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+               <children>
+                  <Label text="Día:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                  <ComboBox fx:id="cbDia" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                  <Label text="Actividad:" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                  <ComboBox fx:id="cbActividad" prefWidth="250.0" GridPane.columnIndex="3" GridPane.rowIndex="0" />
 
-               <!-- Fila 1: Día y Hora de Inicio -->
-               <Label text="Día:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-               <!-- CAMBIO CRÍTICO: cbDia en lugar de txtDia -->
-               <ComboBox fx:id="cbDia" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-
-               <Label text="Hora de Inicio:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-               <TextField fx:id="txtHoraInicio" promptText="Ej: 18:00:00" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-
-               <!-- Fila 2: Instructor y Status -->
-               <Label text="Instructor:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-               <ComboBox fx:id="cbInstructor" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-
-               <Label text="Status:" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-               <ComboBox fx:id="cbStatus" prefWidth="250.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-
+                  <Label text="Hora de Inicio:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                  <ComboBox fx:id="cbHoraInicio" prefWidth="250.0" promptText="Ej: 09:00" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Label text="Instructor:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <ComboBox fx:id="cbInstructor" prefWidth="250.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                  
+                  <TextField fx:id="txtIdClase" visible="false" managed="false" GridPane.rowIndex="2" />
+               </children>
             </GridPane>
             
-            <HBox alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="200.0" spacing="10.0">
+            <VBox prefHeight="30.0" prefWidth="200.0">
                <children>
-                  <Button onAction="#agregarClase" text="Agregar Clase" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;" />
-                  <Button onAction="#actualizarClase" text="Actualizar Clase" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold;" />
-                  <Button onAction="#eliminarClase" text="Eliminar Clase" style="-fx-background-color: #F44336; -fx-text-fill: white; -fx-font-weight: bold;" />
-                  <Button onAction="#limpiarCampos" text="Limpiar Campos" style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-weight: bold;" />
+                  <HBox fx:id="hboxEditar" alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <Button onAction="#handleGuardar" text="Actualizar Datos" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold;" />
+                        <Button fx:id="btnToggleStatus" onAction="#handleToggleStatus" text="Estado" style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-weight: bold;" />
+                        <Button onAction="#handleEliminar" text="Eliminar (Borrar)" style="-fx-background-color: #F44336; -fx-text-fill: white; -fx-font-weight: bold;" />
+                     </children>
+                  </HBox>
+                  <HBox fx:id="hboxCrear" alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <Button onAction="#handleLimpiar" text="Limpiar Campos" style="-fx-background-color: #7f8c8d; -fx-text-fill: white; -fx-font-weight: bold;" />
+                        <Button onAction="#handleGuardar" text="Agregar Clase" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;" />
+                     </children>
+                  </HBox>
                </children>
-            </HBox>
+            </VBox>
 
             <TableView fx:id="tablaClases" VBox.vgrow="ALWAYS">
                <columns>
