@@ -55,7 +55,7 @@ public class AdminService {
             pstmt.setString(3, admin.getApellido());
             pstmt.setString(4, admin.getPassword());
             pstmt.setString(5, admin.getRol());
-            pstmt.setBoolean(6, admin.isActivo()); // <-- CAMBIO CLAVE
+            pstmt.setBoolean(6, admin.isActivo());
             pstmt.setInt(7, admin.getIdAdmin());
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) { e.printStackTrace(); return false; }
