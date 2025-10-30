@@ -128,4 +128,51 @@ public class InstructorService {
             throw e; // Relanzar para que el controlador lo maneje
         }
     }
+    
+    public boolean existsDni(String dni, Integer instructorId) throws SQLException {
+    Connection conn = Database.getConnection(); // Asume que tienes un método para obtener la conexión
+    PreparedStatement pstmt = null;
+    ResultSet rs = null;
+    
+    // Consulta base: buscar DNI y excluir el ID actual si estamos editando
+    String sql;
+    
+    if (instructorId == null) {
+        // Modo Creación (CREATE): Buscar cualquier registro con el DNI
+        sql = "SELECT COUNT(*) FROM instructores WHERE dni = ?";
+    } else {
+        // Modo Edición (UPDATE): Buscar DNI que NO pertenezca al ID actual
+        sql = "SELECT COUNT(*) FROM instructores WHERE dni = ? AND id_Instructor != ?";
+    }
+
+    try {
+        // Obtener la conexión a la BD
+        // conn = obtenerConexion(); // <-- Reemplaza con tu método real
+        
+        pstmt = conn.prepareStatement(sql);
+        
+        // 1. Establecer el parámetro DNI (siempre es el primer parámetro)
+        pstmt.setString(1, dni);
+        
+        // 2. Establecer el parámetro ID (solo en modo Edición)
+        if (instructorId != null) {
+            pstmt.setInt(2, instructorId);
+        }
+        
+        rs = pstmt.executeQuery();
+        
+        if (rs.next()) {
+            int count = rs.getInt(1);
+            return count > 0; // Si el contador es > 0, el DNI está duplicado
+        }
+        
+        return false; // Por defecto, si no hay resultados, no hay duplicados
+
+    } finally {
+        // Asegurar el cierre de recursos
+        if (rs != null) rs.close();
+        if (pstmt != null) pstmt.close();
+        if (conn != null) conn.close(); // <-- Asegúrate de cerrar la conexión correctamente
+    }
+}
 }
