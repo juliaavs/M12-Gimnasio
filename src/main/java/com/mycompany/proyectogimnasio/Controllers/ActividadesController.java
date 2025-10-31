@@ -24,6 +24,10 @@ public class ActividadesController {
     @FXML private ComboBox<Integer> cbDuracion;
     @FXML private TextField txtAforo;
 
+    // Referencias a los botones para alternar visibilidad
+    @FXML private Button btnActualizar;
+    @FXML private Button btnAgregar;
+
     private Connection conn;
 
     @FXML
@@ -36,10 +40,13 @@ public class ActividadesController {
             
             cargarTablaActividades();
             
+            // Listener para la selección de la tabla
             tablaActividades.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldSelection, newSelection) -> {
                     if (newSelection != null) {
                         seleccionarActividad(newSelection);
+                        // Al seleccionar: Modo Edición
+                        cambiarEstadoBotones(true); 
                     }
                 }
             );
@@ -51,27 +58,27 @@ public class ActividadesController {
     }
     
     /**
-     * MÉTODO NUEVO Y CLAVE:
      * Se encarga de inicializar y poblar el ComboBox de duraciones.
-     * Esto asegura que el componente FXML no sea nulo.
      */
     private void inicializarComboBoxDuracion() {
-        // Comprobación de seguridad: si cbDuracion es null, significa que el fx:id en el FXML está mal.
         if (cbDuracion == null) {
-            System.err.println("Error Crítico: El ComboBox 'cbDuracion' no fue inyectado. Revisa el fx:id en ActividadesView.fxml.");
+            System.err.println("Error Crítico: El ComboBox 'cbDuracion' no fue inyectado.");
             return;
         }
-        
-        // Crea la lista de opciones
         ObservableList<Integer> duraciones = FXCollections.observableArrayList(15, 30, 45, 60);
-        
-        // Asigna las opciones al ComboBox
         cbDuracion.setItems(duraciones);
     }
 
     private void cargarTablaActividades() {
         ObservableList<Actividad> listaActividades = FXCollections.observableArrayList();
         String sql = "SELECT id_actividad, nombre, descripcion, duracion, aforo FROM actividades";
+
+        // Configuración de columnas (Asegúrate de que esto esté aquí si no lo hiciste)
+        colId.setCellValueFactory(new PropertyValueFactory<>("idActividad"));
+        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        colDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
+        colDuracion.setCellValueFactory(new PropertyValueFactory<>("duracion"));
+        colAforo.setCellValueFactory(new PropertyValueFactory<>("aforo"));
 
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -110,7 +117,7 @@ public class ActividadesController {
             mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Actividad agregada correctamente.");
             
             cargarTablaActividades();
-            limpiarCampos();
+            limpiarCampos(); // Limpiar también cambia los botones
 
         } catch (NumberFormatException e) {
             mostrarAlerta(Alert.AlertType.ERROR, "Error de Formato", "El aforo debe ser un número entero válido.");
@@ -145,7 +152,7 @@ public class ActividadesController {
             mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Actividad actualizada correctamente.");
             
             cargarTablaActividades();
-            limpiarCampos();
+            limpiarCampos(); // Limpiar también cambia los botones
 
         } catch (NumberFormatException e) {
             mostrarAlerta(Alert.AlertType.ERROR, "Error de Formato", "El aforo y el ID deben ser números válidos.");
@@ -155,26 +162,7 @@ public class ActividadesController {
         }
     }
 
-    @FXML
-    private void eliminarActividad() {
-        if (txtIdActividad.getText().isEmpty()) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Sin Selección", "Por favor, selecciona una actividad para eliminar.");
-            return;
-        }
-        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION, "¿Estás seguro?", ButtonType.YES, ButtonType.NO);
-        if (confirmacion.showAndWait().orElse(ButtonType.NO) != ButtonType.YES) return;
-        String sql = "DELETE FROM actividades WHERE id_actividad = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, Integer.parseInt(txtIdActividad.getText()));
-            ps.executeUpdate();
-            mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Actividad eliminada.");
-            cargarTablaActividades();
-            limpiarCampos();
-        } catch (SQLException e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error SQL", "No se pudo eliminar la actividad.");
-            e.printStackTrace();
-        }
-    }
+    // El método eliminarActividad() se ha quitado.
     
     private void seleccionarActividad(Actividad actividad) {
         txtIdActividad.setText(String.valueOf(actividad.getIdActividad()));
@@ -193,6 +181,9 @@ public class ActividadesController {
         cbDuracion.setPromptText("Seleccionar duración");
         txtAforo.clear();
         tablaActividades.getSelectionModel().clearSelection();
+        
+        // Al limpiar: Modo Creación
+        cambiarEstadoBotones(false); 
     }
 
     private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
@@ -201,5 +192,19 @@ public class ActividadesController {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
+    }
+    
+    /**
+     * Controla la visibilidad de los botones "Agregar" y "Actualizar".
+     * @param enEdicion true si se seleccionó un item (modo edición), false si se limpió (modo creación).
+     */
+    private void cambiarEstadoBotones(boolean enEdicion) {
+        // Mostrar/Ocultar "Actualizar"
+        btnActualizar.setVisible(enEdicion);
+        btnActualizar.setManaged(enEdicion);
+        
+        // Mostrar/Ocultar "Agregar" (es la lógica inversa)
+        btnAgregar.setVisible(!enEdicion);
+        btnAgregar.setManaged(!enEdicion);
     }
 }
