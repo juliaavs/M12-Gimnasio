@@ -32,7 +32,6 @@ public class Actividad {
         return duracion; 
     }
     
-    // CAMBIO CLAVE: El método que faltaba.
     public int getAforo() { 
         return aforo; 
     }
