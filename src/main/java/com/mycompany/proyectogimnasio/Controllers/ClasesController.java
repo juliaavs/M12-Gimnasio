@@ -104,7 +104,7 @@ public class ClasesController {
 
             if (selectedClaseData == null || txtIdClase.getText().isEmpty()) {
                 if (!validarHorarioClase(dia, horaInicio, nombreActividad, -1)) return; 
-                String sql = "INSERT INTO clases (id_instructor, id_actividad, dia, hora_inicio, status) VALUES (?, ?, ?, ?, 'confirmada')";
+                String sql = "INSERT INTO clases (id_instructor, id_actividad, dia, hora_inicio, status) VALUES (?, ?, ?, ?, 'confirmado')";
                 try (PreparedStatement ps = conn.prepareStatement(sql)) {
                     ps.setInt(1, idInstructor);
                     ps.setInt(2, idActividad);
@@ -165,10 +165,10 @@ public class ClasesController {
         String statusActual = selectedClaseData.get(5);
         String nuevoStatus;
 
-        if ("confirmada".equalsIgnoreCase(statusActual)) {
-            nuevoStatus = "cancelada";
+        if ("confirmado".equalsIgnoreCase(statusActual)) {
+            nuevoStatus = "cancelado";
         } else {
-            nuevoStatus = "confirmada";
+            nuevoStatus = "confirmado";
         }
         
         actualizarStatus(nuevoStatus);
@@ -222,7 +222,7 @@ public class ClasesController {
         String sql = "SELECT c.id_clase, c.hora_inicio, a.duracion, a.nombre AS nombre_actividad_existente " +
                      "FROM clases c " +
                      "JOIN actividades a ON c.id_actividad = a.id_actividad " +
-                     "WHERE c.dia = ? AND UPPER(c.status) != 'CANCELADA'";
+                     "WHERE c.dia = ? AND UPPER(c.status) != 'CANCELADO'";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, dia);
@@ -315,7 +315,7 @@ public class ClasesController {
             cbInstructor.getSelectionModel().select(selectedClaseData.get(4));
           
             String status = selectedClaseData.get(5);
-            if ("confirmada".equalsIgnoreCase(status)) {
+            if ("confirmado".equalsIgnoreCase(status)) {
                 btnToggleStatus.setText("Cancelar");
                 btnToggleStatus.setStyle("-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-weight: bold;");
             } else {
