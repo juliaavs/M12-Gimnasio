@@ -10,6 +10,7 @@ module-info.class
 com/mycompany/proyectogimnasio/Controllers/DashboardController.class
 com/mycompany/proyectogimnasio/Controllers/LoginController.class
 com/mycompany/proyectogimnasio/App.class
+com/mycompany/proyectogimnasio/Controllers/InstructorController$1.class
 com/mycompany/proyectogimnasio/Controllers/ClientesController$1.class
 com/mycompany/proyectogimnasio/Service/InstructorService.class
 com/mycompany/proyectogimnasio/Controllers/ReservasController.class

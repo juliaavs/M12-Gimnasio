@@ -45,6 +45,18 @@ public class InstructorController {
         apellidoColumn.setCellValueFactory(cellData -> cellData.getValue().apellidoProperty());
         dniColumn.setCellValueFactory(cellData -> cellData.getValue().dniProperty());
         activoColumn.setCellValueFactory(cellData -> cellData.getValue().activoProperty().asObject());
+        activoColumn.setCellFactory(col -> new TableCell<Instructor, Boolean>() {
+            @Override
+            protected void updateItem(Boolean item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty ? null : (item ? "Activo" : "Inactivo"));
+                // Opcional: añadir estilo
+                if (!empty) {
+                    setStyle(item ? "-fx-text-fill: green;" : "-fx-text-fill: red; -fx-font-weight: bold;");
+                }
+            }
+        });
+
         
        
         clasesColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getClasesConcatenadas()));
