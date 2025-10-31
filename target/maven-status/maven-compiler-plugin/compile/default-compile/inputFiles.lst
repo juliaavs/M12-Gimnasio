@@ -18,6 +18,7 @@
 /home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/App.java
 /home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Service/ClaseService.java
 /home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Models/Instructor.java
+/home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Service/ReservasService.java
 /home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Service/AdminService.java
 /home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Models/Actividad.java
 /home/isard/M12-Gimnasio/src/main/java/com/mycompany/proyectogimnasio/Service/ClienteService.java

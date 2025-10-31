@@ -5,6 +5,12 @@ import com.mycompany.proyectogimnasio.Models.Cliente;
 import java.sql.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+
 
 public class ClienteService {
 
@@ -110,5 +116,49 @@ public class ClienteService {
             e.printStackTrace();
             return false;
         }
+    }
+    
+    public int getTotalClientes() {
+        String sql = "SELECT COUNT(*) FROM clientes WHERE activo = FALSE";
+        int total = 0;
+        try (Connection conn = Database.getConnection(); 
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            if (rs.next()) {
+                total = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            System.err.println("Error al obtener el total de clientes: " + e.getMessage());
+        }
+        return total;
+    }
+    
+    public int getNuevosClientesEstaSemana() {
+        // En Java: calcular la fecha de inicio de la semana actual (Lunes)
+        LocalDate today = LocalDate.now();
+        // Encuentra el último lunes (o el lunes de esta semana)
+        LocalDate startOfWeek = today.with(DayOfWeek.MONDAY);
+
+        // Consulta SQL para contar clientes registrados desde el inicio de la semana.
+        // Usando un marcador de posición (?) para la fecha en la consulta JDBC.
+        String sql = "SELECT COUNT(*) FROM clientes WHERE fecha_registro >= ?";
+        int newClients = 0;
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            // Convertir LocalDate a java.sql.Date y establecer el parámetro
+            pstmt.setDate(1, java.sql.Date.valueOf(startOfWeek)); 
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    newClients = rs.getInt(1);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error al obtener nuevos clientes de la semana: " + e.getMessage());
+        }
+        return newClients;
     }
 }

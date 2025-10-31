@@ -17,8 +17,8 @@ public class InstructorService {
         String SQL_SELECT_ALL = "SELECT id_instructor, nombre, apellido, dni, activo FROM instructores";
 
         try (Connection conn = Database.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(SQL_SELECT_ALL)) {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(SQL_SELECT_ALL)) {
             
             while (rs.next()) {
                 Instructor instructor = new Instructor(
@@ -162,5 +162,34 @@ public class InstructorService {
         if (pstmt != null) pstmt.close();
         if (conn != null) conn.close(); 
     }
-}
+    }
+    public int getTotalInstructores() {
+        String sql = "SELECT COUNT(*) FROM instructores WHERE activo = TRUE";
+        int total = 0;
+        try (Connection conn = Database.getConnection(); 
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                total = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            System.err.println("Error al obtener el total de instructores: " + e.getMessage());
+        }
+        return total;
+    }
+    
+    public int getNuevosInstructoresEsteMes() {
+        String sql = "SELECT COUNT(*) FROM instructores WHERE YEAR(fecha_alta) = YEAR(CURDATE()) AND MONTH(fecha_alta) = MONTH(CURDATE())";
+        int newInstructors = 0;
+        try (Connection conn = Database.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                newInstructors = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            System.err.println("Error al obtener nuevos instructores del mes: " + e.getMessage());
+        }
+        return newInstructors;
+    }
 }

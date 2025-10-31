@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class EstadisticasService {
     
-    // Función original: Consulta 1. Contar Clases por Actividad
+    
     public Map<String, Integer> getClasesPorActividad() throws SQLException {
         Map<String, Integer> data = new HashMap<>();
         String SQL = "SELECT a.nombre, COUNT(c.id_clase) AS count FROM clases c JOIN actividades a ON c.id_actividad = a.id_actividad GROUP BY a.nombre";
@@ -100,5 +100,6 @@ public class EstadisticasService {
         }
         }
     return data;
-}
+    }
+    
 }

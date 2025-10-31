@@ -3,6 +3,10 @@ package com.mycompany.proyectogimnasio.Controllers;
 
 import com.mycompany.proyectogimnasio.App;
 import com.mycompany.proyectogimnasio.Service.EstadisticasService;
+import com.mycompany.proyectogimnasio.Service.InstructorService;
+import com.mycompany.proyectogimnasio.Service.ClienteService; 
+import com.mycompany.proyectogimnasio.Service.ReservasService;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -39,17 +43,78 @@ public class DashboardController {
     @FXML private CategoryAxis ocupacionX;
     
     
-
+    @FXML private Label totalInstructorsLabel;
+    @FXML private Label instructorsChangeLabel;
+    @FXML private Label totalClientsLabel;
+    @FXML private Label clientsChangeLabel;
+    @FXML private Label todayReservationsLabel;
+    @FXML private Label reservationsChangeLabel;
+    
+    
     private EstadisticasService estadisticasService;
-    // --- Métodos de Navegación del Dashboard ---
+    private final InstructorService instructorService = new InstructorService(); // Instanciado
+    private final ClienteService clienteService = new ClienteService();             // Instanciado
+    private final ReservasService reservasService = new ReservasService(); // Instanciado
+
+ 
     
     @FXML
     public void initialize() {
         estadisticasService = new EstadisticasService();
         // Llamada a las nuevas funciones de carga
+        loadDashboardData();
         loadOcupacionPorClaseData();
         
         
+        
+        
+    }
+    
+    private void loadDashboardData() {
+        try {
+            // --- 1. Instructores ---
+            int totalInstructores = instructorService.getTotalInstructores();
+            int newInstructors = instructorService.getNuevosInstructoresEsteMes();
+            
+            totalInstructorsLabel.setText(String.valueOf(totalInstructores));
+            instructorsChangeLabel.setText("+" + newInstructors + " este mes");
+            instructorsChangeLabel.setStyle("-fx-text-fill: green;");
+
+            // --- 2. Clientes ---
+            int totalClients = clienteService.getTotalClientes();
+            int newClients = clienteService.getNuevosClientesEstaSemana();
+
+            totalClientsLabel.setText(String.valueOf(totalClients));
+            clientsChangeLabel.setText("+" + newClients + " esta semana");
+            clientsChangeLabel.setStyle("-fx-text-fill: green;");
+
+
+            // --- 3. Reservas ---
+            int todayReservations = reservasService.getReservasHoy();
+            int yesterdayReservations = reservasService.getReservasAyer();
+            int change = todayReservations - yesterdayReservations;
+            
+            todayReservationsLabel.setText(String.valueOf(todayReservations));
+            
+            // Lógica para el texto y el color del cambio
+            String changeText = (change >= 0 ? "+" : "") + change + " vs ayer";
+            reservationsChangeLabel.setText(changeText);
+            
+            if (change > 0) {
+                reservationsChangeLabel.setStyle("-fx-text-fill: green;");
+            } else if (change < 0) {
+                reservationsChangeLabel.setStyle("-fx-text-fill: red;");
+            } else {
+                 reservationsChangeLabel.setStyle("-fx-text-fill: black;");
+            }
+        } catch (Exception e) {
+            // Manejo de errores genérico para la carga de datos del dashboard
+            System.err.println("Error al cargar datos del Dashboard: " + e.getMessage());
+            // Opcional: Mostrar "Error" en los labels si falla la DB
+            totalInstructorsLabel.setText("ERROR");
+            totalClientsLabel.setText("ERROR");
+            todayReservationsLabel.setText("ERROR");
+        }
     }
 
     @FXML

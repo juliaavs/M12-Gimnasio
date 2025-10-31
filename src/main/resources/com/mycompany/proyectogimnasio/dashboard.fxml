@@ -16,20 +16,21 @@
             <HBox spacing="20">
                 <VBox alignment="CENTER" style="-fx-background-color: #ecf0f1; -fx-padding: 20; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
                     <Label text="Instructores totales" style="-fx-font-weight: bold;" />
-                    <Label text="24" style="-fx-font-size: 24;" />
-                    <Label text="+2 este mes" style="-fx-text-fill: green;" />
+                    <Label fx:id="totalInstructorsLabel" text="24" style="-fx-font-size: 24;" />
+                    <Label fx:id="instructorsChangeLabel" text="+2 este mes" style="-fx-text-fill: green;" />
                 </VBox>
                 <VBox alignment="CENTER" style="-fx-background-color: #ecf0f1; -fx-padding: 20; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
                     <Label text="Clientes totales" style="-fx-font-weight: bold;" />
-                    <Label text="487" style="-fx-font-size: 24;" />
-                    <Label text="+15 esta semana" style="-fx-text-fill: green;" />
+                    <Label fx:id="totalClientsLabel" text="487" style="-fx-font-size: 24;" />
+                    <Label fx:id="clientsChangeLabel" text="+15 esta semana" style="-fx-text-fill: green;" />
                 </VBox>
                 <VBox alignment="CENTER" style="-fx-background-color: #ecf0f1; -fx-padding: 20; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
                     <Label text="Reservas hoy" style="-fx-font-weight: bold;" />
-                    <Label text="89" style="-fx-font-size: 24;" />
-                    <Label text="-5 vs ayer" style="-fx-text-fill: red;" />
+                    <Label fx:id="todayReservationsLabel" text="89" style="-fx-font-size: 24;" />
+                    <Label fx:id="reservationsChangeLabel" text="-5 vs ayer" style="-fx-text-fill: red;" />
                 </VBox>
             </HBox>
+        
 
             <VBox spacing="10">
                 <HBox alignment="CENTER_LEFT" spacing="10">
