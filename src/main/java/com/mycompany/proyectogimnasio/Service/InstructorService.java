@@ -12,7 +12,7 @@ import java.util.List;
 public class InstructorService {
     
     
-    // --- R (Read): Listar todos los instructores con sus clases ---
+   
     public List<Instructor> getAllInstructors() throws SQLException {
         List<Instructor> instructores = new ArrayList<>();
         String SQL_SELECT_ALL = "SELECT id_instructor, nombre, apellido, dni, activo FROM instructores";
@@ -30,7 +30,7 @@ public class InstructorService {
                     rs.getBoolean("activo")
                 );
                 
-                // Cargar las clases asociadas a este instructor
+                
                 instructor.setNombresClases(getClasesByInstructorId(instructor.getIdInstructor(), conn));
                 instructores.add(instructor);
             }
@@ -38,10 +38,10 @@ public class InstructorService {
         return instructores;
     }
     
-    // Método auxiliar para obtener los nombres de las clases de un instructor
+    
     private List<String> getClasesByInstructorId(int idInstructor, Connection conn) throws SQLException {
         List<String> clases = new ArrayList<>();
-        // JOIN para obtener la actividad (nombre) a través de la clase (id_actividad)
+        
         String SQL_CLASES = "SELECT a.nombre FROM clases c JOIN actividades a ON c.id_actividad = a.id_actividad WHERE c.id_instructor = ?";
 
         try (PreparedStatement ps = conn.prepareStatement(SQL_CLASES)) {
@@ -55,7 +55,7 @@ public class InstructorService {
         return clases;
     }
 
-    // --- C (Create): Insertar un nuevo instructor ---
+    
     public void addInstructor(Instructor instructor) throws SQLException {
         String SQL_INSERT = "INSERT INTO instructores (nombre, apellido, dni, activo) VALUES (?, ?, ?, ?)";
         try (Connection conn = Database.getConnection();
@@ -65,17 +65,11 @@ public class InstructorService {
             ps.setString(3, instructor.getDni());
             ps.setBoolean(4, instructor.isActivo());
             ps.executeUpdate();
-            
-            // Opcional: obtener el ID generado si se necesita
-            // try (ResultSet rs = ps.getGeneratedKeys()) {
-            //     if (rs.next()) {
-            //         instructor.setIdInstructor(rs.getInt(1));
-            //     }
-            // }
+          
         }
     }
     
-    // --- U (Update): Actualizar un instructor existente ---
+   
     public void updateInstructor(Instructor instructor) throws SQLException {
         String SQL_UPDATE = "UPDATE instructores SET nombre = ?, apellido = ?, dni = ?, activo = ? WHERE id_instructor = ?";
         try (Connection conn = Database.getConnection();
@@ -94,12 +88,9 @@ public class InstructorService {
         }
     }
 
-    // --- D (Delete): Eliminar un instructor ---
-    // ¡CUIDADO! La tabla `clases` tiene una clave foránea a `instructores`. 
-    // Necesitas eliminar o reasignar las clases asociadas antes de eliminar al instructor.
+   
     public void deleteInstructor(int idInstructor) throws SQLException {
-        // En un entorno real, primero se manejarían las dependencias (ej. reasignar clases)
-        // Por simplicidad, asumiremos que no hay clases asociadas o se han gestionado.
+       
         String SQL_DELETE = "DELETE FROM instructores WHERE id_instructor = ?";
         try (Connection conn = Database.getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_DELETE)) {
@@ -114,18 +105,18 @@ public class InstructorService {
         try (Connection conn = Database.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(SQL)) {
             
-            // 1. Establecer el nuevo estado (el booleano se convierte a 1 o 0 en MySQL)
+           
             pstmt.setBoolean(1, nuevoEstado);
             
-            // 2. Establecer el ID del instructor
+         
             pstmt.setInt(2, idInstructor);
             
-            // Ejecutar la actualización y devolver true si se modificó al menos 1 fila
+            
             return pstmt.executeUpdate() > 0;
             
         } catch (SQLException e) {
             System.err.println("Error al cambiar el estado del instructor ID " + idInstructor + ": " + e.getMessage());
-            throw e; // Relanzar para que el controlador lo maneje
+            throw e; 
         }
     }
     
@@ -134,27 +125,25 @@ public class InstructorService {
     PreparedStatement pstmt = null;
     ResultSet rs = null;
     
-    // Consulta base: buscar DNI y excluir el ID actual si estamos editando
+    
     String sql;
     
     if (instructorId == null) {
-        // Modo Creación (CREATE): Buscar cualquier registro con el DNI
+       
         sql = "SELECT COUNT(*) FROM instructores WHERE dni = ?";
     } else {
-        // Modo Edición (UPDATE): Buscar DNI que NO pertenezca al ID actual
+        
         sql = "SELECT COUNT(*) FROM instructores WHERE dni = ? AND id_Instructor != ?";
     }
 
     try {
-        // Obtener la conexión a la BD
-        // conn = obtenerConexion(); // <-- Reemplaza con tu método real
-        
+       
         pstmt = conn.prepareStatement(sql);
         
-        // 1. Establecer el parámetro DNI (siempre es el primer parámetro)
+        
         pstmt.setString(1, dni);
         
-        // 2. Establecer el parámetro ID (solo en modo Edición)
+   
         if (instructorId != null) {
             pstmt.setInt(2, instructorId);
         }
@@ -163,16 +152,16 @@ public class InstructorService {
         
         if (rs.next()) {
             int count = rs.getInt(1);
-            return count > 0; // Si el contador es > 0, el DNI está duplicado
+            return count > 0; 
         }
         
-        return false; // Por defecto, si no hay resultados, no hay duplicados
+        return false; 
 
     } finally {
-        // Asegurar el cierre de recursos
+        
         if (rs != null) rs.close();
         if (pstmt != null) pstmt.close();
-        if (conn != null) conn.close(); // <-- Asegúrate de cerrar la conexión correctamente
+        if (conn != null) conn.close(); 
     }
 }
 }
