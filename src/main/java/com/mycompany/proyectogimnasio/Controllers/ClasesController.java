@@ -60,6 +60,32 @@ public class ClasesController {
         colActividad.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(3)));
         colIdInstructor.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(4)));
         colStatus.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(5)));
+        colStatus.setCellFactory(column -> {
+            return new TableCell<ObservableList<String>, String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+
+                    
+                    this.getStyleClass().removeAll("clase-confirmada", "clase-cancelada");
+
+                    if (empty || item == null) {
+                        setText(null);
+                        setGraphic(null);
+                    } else {
+                        setText(item); 
+
+                        // Aplica el estilo basado en el valor
+                        if (item.equalsIgnoreCase("Confirmado")) {
+                            setStyle("-fx-text-fill: green;");
+                        } else if (item.equalsIgnoreCase("Cancelado")) {
+                            setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+                        }
+                    }
+                }
+            };
+        });
+        
 
         try {
             conn = Database.getConnection();
