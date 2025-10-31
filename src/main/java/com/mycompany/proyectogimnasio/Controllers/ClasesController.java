@@ -1,5 +1,6 @@
 package com.mycompany.proyectogimnasio.Controllers;
 
+import com.mycompany.proyectogimnasio.Database;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -16,7 +17,6 @@ import javafx.scene.layout.HBox;
 
 public class ClasesController {
 
-    // --- Componentes FXML para la Tabla (TableView) ---
     @FXML private TableView<ObservableList<String>> tablaClases;
     @FXML private TableColumn<ObservableList<String>, String> colId;
     @FXML private TableColumn<ObservableList<String>, String> colDia;
@@ -25,7 +25,6 @@ public class ClasesController {
     @FXML private TableColumn<ObservableList<String>, String> colIdInstructor;
     @FXML private TableColumn<ObservableList<String>, String> colStatus;
 
-    // --- Componentes FXML para la Entrada de Datos ---
     @FXML private ComboBox<String> cbDia;
     @FXML private ComboBox<String> cbHoraInicio;
     @FXML private TextField txtIdClase;
@@ -35,17 +34,14 @@ public class ClasesController {
     @FXML private HBox hboxCrear;
     @FXML private HBox hboxEditar;
     
-    // **CAMBIO CLAVE**: Un solo botón de estado
     @FXML private Button btnToggleStatus; 
 
-    // --- Variables de Conexión y Mapeo ---
     private Connection conn;
     private Map<String, Integer> actividadesMap;
     private Map<String, Integer> actividadesDuracionMap;
     private Map<String, Integer> instructoresMap;
     private ObservableList<String> selectedClaseData;
     
-    // --- Constantes para los horarios del gimnasio ---
     private static final LocalTime APERTURA_MANANA = LocalTime.of(7, 0);
     private static final LocalTime CIERRE_MANANA = LocalTime.of(13, 0);
     private static final LocalTime APERTURA_TARDE = LocalTime.of(15, 0);
@@ -66,7 +62,7 @@ public class ClasesController {
         colStatus.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(5)));
 
         try {
-            conn = DriverManager.getConnection("jdbc:mysql://gondola.proxy.rlwy.net:51831/railway", "root", "dZLeazCTzEKkPnAQFANrKCxyZlNywudL");
+            conn = Database.getConnection();
 
             cargarActividades();
             cargarInstructores();
@@ -90,8 +86,6 @@ public class ClasesController {
         }
     }
 
-    // --- Métodos de CRUD (Crear, Leer, Actualizar, Borrar) ---
-
     @FXML
     private void handleGuardar() {
         String nombreActividad = cbActividad.getSelectionModel().getSelectedItem();
@@ -109,7 +103,6 @@ public class ClasesController {
             int idInstructor = instructoresMap.get(nombreInstructor);
 
             if (selectedClaseData == null || txtIdClase.getText().isEmpty()) {
-                // --- MODO CREAR ---
                 if (!validarHorarioClase(dia, horaInicio, nombreActividad, -1)) return; 
                 String sql = "INSERT INTO clases (id_instructor, id_actividad, dia, hora_inicio, status) VALUES (?, ?, ?, ?, 'confirmado')";
                 try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -121,7 +114,6 @@ public class ClasesController {
                     mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Clase agregada correctamente.");
                 }
             } else {
-                // --- MODO ACTUALIZAR ---
                 int idClase = Integer.parseInt(txtIdClase.getText());
                 if (!validarHorarioClase(dia, horaInicio, nombreActividad, idClase)) return;
                 String sql = "UPDATE clases SET id_instructor = ?, id_actividad = ?, dia = ?, hora_inicio = ? WHERE id_clase = ?";
@@ -166,10 +158,6 @@ public class ClasesController {
         }
     }
     
-    /**
-     * **NUEVO MÉTODO**
-     * Maneja el clic del botón de estado dinámico.
-     */
     @FXML
     private void handleToggleStatus() {
         if (!validarSeleccion()) return;
@@ -177,7 +165,6 @@ public class ClasesController {
         String statusActual = selectedClaseData.get(5);
         String nuevoStatus;
 
-        // Determina la acción opuesta
         if ("confirmado".equalsIgnoreCase(statusActual)) {
             nuevoStatus = "cancelado";
         } else {
@@ -204,11 +191,8 @@ public class ClasesController {
             mostrarAlerta(Alert.AlertType.ERROR, "Error SQL", "Error al actualizar el estado: " + e.getMessage());
         }
     }
-
-    // --- Lógica de Validación de Horario ---
     
     private boolean validarHorarioClase(String dia, String horaInicioStr, String nombreActividad, int idClaseAExcluir) {
-        // ... (Este método no cambia)
         LocalTime nuevaHoraInicio;
         LocalTime nuevaHoraFin;
         try {
@@ -238,7 +222,7 @@ public class ClasesController {
         String sql = "SELECT c.id_clase, c.hora_inicio, a.duracion, a.nombre AS nombre_actividad_existente " +
                      "FROM clases c " +
                      "JOIN actividades a ON c.id_actividad = a.id_actividad " +
-                     "WHERE c.dia = ? AND UPPER(c.status) != 'CANCELADO";
+                     "WHERE c.dia = ? AND UPPER(c.status) != 'CANCELADO'";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, dia);
@@ -264,11 +248,7 @@ public class ClasesController {
         return true;
     }
 
-
-    // --- Métodos de Carga de Datos y UI ---
-
     private void cargarActividades() throws SQLException {
-        // ... (Este método no cambia)
         actividadesMap.clear();
         actividadesDuracionMap.clear();
         if (cbActividad == null) return;
@@ -288,7 +268,6 @@ public class ClasesController {
     
     @FXML
     private void cargarTabla() {
-        // ... (Este método no cambia)
         ObservableList<ObservableList<String>> data = FXCollections.observableArrayList();
         String sql = "SELECT c.id_clase, c.dia, c.hora_inicio, a.nombre AS nombre_actividad, " +
                          "CONCAT(i.nombre, ' ', i.apellido) AS instructor_completo, c.status " +
@@ -316,10 +295,6 @@ public class ClasesController {
         }
     }
     
-    /**
-     * **MÉTODO MODIFICADO**
-     * Actualiza el texto y estilo del botón de estado.
-     */
     private void mostrarDetallesClase(ObservableList<String> claseData) {
         selectedClaseData = claseData;
         
@@ -338,19 +313,17 @@ public class ClasesController {
             }
             cbActividad.getSelectionModel().select(selectedClaseData.get(3));
             cbInstructor.getSelectionModel().select(selectedClaseData.get(4));
-            
-            // --- **LÓGICA DEL BOTÓN DINÁMICO** ---
+          
             String status = selectedClaseData.get(5);
             if ("confirmado".equalsIgnoreCase(status)) {
                 btnToggleStatus.setText("Cancelar");
-                btnToggleStatus.setStyle("-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-weight: bold;"); // Naranja
+                btnToggleStatus.setStyle("-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-weight: bold;");
             } else {
-                // Para "cancelada" o cualquier otro estado
                 btnToggleStatus.setText("Confirmar");
-                btnToggleStatus.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;"); // Verde
+                btnToggleStatus.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;");
             }
             
-            setEstadoFormulario(true); // Modo "Editar"
+            setEstadoFormulario(true);
         }
     }
 
@@ -368,11 +341,10 @@ public class ClasesController {
         tablaClases.getSelectionModel().clearSelection();
         selectedClaseData = null;
         
-        setEstadoFormulario(false); // Modo "Crear"
+        setEstadoFormulario(false);
     }
     
     private void cargarHorariosDisponibles() {
-        // ... (Este método no cambia)
         if (cbHoraInicio == null) return;
         ObservableList<String> horarios = FXCollections.observableArrayList();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -399,7 +371,6 @@ public class ClasesController {
     }
 
     private void cargarDiasSemana() {
-        // ... (Este método no cambia)
         if (cbDia == null) return;
         ObservableList<String> dias = FXCollections.observableArrayList(
             "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"
@@ -408,7 +379,6 @@ public class ClasesController {
     }
 
     private void cargarInstructores() throws SQLException {
-        // ... (Este método no cambia)
         instructoresMap.clear();
         if (cbInstructor == null) return;
         cbInstructor.getItems().clear();

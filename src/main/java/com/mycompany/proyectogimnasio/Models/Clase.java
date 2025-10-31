@@ -7,10 +7,8 @@ public class Clase {
     private String dia;
     private String horaInicio;
     private String status;
-    private String nombreActividad; // Para mostrar en la tabla
+    private String nombreActividad;
 
-    // Constructor, Getters y Setters...
-    // Ejemplo de constructor
     public Clase(int idClase, int idInstructor, int idActividad, String dia, String horaInicio, String status, String nombreActividad) {
         this.idClase = idClase;
         this.idInstructor = idInstructor;
@@ -21,7 +19,6 @@ public class Clase {
         this.nombreActividad = nombreActividad;
     }
 
-    // Getters
     public int getIdClase() { return idClase; }
     public int getIdInstructor() { return idInstructor; }
     public int getIdActividad() { return idActividad; }

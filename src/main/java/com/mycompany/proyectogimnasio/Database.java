@@ -10,7 +10,6 @@ public class Database {
     private static final String USER = "root";
     private static final String PASSWORD = "dZLeazCTzEKkPnAQFANrKCxyZlNywudL";
 
-    // Método para obtener la conexión
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
