@@ -18,10 +18,12 @@
 
    <TableView fx:id="reservasTable" VBox.vgrow="ALWAYS">
       <columns>
-         <TableColumn fx:id="idClaseColumn" prefWidth="75.0" text="Clase" />
-         <TableColumn fx:id="idClienteColumn" prefWidth="75.0" text="Cliente" />
-         <TableColumn fx:id="statusColumn" prefWidth="120.0" text="Estado" />
-         <TableColumn fx:id="diaReservaColumn" prefWidth="150.0" text="Día Reserva" />
+        <TableColumn fx:id="nombreClaseColumn" prefWidth="75.0" text="Clase" />
+        <TableColumn fx:id="nombreClienteColumn" prefWidth="75.0" text="Cliente" />
+        <TableColumn fx:id="statusColumn" prefWidth="120.0" text="Estado" />
+        <TableColumn fx:id="diaReservaColumn" prefWidth="150.0" text="Día Reserva" />
+        <TableColumn fx:id="idClaseColumn" prefWidth="75.0" text="ID Clase" visible="false" />
+        <TableColumn fx:id="idClienteColumn" prefWidth="75.0" text="ID Cliente" visible="false" />
       </columns>
       <columnResizePolicy>
          <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

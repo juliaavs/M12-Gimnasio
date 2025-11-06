@@ -59,37 +59,47 @@ public class ReservasService {
     
     public List<Reservas> getAll() {
         List<Reservas> reservasList = new ArrayList<>();
-        // Sentencia SQL para seleccionar todos los campos relevantes
-        String sql = "SELECT * FROM inscripciones"; 
         
-        // Uso de try-with-resources para asegurar el cierre automático de los recursos (Connection, Statement, ResultSet)
-        try (Connection conn = Database.getConnection(); // Asume que esta línea funciona
+        // Consulta SQL compleja usando JOIN para obtener:
+        // 1. Datos de la Inscripción (i)
+        // 2. Nombre de la Actividad (a) a través de la Clase (c)
+        // 3. Nombre del Cliente (cl)
+        String sql = "SELECT " +
+                     "i.id_clase, i.id_cliente, i.status, i.dia_reserva, " +
+                     "a.nombre AS nombre_clase, " + // nombre de la actividad (que es el nombre de la clase)
+                     "cl.nombre AS nombre_cliente " + // nombre del cliente
+                     "FROM inscripciones i " +
+                     // JOIN 1: De inscripciones a Clases
+                     "INNER JOIN clases c ON i.id_clase = c.id_clase " +
+                     // JOIN 2: De Clases a Actividades (para obtener el nombre)
+                     "INNER JOIN actividades a ON c.id_actividad = a.id_actividad " +
+                     // JOIN 3: De inscripciones a Clientes
+                     "INNER JOIN clientes cl ON i.id_cliente = cl.id_cliente";
+        
+        try (Connection conn = Database.getConnection(); 
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
-            // 1. Itera sobre cada fila (registro) devuelta por la consulta
             while (rs.next()) {
-                
-                // 2. Extrae los datos del ResultSet usando los nombres de las columnas
                 int idClase = rs.getInt("id_clase");
                 int idCliente = rs.getInt("id_cliente");
                 String status = rs.getString("status");
-                
-                // 3. Mapea java.sql.Date a java.time.LocalDate, que es el tipo de tu modelo
                 LocalDate diaReserva = rs.getDate("dia_reserva").toLocalDate(); 
+                
+                // Mapeo de los nombres obtenidos por el JOIN
+                String nombreClase = rs.getString("nombre_clase");
+                String nombreCliente = rs.getString("nombre_cliente");
 
-                // 4. Crea el objeto Reservas con el constructor completo
-                Reservas reserva = new Reservas(idClase, idCliente, status, diaReserva);
+                Reservas reserva = new Reservas(idClase, idCliente, status, diaReserva, 
+                                                nombreClase, nombreCliente);
                 reservasList.add(reserva);
             }
         } catch (SQLException e) {
-            System.err.println("Error SQL al obtener todas las reservas: " + e.getMessage());
+            System.err.println("Error SQL en getAll() con JOIN: " + e.getMessage());
             e.printStackTrace();
-            // Retorna una lista vacía si falla la conexión o la consulta
         }
         return reservasList;
     }
-    
     public boolean updateStatus(int idClase, int idCliente, String newStatus) {
     String sql = "UPDATE inscripciones SET status = ? WHERE id_clase = ? AND id_cliente = ?";
     
@@ -109,4 +119,5 @@ public class ReservasService {
         return false;
     }
     }
+    
 }
