@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -11,6 +12,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -30,7 +32,9 @@
                   </Label>
                   <TableView fx:id="tablaClientes" VBox.vgrow="ALWAYS">
                      <columns>
-                        <TableColumn fx:id="colDni" prefWidth="100.0" text="DNI" />
+                        <TableColumn fx:id="colTipoDoc" prefWidth="80.0" text="Tipo Doc." />
+                        
+                        <TableColumn fx:id="colDni" prefWidth="100.0" text="Documento" />
                         <TableColumn fx:id="colNombre" prefWidth="120.0" text="Nombre" />
                         <TableColumn fx:id="colApellido" prefWidth="150.0" text="Apellido" />
                         <TableColumn fx:id="colIban" prefWidth="170.0" text="IBAN" />
@@ -44,7 +48,6 @@
                   </TableView>
                </children>
             </VBox>
-            
             <VBox minWidth="300.0" spacing="15.0" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
                <children>
                   <Label text="Detalles del Cliente">
@@ -56,42 +59,63 @@
                      </VBox.margin>
                   </Label>
                   <GridPane hgap="10.0" vgap="10.0">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="80.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="NEVER" minWidth="80.0" prefWidth="80.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                     </columnConstraints>
+                     <rowConstraints>
                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
                      <children>
-                        <Label text="DNI:" GridPane.rowIndex="0" />
-                        
-                        <HBox alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Tipo Doc.:" GridPane.rowIndex="0" />
+                        <ComboBox fx:id="cbTipoDoc" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <Label text="Número:" GridPane.rowIndex="1" />
+                        <StackPane fx:id="stackDoc" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <TextField fx:id="txtDni" promptText="12345678" HBox.hgrow="ALWAYS" />
-                              <TextField fx:id="txtDniLetra" editable="false" focusTraversable="false" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" style="-fx-background-color: #ecf0f1; -fx-font-weight: bold; -fx-alignment: CENTER;" />
+                              <HBox fx:id="paneDni" alignment="CENTER_LEFT" spacing="5.0">
+                                 <children>
+                                    <TextField fx:id="txtDni" promptText="8 números" HBox.hgrow="ALWAYS" />
+                                    <TextField fx:id="txtDniLetra" editable="false" focusTraversable="false" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" style="-fx-background-color: #ecf0f1; -fx-font-weight: bold; -fx-alignment: CENTER;" />
+                                 </children>
+                              </HBox>
+                              <HBox fx:id="paneNie" alignment="CENTER_LEFT" managed="false" spacing="5.0" visible="false">
+                                 <children>
+                                    <ComboBox fx:id="cbNiePrefix" prefWidth="60.0" />
+                                    <TextField fx:id="txtNieNum" promptText="7 números" HBox.hgrow="ALWAYS" />
+                                    <TextField fx:id="txtNieLetra" editable="false" focusTraversable="false" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" style="-fx-background-color: #ecf0f1; -fx-font-weight: bold; -fx-alignment: CENTER;" />
+                                 </children>
+                              </HBox>
+                              <HBox fx:id="panePasaporte" alignment="CENTER_LEFT" managed="false" visible="false">
+                                 <children>
+                                    <TextField fx:id="txtPasaporte" promptText="ABC1234" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </StackPane>
+                        <Label text="Nombre:" GridPane.rowIndex="2" />
+                        <TextField fx:id="txtNombre" promptText="Nombre del cliente" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label text="Apellido:" GridPane.rowIndex="3" />
+                        <TextField fx:id="txtApellido" promptText="Apellido del cliente" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label text="IBAN:" GridPane.rowIndex="4" />
+                        <HBox alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                           <children>
+                              <Label text="ES" style="-fx-font-weight: bold;" />
+                              <TextField fx:id="txtIban" promptText="22 números" HBox.hgrow="ALWAYS" />
                            </children>
                         </HBox>
-                        
-                        <Label text="Nombre:" GridPane.rowIndex="1" />
-                        <TextField fx:id="txtNombre" promptText="Nombre del cliente" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Label text="Apellido:" GridPane.rowIndex="2" />
-                        <TextField fx:id="txtApellido" promptText="Apellido del cliente" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label text="IBAN:" GridPane.rowIndex="3" />
-                        <TextField fx:id="txtIban" promptText="ES00..." GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                        <Label text="Teléfono:" GridPane.rowIndex="4" />
-                        <TextField fx:id="txtTelefono" promptText="600123456" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <Label text="C. Postal:" GridPane.rowIndex="5" />
-                        <TextField fx:id="txtCodPostal" promptText="08001" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <Label text="Teléfono:" GridPane.rowIndex="5" />
+                        <TextField fx:id="txtTelefono" promptText="600123456" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <Label text="C. Postal:" GridPane.rowIndex="6" />
+                        <TextField fx:id="txtCodPostal" promptText="08001" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                      </children>
                   </GridPane>
                   <VBox VBox.vgrow="ALWAYS" />
-                  
                   <VBox spacing="10.0">
                      <children>
                         <HBox fx:id="hboxEditar" alignment="CENTER" spacing="10.0">
@@ -108,7 +132,6 @@
                         </HBox>
                      </children>
                   </VBox>
-                  
                </children>
             </VBox>
          </children>

@@ -2,16 +2,22 @@ package com.mycompany.proyectogimnasio.Controllers;
 
 import com.mycompany.proyectogimnasio.Models.Cliente;
 import com.mycompany.proyectogimnasio.Service.ClienteService;
+import javafx.beans.property.SimpleStringProperty; // <-- IMPORTAR
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import java.util.Optional;
+import java.util.function.UnaryOperator; // <-- IMPORTAR
+import javafx.scene.control.TextFormatter;
 
 public class ClientesController {
 
     //<editor-fold desc="FXML Components">
     @FXML private TableView<Cliente> tablaClientes;
+    @FXML private TableColumn<Cliente, String> colTipoDoc; // <-- NUEVO
     @FXML private TableColumn<Cliente, String> colDni;
     @FXML private TableColumn<Cliente, String> colNombre;
     @FXML private TableColumn<Cliente, String> colApellido;
@@ -20,8 +26,23 @@ public class ClientesController {
     @FXML private TableColumn<Cliente, String> colCodPostal;
     @FXML private TableColumn<Cliente, Boolean> colActivo;
 
+    // --- Campos de Documento ---
+    @FXML private ComboBox<String> cbTipoDoc;
+    @FXML private StackPane stackDoc;
+    // DNI
+    @FXML private HBox paneDni;
     @FXML private TextField txtDni;
-    @FXML private TextField txtDniLetra; // <-- NUEVO
+    @FXML private TextField txtDniLetra;
+    // NIE
+    @FXML private HBox paneNie;
+    @FXML private ComboBox<String> cbNiePrefix;
+    @FXML private TextField txtNieNum;
+    @FXML private TextField txtNieLetra;
+    // Pasaporte
+    @FXML private HBox panePasaporte;
+    @FXML private TextField txtPasaporte;
+    // --- Fin Campos de Documento ---
+
     @FXML private TextField txtNombre;
     @FXML private TextField txtApellido;
     @FXML private TextField txtIban;
@@ -38,9 +59,32 @@ public class ClientesController {
 
     private final ClienteService clienteService = new ClienteService();
     private Cliente clienteSeleccionado;
+    
+    private static final String TIPO_DNI = "DNI";
+    private static final String TIPO_NIE = "NIE";
+    private static final String TIPO_PASAPORTE = "Pasaporte";
 
     @FXML
     public void initialize() {
+        
+        // --- Configuración de Columnas de la Tabla ---
+        
+        // **NUEVA COLUMNA TIPO DOC**
+        colTipoDoc.setCellValueFactory(cellData -> {
+            String doc = cellData.getValue().getDni();
+            String tipo = "";
+            if (doc == null) {
+                tipo = "N/A";
+            } else if (doc.matches("\\d{8}[A-Z]")) {
+                tipo = TIPO_DNI;
+            } else if (doc.matches("[XYZ]\\d{7}[A-Z]")) {
+                tipo = TIPO_NIE;
+            } else {
+                tipo = TIPO_PASAPORTE;
+            }
+            return new SimpleStringProperty(tipo);
+        });
+
         colDni.setCellValueFactory(cellData -> cellData.getValue().dniProperty());
         colNombre.setCellValueFactory(cellData -> cellData.getValue().nombreProperty());
         colApellido.setCellValueFactory(cellData -> cellData.getValue().apellidoProperty());
@@ -63,30 +107,70 @@ public class ClientesController {
         tablaClientes.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> mostrarDetallesCliente(newValue));
         
-        // **CAMBIO CLAVE**: Listener para calcular la letra del DNI automáticamente
-        txtDni.textProperty().addListener((obs, oldVal, newVal) -> {
-            actualizarLetraDni();
-        });
+        // --- Configuración de Campos de Documento ---
+        cbTipoDoc.setItems(FXCollections.observableArrayList(TIPO_DNI, TIPO_NIE, TIPO_PASAPORTE));
+        cbNiePrefix.setItems(FXCollections.observableArrayList("X", "Y", "Z"));
+        
+        cbTipoDoc.valueProperty().addListener((obs, oldVal, newVal) -> gestionarVisibilidadCamposDoc(newVal));
+        
+        txtDni.textProperty().addListener((obs, oldVal, newVal) -> actualizarLetraDni());
+        txtNieNum.textProperty().addListener((obs, oldVal, newVal) -> actualizarLetraNie());
+        cbNiePrefix.valueProperty().addListener((obs, oldVal, newVal) -> actualizarLetraNie());
+        
+        // --- APLICAR LÍMITES DE CARACTERES ---
+        addNumericLimiter(txtDni, 8);
+        addNumericLimiter(txtNieNum, 7);
+        addNumericLimiter(txtIban, 22);
+        addNumericLimiter(txtTelefono, 9);
+        addNumericLimiter(txtCodPostal, 5);
+        
+        // Formateador para Pasaporte (3 letras, 4 números)
+        addPasaporteLimiter(txtPasaporte, 7);
         
         cargarClientes();
-        setEstadoFormulario(false);
+        handleLimpiar(); 
     }
     
-    /**
-     * NUEVO: Método que se llama cada vez que cambia el texto en txtDni.
-     */
+    private void gestionarVisibilidadCamposDoc(String tipo) {
+        paneDni.setVisible(TIPO_DNI.equals(tipo));
+        paneDni.setManaged(TIPO_DNI.equals(tipo));
+        
+        paneNie.setVisible(TIPO_NIE.equals(tipo));
+        paneNie.setManaged(TIPO_NIE.equals(tipo));
+        
+        panePasaporte.setVisible(TIPO_PASAPORTE.equals(tipo));
+        panePasaporte.setManaged(TIPO_PASAPORTE.equals(tipo));
+    }
+    
     private void actualizarLetraDni() {
         String numeros = txtDni.getText().trim();
-        String letra = calcularLetraDni(numeros);
+        String letra = calcularLetraNif(numeros);
         txtDniLetra.setText(letra);
     }
     
-    /**
-     * NUEVO: Lógica de cálculo de la letra extraída.
-     * @param numeros Los 8 números del DNI.
-     * @return La letra correspondiente, o "" si la entrada no es válida.
-     */
-    private String calcularLetraDni(String numeros) {
+    private void actualizarLetraNie() {
+        String prefix = cbNiePrefix.getValue();
+        String numeros = txtNieNum.getText().trim();
+        
+        if (prefix == null || !numeros.matches("\\d{7}")) {
+            txtNieLetra.setText("");
+            return;
+        }
+        
+        String numerosParaCalculo = "";
+        if (prefix.equals("X")) {
+            numerosParaCalculo = "0" + numeros;
+        } else if (prefix.equals("Y")) {
+            numerosParaCalculo = "1" + numeros;
+        } else { // Z
+            numerosParaCalculo = "2" + numeros;
+        }
+        
+        String letra = calcularLetraNif(numerosParaCalculo);
+        txtNieLetra.setText(letra);
+    }
+    
+    private String calcularLetraNif(String numeros) {
         if (numeros == null || !numeros.matches("\\d{8}")) {
             return "";
         }
@@ -105,6 +189,7 @@ public class ClientesController {
         hboxEditar.setManaged(isEditing);
         hboxCrear.setVisible(!isEditing);
         hboxCrear.setManaged(!isEditing);
+        cbTipoDoc.setDisable(isEditing);
     }
     
     private void cargarClientes() {
@@ -115,19 +200,33 @@ public class ClientesController {
     private void mostrarDetallesCliente(Cliente cliente) {
         this.clienteSeleccionado = cliente;
         if (cliente != null) {
-            // **CAMBIO CLAVE**: Separar DNI en números y letra
-            String dniCompleto = cliente.getDni();
-            if (dniCompleto != null && dniCompleto.length() == 9) {
-                txtDni.setText(dniCompleto.substring(0, 8));
-                txtDniLetra.setText(dniCompleto.substring(8));
+            String doc = cliente.getDni();
+            
+            // Detectar tipo de documento
+            if (doc.matches("\\d{8}[A-Z]")) {
+                cbTipoDoc.setValue(TIPO_DNI);
+                txtDni.setText(doc.substring(0, 8));
+                txtDniLetra.setText(doc.substring(8));
+            } else if (doc.matches("[XYZ]\\d{7}[A-Z]")) {
+                cbTipoDoc.setValue(TIPO_NIE);
+                cbNiePrefix.setValue(doc.substring(0, 1));
+                txtNieNum.setText(doc.substring(1, 8));
+                // **CORRECCIÓN BUG NIE**: Simplemente mostrar la letra, no recalcular
+                txtNieLetra.setText(doc.substring(8));
             } else {
-                txtDni.setText(dniCompleto); // Cargar datos aunque estén mal
-                txtDniLetra.clear();
+                cbTipoDoc.setValue(TIPO_PASAPORTE);
+                txtPasaporte.setText(doc);
+            }
+            
+            String iban = cliente.getIban();
+            if (iban != null && iban.startsWith("ES") && iban.length() == 24) {
+                txtIban.setText(iban.substring(2));
+            } else {
+                txtIban.setText(iban);
             }
             
             txtNombre.setText(cliente.getNombre());
             txtApellido.setText(cliente.getApellido());
-            txtIban.setText(cliente.getIban());
             txtTelefono.setText(cliente.getTelefono());
             txtCodPostal.setText(cliente.getCodPostal());
             setEstadoFormulario(true);
@@ -142,33 +241,39 @@ public class ClientesController {
             return;
         }
 
-        // **CAMBIO CLAVE**: Construir el DNI completo
-        String dniNumeros = txtDni.getText().trim();
-        String dniLetra = txtDniLetra.getText().trim().toUpperCase();
-        String dni = dniNumeros + dniLetra; // DNI completo
+        String dniFinal;
+        String tipoDoc = cbTipoDoc.getValue();
+        
+        if (TIPO_DNI.equals(tipoDoc)) {
+            dniFinal = txtDni.getText().trim() + txtDniLetra.getText().trim();
+        } else if (TIPO_NIE.equals(tipoDoc)) {
+            dniFinal = cbNiePrefix.getValue() + txtNieNum.getText().trim() + txtNieLetra.getText().trim();
+        } else {
+            dniFinal = txtPasaporte.getText().trim().toUpperCase();
+        }
         
         String nombre = txtNombre.getText().trim();
         String apellido = txtApellido.getText().trim();
-        String password = dni; // La contraseña es el DNI completo
-        String iban = txtIban.getText().trim().toUpperCase();
+        String password = dniFinal; 
+        String iban = "ES" + txtIban.getText().trim().toUpperCase();
         String telefono = txtTelefono.getText().trim();
         String codPostal = txtCodPostal.getText().trim();
         
         boolean exito;
         
         if (clienteSeleccionado == null) {
-            if (clienteService.dniExiste(dni)) {
-                mostrarAlerta(false, "Error al Crear", "Ya existe un cliente con el DNI: " + dni, "");
+            if (clienteService.dniExiste(dniFinal)) {
+                mostrarAlerta(false, "Error al Crear", "Ya existe un cliente con el documento: " + dniFinal, "");
                 return;
             }
-            Cliente nuevoCliente = new Cliente(0, dni, nombre, apellido, password, iban, telefono, codPostal, true);
+            Cliente nuevoCliente = new Cliente(0, dniFinal, nombre, apellido, password, iban, telefono, codPostal, true);
             exito = clienteService.agregarCliente(nuevoCliente);
             mostrarAlerta(exito, "Cliente Agregado", "El nuevo cliente se ha añadido correctamente.", "Error al añadir el cliente.");
         
         } else {
             Cliente clienteActualizado = new Cliente(
                 clienteSeleccionado.getIdCliente(), 
-                dni, nombre, apellido, password, iban, telefono, codPostal, 
+                dniFinal, nombre, apellido, password, iban, telefono, codPostal, 
                 clienteSeleccionado.isActivo()
             );
             exito = clienteService.actualizarCliente(clienteActualizado);
@@ -206,13 +311,21 @@ public class ClientesController {
 
     @FXML
     private void handleLimpiar() {
+        cbTipoDoc.setValue(TIPO_DNI); 
+        gestionarVisibilidadCamposDoc(TIPO_DNI);
         txtDni.clear();
-        txtDniLetra.clear(); // <-- NUEVO
+        txtDniLetra.clear(); 
+        cbNiePrefix.setValue(null);
+        txtNieNum.clear();
+        txtNieLetra.clear();
+        txtPasaporte.clear();
+        
         txtNombre.clear();
         txtApellido.clear();
         txtIban.clear();
         txtTelefono.clear();
         txtCodPostal.clear();
+        
         tablaClientes.getSelectionModel().clearSelection();
         this.clienteSeleccionado = null;
         setEstadoFormulario(false);
@@ -220,14 +333,38 @@ public class ClientesController {
 
     private boolean validarCampos() {
         String mensajeError = "";
-        
-        // **CAMBIO CLAVE**: Validar solo los 8 números del DNI
-        String errorDni = getDniNumerosValidationError(txtDni.getText());
-        if (errorDni != null) {
-            mensajeError += errorDni + "\n";
-        } else if (txtDniLetra.getText().isEmpty()) {
-            // Si los números son válidos pero la letra está vacía (no debería pasar, pero por si acaso)
-            mensajeError += "El número de DNI introducido no es válido.\n";
+        String tipoDoc = cbTipoDoc.getValue();
+
+        if (tipoDoc == null) {
+            mensajeError += "Debe seleccionar un tipo de documento (DNI, NIE, Pasaporte).\n";
+        } else {
+            switch (tipoDoc) {
+                case TIPO_DNI:
+                    String errorDni = getDniNumerosValidationError(txtDni.getText());
+                    if (errorDni != null) {
+                        mensajeError += errorDni + "\n";
+                    } else if (txtDniLetra.getText().isEmpty()) {
+                        mensajeError += "El número de DNI introducido no es válido.\n";
+                    }
+                    break;
+                case TIPO_NIE:
+                    if (cbNiePrefix.getValue() == null) {
+                        mensajeError += "Debe seleccionar un prefijo (X, Y, Z) para el NIE.\n";
+                    }
+                    if (!txtNieNum.getText().matches("\\d{7}")) {
+                        mensajeError += "El número de NIE debe tener 7 dígitos.\n";
+                    } else if (txtNieLetra.getText().isEmpty()) {
+                        mensajeError += "El número de NIE introducido no es válido.\n";
+                    }
+                    break;
+                case TIPO_PASAPORTE:
+                    if (txtPasaporte.getText() == null || txtPasaporte.getText().trim().isEmpty()) {
+                        mensajeError += "El número de Pasaporte es obligatorio.\n";
+                    } else if (!txtPasaporte.getText().trim().toUpperCase().matches("^[A-Z]{3}\\d{4}$")) {
+                        mensajeError += "El Pasaporte debe tener 3 letras (mayúsculas) seguidas de 4 números (ej: ABC1234).\n";
+                    }
+                    break;
+            }
         }
         
         String errorIban = getIbanValidationError(txtIban.getText());
@@ -239,7 +376,6 @@ public class ClientesController {
         if (txtCodPostal.getText() == null || !txtCodPostal.getText().trim().matches("^\\d{5}$")) {
             mensajeError += "El código postal debe tener 5 dígitos.\n";
         }
-        
         if (txtNombre.getText() == null || txtNombre.getText().trim().isEmpty()) mensajeError += "El Nombre es obligatorio.\n";
         if (txtApellido.getText() == null || txtApellido.getText().trim().isEmpty()) mensajeError += "El Apellido es obligatorio.\n";
         
@@ -255,10 +391,6 @@ public class ClientesController {
         }
     }
     
-    /**
-     * MÉTODO ACTUALIZADO
-     * Valida solo los 8 números del DNI.
-     */
     private String getDniNumerosValidationError(String dniNumeros) {
         if (dniNumeros == null || dniNumeros.trim().isEmpty()) { 
             return "El DNI es obligatorio."; 
@@ -266,16 +398,16 @@ public class ClientesController {
         if (!dniNumeros.trim().matches("\\d{8}")) { 
             return "El DNI debe tener 8 números."; 
         }
-        // Si los números son correctos, la letra se calcula sola.
         return null;
     }
     
-    // El método getDniValidationError original se ha reemplazado/eliminado.
-    
     private String getIbanValidationError(String iban) {
         if (iban == null || iban.trim().isEmpty()) { return "El IBAN es obligatorio."; }
-        String ibanLimpio = iban.trim().toUpperCase().replaceAll("\\s", "");
-        if (!ibanLimpio.matches("^ES\\d{22}$")) { return "El formato del IBAN no es válido. Debe ser 'ES' + 22 números."; }
+        
+        String ibanLimpio = iban.trim().replaceAll("\\s", "");
+        if (!ibanLimpio.matches("^\\d{22}$")) { 
+            return "El formato del IBAN no es válido. Debe introducir 22 números."; 
+        }
         return null;
     }
 
@@ -291,5 +423,47 @@ public class ClientesController {
             alert.setHeaderText(encabezadoError);
         }
         alert.showAndWait();
+    }
+    
+    // --- MÉTODOS HELPER PARA LIMITAR TEXTO ---
+
+    /**
+     * Aplica un TextFormatter a un TextField para permitir solo números
+     * y limitar la longitud total.
+     */
+    private void addNumericLimiter(TextField textField, int maxLength) {
+        UnaryOperator<TextFormatter.Change> filter = change -> {
+            String newText = change.getControlNewText();
+            if (newText.matches("\\d*") && newText.length() <= maxLength) {
+                return change;
+            }
+            return null; 
+        };
+        textField.setTextFormatter(new TextFormatter<>(filter));
+    }
+    
+    /**
+     * Aplica un TextFormatter para el Pasaporte.
+     * Limita a 'maxLength' y fuerza mayúsculas.
+     * La validación de patrón (LLLNNNN) se hace al guardar.
+     */
+    private void addPasaporteLimiter(TextField textField, int maxLength) {
+        UnaryOperator<TextFormatter.Change> filter = change -> {
+            String newText = change.getControlNewText();
+
+            if (newText.length() > maxLength) {
+                return null; // Demasiado largo
+            }
+            
+            // Permite solo letras y números (luego validará el patrón exacto)
+            if (!newText.matches("^[a-zA-Z0-9]*$")) {
+                return null; // Caracteres inválidos
+            }
+
+            // Forzar mayúsculas
+            change.setText(change.getText().toUpperCase());
+            return change;
+        };
+        textField.setTextFormatter(new TextFormatter<>(filter));
     }
 }
