@@ -16,16 +16,17 @@ public class ClientesController {
     @FXML private TableColumn<Cliente, String> colNombre;
     @FXML private TableColumn<Cliente, String> colApellido;
     @FXML private TableColumn<Cliente, String> colIban;
-    @FXML private TableColumn<Cliente, String> colTelefono;   // <-- NUEVO
-    @FXML private TableColumn<Cliente, String> colCodPostal;  // <-- NUEVO
-    @FXML private TableColumn<Cliente, Boolean> colActivo;     // <-- NUEVO
+    @FXML private TableColumn<Cliente, String> colTelefono;
+    @FXML private TableColumn<Cliente, String> colCodPostal;
+    @FXML private TableColumn<Cliente, Boolean> colActivo;
 
     @FXML private TextField txtDni;
+    @FXML private TextField txtDniLetra; // <-- NUEVO
     @FXML private TextField txtNombre;
     @FXML private TextField txtApellido;
     @FXML private TextField txtIban;
-    @FXML private TextField txtTelefono;   // <-- NUEVO
-    @FXML private TextField txtCodPostal;  // <-- NUEVO
+    @FXML private TextField txtTelefono;
+    @FXML private TextField txtCodPostal;
 
     @FXML private HBox hboxEditar;
     @FXML private HBox hboxCrear;
@@ -43,31 +44,60 @@ public class ClientesController {
         colDni.setCellValueFactory(cellData -> cellData.getValue().dniProperty());
         colNombre.setCellValueFactory(cellData -> cellData.getValue().nombreProperty());
         colApellido.setCellValueFactory(cellData -> cellData.getValue().apellidoProperty());
-        colIban.setCellValueFactory(cellData -> cellData.getValue().ibanProperty());        
-        // **CAMBIO CLAVE**: Mapear nuevas columnas
+        colIban.setCellValueFactory(cellData -> cellData.getValue().ibanProperty());
         colTelefono.setCellValueFactory(cellData -> cellData.getValue().telefonoProperty());
         colCodPostal.setCellValueFactory(cellData -> cellData.getValue().codPostalProperty());
         
-        // Columna 'Activo' con formato personalizado (CheckBox visual)
         colActivo.setCellValueFactory(cellData -> cellData.getValue().activoProperty());
         colActivo.setCellFactory(col -> new TableCell<Cliente, Boolean>() {
             @Override
             protected void updateItem(Boolean item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty ? null : (item ? "Activo" : "Inactivo"));
-                // Opcional: añadir estilo
                 if (!empty) {
                     setStyle(item ? "-fx-text-fill: green;" : "-fx-text-fill: red; -fx-font-weight: bold;");
                 }
             }
         });
 
-
         tablaClientes.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> mostrarDetallesCliente(newValue));
         
+        // **CAMBIO CLAVE**: Listener para calcular la letra del DNI automáticamente
+        txtDni.textProperty().addListener((obs, oldVal, newVal) -> {
+            actualizarLetraDni();
+        });
+        
         cargarClientes();
         setEstadoFormulario(false);
+    }
+    
+    /**
+     * NUEVO: Método que se llama cada vez que cambia el texto en txtDni.
+     */
+    private void actualizarLetraDni() {
+        String numeros = txtDni.getText().trim();
+        String letra = calcularLetraDni(numeros);
+        txtDniLetra.setText(letra);
+    }
+    
+    /**
+     * NUEVO: Lógica de cálculo de la letra extraída.
+     * @param numeros Los 8 números del DNI.
+     * @return La letra correspondiente, o "" si la entrada no es válida.
+     */
+    private String calcularLetraDni(String numeros) {
+        if (numeros == null || !numeros.matches("\\d{8}")) {
+            return "";
+        }
+        try {
+            int numeroDni = Integer.parseInt(numeros);
+            String letras = "TRWAGMYFPDXBNJZSQVHLCKE";
+            char letraCalculada = letras.charAt(numeroDni % 23);
+            return String.valueOf(letraCalculada);
+        } catch (NumberFormatException e) {
+            return "";
+        }
     }
     
     private void setEstadoFormulario(boolean isEditing) {
@@ -85,12 +115,21 @@ public class ClientesController {
     private void mostrarDetallesCliente(Cliente cliente) {
         this.clienteSeleccionado = cliente;
         if (cliente != null) {
-            txtDni.setText(cliente.getDni());
+            // **CAMBIO CLAVE**: Separar DNI en números y letra
+            String dniCompleto = cliente.getDni();
+            if (dniCompleto != null && dniCompleto.length() == 9) {
+                txtDni.setText(dniCompleto.substring(0, 8));
+                txtDniLetra.setText(dniCompleto.substring(8));
+            } else {
+                txtDni.setText(dniCompleto); // Cargar datos aunque estén mal
+                txtDniLetra.clear();
+            }
+            
             txtNombre.setText(cliente.getNombre());
             txtApellido.setText(cliente.getApellido());
             txtIban.setText(cliente.getIban());
-            txtTelefono.setText(cliente.getTelefono());   // <-- NUEVO
-            txtCodPostal.setText(cliente.getCodPostal()); // <-- NUEVO
+            txtTelefono.setText(cliente.getTelefono());
+            txtCodPostal.setText(cliente.getCodPostal());
             setEstadoFormulario(true);
         } else {
             handleLimpiar();
@@ -103,13 +142,17 @@ public class ClientesController {
             return;
         }
 
-        String dni = txtDni.getText().trim().toUpperCase();
+        // **CAMBIO CLAVE**: Construir el DNI completo
+        String dniNumeros = txtDni.getText().trim();
+        String dniLetra = txtDniLetra.getText().trim().toUpperCase();
+        String dni = dniNumeros + dniLetra; // DNI completo
+        
         String nombre = txtNombre.getText().trim();
         String apellido = txtApellido.getText().trim();
-        String password = dni;
+        String password = dni; // La contraseña es el DNI completo
         String iban = txtIban.getText().trim().toUpperCase();
-        String telefono = txtTelefono.getText().trim();     // <-- NUEVO
-        String codPostal = txtCodPostal.getText().trim(); // <-- NUEVO
+        String telefono = txtTelefono.getText().trim();
+        String codPostal = txtCodPostal.getText().trim();
         
         boolean exito;
         
@@ -118,17 +161,15 @@ public class ClientesController {
                 mostrarAlerta(false, "Error al Crear", "Ya existe un cliente con el DNI: " + dni, "");
                 return;
             }
-            // Creamos el cliente (el servicio lo pondrá como activo=0 por defecto)
             Cliente nuevoCliente = new Cliente(0, dni, nombre, apellido, password, iban, telefono, codPostal, true);
             exito = clienteService.agregarCliente(nuevoCliente);
             mostrarAlerta(exito, "Cliente Agregado", "El nuevo cliente se ha añadido correctamente.", "Error al añadir el cliente.");
         
         } else {
-            // Actualizamos el cliente
             Cliente clienteActualizado = new Cliente(
                 clienteSeleccionado.getIdCliente(), 
                 dni, nombre, apellido, password, iban, telefono, codPostal, 
-                clienteSeleccionado.isActivo() // Mantenemos su estado de actividad
+                clienteSeleccionado.isActivo()
             );
             exito = clienteService.actualizarCliente(clienteActualizado);
             mostrarAlerta(exito, "Cliente Actualizado", "Los datos del cliente se han actualizado.", "Error al actualizar el cliente.");
@@ -147,7 +188,6 @@ public class ClientesController {
             return;
         }
         
-        // **CAMBIO CLAVE**: Lógica de "Dar de Baja"
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmar Baja");
         alert.setHeaderText("Dar de baja a: " + clienteSeleccionado.getNombre() + " " + clienteSeleccionado.getApellido());
@@ -155,7 +195,6 @@ public class ClientesController {
         
         Optional<ButtonType> resultado = alert.showAndWait();
         if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
-            // Llamamos al nuevo método del servicio
             boolean exito = clienteService.desactivarCliente(clienteSeleccionado.getIdCliente());
             mostrarAlerta(exito, "Cliente Dado de Baja", "El cliente ha sido marcado como 'Inactivo'.", "Error al dar de baja al cliente.");
             if (exito) {
@@ -168,11 +207,12 @@ public class ClientesController {
     @FXML
     private void handleLimpiar() {
         txtDni.clear();
+        txtDniLetra.clear(); // <-- NUEVO
         txtNombre.clear();
         txtApellido.clear();
         txtIban.clear();
-        txtTelefono.clear();   // <-- NUEVO
-        txtCodPostal.clear();  // <-- NUEVO
+        txtTelefono.clear();
+        txtCodPostal.clear();
         tablaClientes.getSelectionModel().clearSelection();
         this.clienteSeleccionado = null;
         setEstadoFormulario(false);
@@ -181,13 +221,18 @@ public class ClientesController {
     private boolean validarCampos() {
         String mensajeError = "";
         
-        String errorDni = getDniValidationError(txtDni.getText());
-        if (errorDni != null) mensajeError += errorDni + "\n";
+        // **CAMBIO CLAVE**: Validar solo los 8 números del DNI
+        String errorDni = getDniNumerosValidationError(txtDni.getText());
+        if (errorDni != null) {
+            mensajeError += errorDni + "\n";
+        } else if (txtDniLetra.getText().isEmpty()) {
+            // Si los números son válidos pero la letra está vacía (no debería pasar, pero por si acaso)
+            mensajeError += "El número de DNI introducido no es válido.\n";
+        }
         
         String errorIban = getIbanValidationError(txtIban.getText());
         if (errorIban != null) mensajeError += errorIban + "\n";
         
-        // **CAMBIO CLAVE**: Validación de nuevos campos
         if (txtTelefono.getText() == null || !txtTelefono.getText().trim().matches("^\\d{9}$")) {
             mensajeError += "El teléfono debe tener 9 dígitos.\n";
         }
@@ -210,22 +255,22 @@ public class ClientesController {
         }
     }
     
-    private String getDniValidationError(String dni) {
-        if (dni == null || dni.trim().isEmpty()) { return "El DNI es obligatorio."; }
-        String dniLimpio = dni.trim().toUpperCase();
-        if (dniLimpio.length() != 9) { return "El DNI debe tener 9 caracteres (ej: 12345678A)."; }
-        String parteNumerica = dniLimpio.substring(0, 8);
-        char letra = dniLimpio.charAt(8);
-        if (!parteNumerica.matches("\\d{8}")) { return "Los primeros 8 caracteres del DNI deben ser números."; }
-        if (!Character.isLetter(letra)) { return "El último carácter del DNI debe ser una letra."; }
-        try {
-            int numeroDni = Integer.parseInt(parteNumerica);
-            String letras = "TRWAGMYFPDXBNJZSQVHLCKE";
-            char letraCalculada = letras.charAt(numeroDni % 23);
-            if (letra != letraCalculada) { return "La letra '" + letra + "' no es correcta. Debería ser '" + letraCalculada + "'."; }
-        } catch (NumberFormatException e) { return "Error interno al validar el número de DNI."; }
+    /**
+     * MÉTODO ACTUALIZADO
+     * Valida solo los 8 números del DNI.
+     */
+    private String getDniNumerosValidationError(String dniNumeros) {
+        if (dniNumeros == null || dniNumeros.trim().isEmpty()) { 
+            return "El DNI es obligatorio."; 
+        }
+        if (!dniNumeros.trim().matches("\\d{8}")) { 
+            return "El DNI debe tener 8 números."; 
+        }
+        // Si los números son correctos, la letra se calcula sola.
         return null;
     }
+    
+    // El método getDniValidationError original se ha reemplazado/eliminado.
     
     private String getIbanValidationError(String iban) {
         if (iban == null || iban.trim().isEmpty()) { return "El IBAN es obligatorio."; }
