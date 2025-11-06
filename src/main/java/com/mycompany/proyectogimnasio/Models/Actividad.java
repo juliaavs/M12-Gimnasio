@@ -1,6 +1,7 @@
 package com.mycompany.proyectogimnasio.Models;
+import java.io.Serializable;
 
-public class Actividad {
+public class Actividad implements Serializable {
     private int idActividad;
     private String nombre;
     private String descripcion;

@@ -1,4 +1,3 @@
-
 package com.mycompany.proyectogimnasio.Models;
 
 import javafx.beans.property.*;
@@ -10,7 +9,7 @@ public class Instructor {
     private final StringProperty apellido = new SimpleStringProperty();
     private final StringProperty dni = new SimpleStringProperty();
     private final BooleanProperty activo = new SimpleBooleanProperty();
-   
+    
     private List<String> nombresClases;
 
     public Instructor() {}
@@ -22,13 +21,13 @@ public class Instructor {
         setDni(dni);
         setActivo(activo);
     }
-   
+    
     public IntegerProperty idInstructorProperty() { return idInstructor; }
     public StringProperty nombreProperty() { return nombre; }
     public StringProperty apellidoProperty() { return apellido; }
     public StringProperty dniProperty() { return dni; }
     public BooleanProperty activoProperty() { return activo; }
-   
+    
     public int getIdInstructor() { return idInstructor.get(); }
     public void setIdInstructor(int idInstructor) { this.idInstructor.set(idInstructor); }
 
@@ -43,11 +42,16 @@ public class Instructor {
 
     public boolean isActivo() { return activo.get(); }
     public void setActivo(boolean activo) { this.activo.set(activo); }
-   
+    
     public List<String> getNombresClases() { return nombresClases; }
     public void setNombresClases(List<String> nombresClases) { this.nombresClases = nombresClases; }
-   
+    
     public String getClasesConcatenadas() {
         return nombresClases != null ? String.join(", ", nombresClases) : "N/A";
+    }
+
+    @Override
+    public String toString() {
+        return getNombre() + " " + getApellido();
     }
 }
