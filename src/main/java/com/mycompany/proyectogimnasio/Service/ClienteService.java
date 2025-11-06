@@ -142,7 +142,7 @@ public class ClienteService {
 
         // Consulta SQL para contar clientes registrados desde el inicio de la semana.
         // Usando un marcador de posición (?) para la fecha en la consulta JDBC.
-        String sql = "SELECT COUNT(*) FROM clientes WHERE fecha_registro >= ?";
+        String sql = "SELECT COUNT(*) FROM clientes WHERE fecha_alta >= ?";
         int newClients = 0;
 
         try (Connection conn = Database.getConnection();

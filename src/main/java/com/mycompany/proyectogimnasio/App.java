@@ -195,11 +195,8 @@ public class App extends Application {
         initRootWithSidebar();
         sidebarController.setUser(usuario, rol);
 
-        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/reservas.fxml"));
+        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/ReservasView.fxml"));
         Parent center = loader.load();
-
-        ReservasController controller = loader.getController();
-        controller.setUser(usuario, rol);
 
         root.setCenter(center);
         primaryStage.setTitle("Reservas - FitGym Pro");
