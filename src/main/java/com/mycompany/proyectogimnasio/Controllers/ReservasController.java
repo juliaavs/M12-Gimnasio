@@ -64,10 +64,10 @@ public class ReservasController implements Initializable {
             // Aplicar estilo en línea basado en el estado
             if ("confirmado".equalsIgnoreCase(item)) {
                 // Fondo verde claro y texto verde oscuro
-                setStyle("-fx-background-color: #e6ffe6; -fx-text-fill: #008000; -fx-font-weight: bold;");
+                setStyle("-fx-text-fill: green;");
             } else if ("cancelado".equalsIgnoreCase(item)) {
                 // Fondo rojo claro y texto rojo oscuro
-                setStyle("-fx-background-color: #ffe6e6; -fx-text-fill: #cc0000; -fx-font-weight: bold;");
+                setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
             }
         }
     }
