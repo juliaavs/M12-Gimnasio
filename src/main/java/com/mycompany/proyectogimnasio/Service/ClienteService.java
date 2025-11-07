@@ -29,7 +29,6 @@ public class ClienteService {
                     rs.getString("IBAN"),
                     rs.getString("telefono"),
                     rs.getString("cod_postal"),
-                    // ** CAMBIO 1: 1 ahora es 'true' (Activo) **
                     rs.getInt("activo") == 1 
                 ));
             }
@@ -56,10 +55,12 @@ public class ClienteService {
     }
 
     public boolean agregarCliente(Cliente cliente) {
-        // ** CAMBIO 2: Se inserta '1' (Activo) por defecto **
-        String sql = "INSERT INTO clientes(dni, nombre, apellido, password, IBAN, telefono, cod_postal, activo) VALUES(?,?,?,?,?,?,?,1)";
+        // ** CAMBIO 1: Añadir 'fecha_alta' al SQL y un '?' más **
+        String sql = "INSERT INTO clientes(dni, nombre, apellido, password, IBAN, telefono, cod_postal, activo, fecha_alta) VALUES(?,?,?,?,?,?,?,1,?)";
+        
         try (Connection conn = Database.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
             pstmt.setString(1, cliente.getDni());
             pstmt.setString(2, cliente.getNombre());
             pstmt.setString(3, cliente.getApellido());
@@ -67,7 +68,13 @@ public class ClienteService {
             pstmt.setString(5, cliente.getIban());
             pstmt.setString(6, cliente.getTelefono());
             pstmt.setString(7, cliente.getCodPostal());
+            // 'activo' (campo 8) se pone a 1 (activo) directamente en el SQL
+            
+            // ** CAMBIO 2: Añadir la fecha de hoy como parámetro 8 (que es el 9º '?') **
+            pstmt.setDate(8, java.sql.Date.valueOf(LocalDate.now())); 
+            
             return pstmt.executeUpdate() > 0;
+            
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -94,7 +101,6 @@ public class ClienteService {
     }
 
     public boolean setEstadoCliente(int idCliente, boolean activar) {
-        // ** CAMBIO 3: 'activar' = true es 1, 'activar' = false es 0 **
         int nuevoValorDB = activar ? 1 : 0; 
         
         String sql = "UPDATE clientes SET activo = ? WHERE id_cliente = ?";
@@ -110,7 +116,6 @@ public class ClienteService {
     }
     
     public int getTotalClientes() {
-        // ** CAMBIO 4: Contar donde activo = 1 (Activo) **
         String sql = "SELECT COUNT(*) FROM clientes WHERE activo = 1";
         int total = 0;
         try (Connection conn = Database.getConnection(); 
