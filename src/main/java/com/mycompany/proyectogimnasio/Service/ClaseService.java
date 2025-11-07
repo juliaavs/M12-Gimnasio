@@ -96,6 +96,7 @@ public class ClaseService {
                         rs.getString("apellido"),
                         rs.getString("dni"),
                         rs.getBoolean("activo")
+                        
                 ));
             }
         } catch (SQLException e) {

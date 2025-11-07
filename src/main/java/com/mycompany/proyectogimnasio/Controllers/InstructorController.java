@@ -16,6 +16,9 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import java.util.Optional;
+import java.text.SimpleDateFormat; 
+import java.text.DateFormat;
+import java.util.Date;
 
 
 public class InstructorController {
@@ -27,6 +30,7 @@ public class InstructorController {
     @FXML private TableColumn<Instructor, String> apellidoColumn;
     @FXML private TableColumn<Instructor, String> dniColumn;
     @FXML private TableColumn<Instructor, Boolean> activoColumn;
+    @FXML private TableColumn<Instructor, Date> fechaAltaColumn; 
 
     @FXML private TextField txtFiltro;
 
@@ -57,6 +61,8 @@ public class InstructorController {
 
     private static final String TIPO_DNI = "DNI";
     private static final String TIPO_NIE = "NIE";
+    
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 
     @FXML
     public void initialize() {
@@ -84,6 +90,8 @@ public class InstructorController {
                 }
             }
         });
+        
+        
         
         instructorTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showInstructorDetails(newValue));

@@ -22,7 +22,7 @@ public class ReservasService {
     public int getReservasHoy() {
         LocalDate today = LocalDate.now();
         // Esta consulta cuenta todas las reservas cuya fecha sea igual a la de hoy.
-        String sql = "SELECT COUNT(*) FROM inscripciones WHERE DATE(dia_reserva) = ?";
+        String sql = "SELECT COUNT(*) FROM inscripciones WHERE dia_reserva = ?";
         return getReservasPorFecha(today, sql);
     }
 
@@ -31,7 +31,7 @@ public class ReservasService {
      */
     public int getReservasAyer() {
         LocalDate yesterday = LocalDate.now().minusDays(1);
-        String sql = "SELECT COUNT(*) FROM inscripciones WHERE DATE(dia_reserva) = ?";
+        String sql = "SELECT COUNT(*) FROM inscripciones WHERE dia_reserva = ?";
         return getReservasPorFecha(yesterday, sql);
     }
 

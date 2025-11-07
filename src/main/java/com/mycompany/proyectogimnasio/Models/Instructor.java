@@ -2,6 +2,9 @@ package com.mycompany.proyectogimnasio.Models;
 
 import javafx.beans.property.*;
 import java.util.List;
+import java.util.Date; // Necesaria para el tipo Date
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 public class Instructor {
     private final IntegerProperty idInstructor = new SimpleIntegerProperty();
@@ -9,6 +12,7 @@ public class Instructor {
     private final StringProperty apellido = new SimpleStringProperty();
     private final StringProperty dni = new SimpleStringProperty();
     private final BooleanProperty activo = new SimpleBooleanProperty();
+
     
     private List<String> nombresClases;
 
@@ -20,6 +24,7 @@ public class Instructor {
         setApellido(apellido);
         setDni(dni);
         setActivo(activo);
+        
     }
     
     public IntegerProperty idInstructorProperty() { return idInstructor; }
@@ -27,6 +32,7 @@ public class Instructor {
     public StringProperty apellidoProperty() { return apellido; }
     public StringProperty dniProperty() { return dni; }
     public BooleanProperty activoProperty() { return activo; }
+    
     
     public int getIdInstructor() { return idInstructor.get(); }
     public void setIdInstructor(int idInstructor) { this.idInstructor.set(idInstructor); }
@@ -42,6 +48,7 @@ public class Instructor {
 
     public boolean isActivo() { return activo.get(); }
     public void setActivo(boolean activo) { this.activo.set(activo); }
+    
     
     public List<String> getNombresClases() { return nombresClases; }
     public void setNombresClases(List<String> nombresClases) { this.nombresClases = nombresClases; }

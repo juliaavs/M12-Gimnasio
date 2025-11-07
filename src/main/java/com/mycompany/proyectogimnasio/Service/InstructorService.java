@@ -5,6 +5,7 @@ import com.mycompany.proyectogimnasio.Database;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.*;
 
 
 
@@ -14,7 +15,7 @@ public class InstructorService {
    
     public List<Instructor> getAllInstructors() throws SQLException {
         List<Instructor> instructores = new ArrayList<>();
-        String SQL_SELECT_ALL = "SELECT id_instructor, nombre, apellido, dni, activo FROM instructores";
+        String SQL_SELECT_ALL = "SELECT id_instructor, nombre, apellido, dni, activo, fecha_alta FROM instructores";
 
         try (Connection conn = Database.getConnection();
             Statement stmt = conn.createStatement();
@@ -27,6 +28,7 @@ public class InstructorService {
                     rs.getString("apellido"),
                     rs.getString("dni"),
                     rs.getBoolean("activo")
+                    
                 );
                 
                 
@@ -56,13 +58,15 @@ public class InstructorService {
 
     
     public void addInstructor(Instructor instructor) throws SQLException {
-        String SQL_INSERT = "INSERT INTO instructores (nombre, apellido, dni, activo) VALUES (?, ?, ?, ?)";
+        String SQL_INSERT = "INSERT INTO instructores (nombre, apellido, dni, activo, fecha_alta) VALUES (?, ?, ?, ?, ?)";
+        
         try (Connection conn = Database.getConnection();
-             PreparedStatement ps = conn.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS)) {
+            PreparedStatement ps = conn.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, instructor.getNombre());
             ps.setString(2, instructor.getApellido());
             ps.setString(3, instructor.getDni());
             ps.setBoolean(4, instructor.isActivo());
+            ps.setDate(5, java.sql.Date.valueOf(LocalDate.now()));
             ps.executeUpdate();
           
         }
