@@ -2,6 +2,7 @@ package com.mycompany.proyectogimnasio.Service;
 
 import com.mycompany.proyectogimnasio.Database;
 import java.sql.*;
+import com.mycompany.proyectogimnasio.Models.ClaseInfo;
 import java.time.LocalDate; // <-- IMPORTAR
 import java.time.format.TextStyle; // <-- IMPORTAR
 import java.util.ArrayList; // <-- IMPORTAR
@@ -16,25 +17,19 @@ public class EstadisticasService {
      * MÉTODO NUEVO
      * Obtiene las clases programadas para el día de hoy.
      */
-    public List<String> getClasesDeHoy() throws SQLException {
-        List<String> clasesHoy = new ArrayList<>();
+    public List<ClaseInfo> getClasesDeHoy() throws SQLException {
+        List<ClaseInfo> clasesHoy = new ArrayList<>();
         
-        // 1. Obtener el día de la semana actual en español (ej. "Lunes", "Martes")
         LocalDate today = LocalDate.now();
-        // Usamos Locale para asegurar que el nombre del día esté en español
         String diaSemana = today.getDayOfWeek().getDisplayName(TextStyle.FULL, new Locale("es", "ES"));
-        // Pone la primera letra en mayúscula (ej. "lunes" -> "Lunes")
         diaSemana = diaSemana.substring(0, 1).toUpperCase() + diaSemana.substring(1);
 
-        // 2. Corregir el acento de "Miércoles"
         if ("Miercoles".equals(diaSemana)) {
             diaSemana = "Miércoles";
         }
 
-        // 3. Consulta SQL
-        String sql = "SELECT TIME_FORMAT(c.hora_inicio, '%H:%i') AS hora, " +
-                     "       a.nombre AS actividad, " +
-                     "       i.nombre AS instructor " +
+        String sql = "SELECT c.id_clase, a.nombre AS actividad, i.nombre AS instructor, " +
+                     "       c.hora_inicio, a.duracion " +
                      "FROM clases c " +
                      "JOIN actividades a ON c.id_actividad = a.id_actividad " +
                      "JOIN instructores i ON c.id_instructor = i.id_instructor " +
@@ -48,13 +43,14 @@ public class EstadisticasService {
             ResultSet rs = ps.executeQuery();
             
             while (rs.next()) {
-                // Formatea el string como "10:00 - Spinning (Juan Perez)"
-                String formatted = String.format("%s - %s (%s)",
-                    rs.getString("hora"),
+                clasesHoy.add(new ClaseInfo(
+                    rs.getInt("id_clase"),
                     rs.getString("actividad"),
-                    rs.getString("instructor")
-                );
-                clasesHoy.add(formatted);
+                    rs.getString("instructor"),
+                    diaSemana, 
+                    rs.getTime("hora_inicio").toLocalTime(),
+                    rs.getInt("duracion")
+                ));
             }
         }
         return clasesHoy;

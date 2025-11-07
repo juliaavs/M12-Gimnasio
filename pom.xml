@@ -25,7 +25,6 @@
             <artifactId>javafx-fxml</artifactId>
             <version>${javafx.version}</version>
         </dependency>
-
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
@@ -43,7 +42,6 @@
                     <release>11</release>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
@@ -52,29 +50,33 @@
                     <mainClass>com.mycompany.proyectogimnasio.Main</mainClass>
                 </configuration>
             </plugin>
-            
             <plugin>
                 <groupId>org.panteleyev</groupId>
                 <artifactId>jpackage-maven-plugin</artifactId>
                 <version>1.5.0</version>
                 <configuration>
-                    <name>ProyectoGimnasio</name>
+                    <name>AdministracionGimnasio</name>
                     <mainClass>com.mycompany.proyectogimnasio.Main</mainClass>
                     <mainJar>ProyectoGimnasio-1.0-SNAPSHOT.jar</mainJar>
-                    
                     <input>target</input>
-                    
                     <destination>target/dist</destination>
-                    <appName>Proyecto Gimnasio</appName>
+                    <appName>Administracion Gimnasio</appName>
                     <vendor>Tu Nombre</vendor>
                     <copyright>Copyright © 2025</copyright>
+                    <icon>src/main/resources/icon.png</icon>
 
+                    <modules>
+                        <module>java.sql</module>
+                        <module>javafx.controls</module>
+                        <module>javafx.fxml</module>
+                        <module>javafx.graphics</module>
+                    </modules>
+                    
                     <linuxShortcut>true</linuxShortcut>
                     <linuxMenuDir>/usr/share/applications</linuxMenuDir>
                     <linuxMenuGroup>Office</linuxMenuGroup>
                 </configuration>
             </plugin>
-            
         </plugins>
     </build>
 </project>
