@@ -1,6 +1,7 @@
 package com.mycompany.proyectogimnasio.Controllers;
 
 import com.mycompany.proyectogimnasio.App;
+import com.mycompany.proyectogimnasio.Models.ClaseInfo; 
 import com.mycompany.proyectogimnasio.Service.EstadisticasService;
 import com.mycompany.proyectogimnasio.Service.InstructorService;
 import com.mycompany.proyectogimnasio.Service.ClienteService;
@@ -13,7 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List; // <-- IMPORTAR List
+import java.util.List;
 import java.util.Map;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -22,7 +23,14 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView; // <-- IMPORTAR ListView
+import javafx.scene.control.ListView;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableCell;
+import javafx.scene.paint.Color;
+import javafx.beans.property.SimpleStringProperty;
+import java.time.format.DateTimeFormatter; 
+import java.time.LocalTime; // <-- ¡AÑADE ESTA LÍNEA!
 
 public class DashboardController {
     
@@ -35,7 +43,7 @@ public class DashboardController {
     @FXML
     private Button btnInstructores; 
     
-    @FXML private PieChart clasesPorActividadChart; // No se usa en esta versión, pero estaba
+    @FXML private PieChart clasesPorActividadChart;
     
     @FXML private BarChart<String, Number> ocupacionChart;
     
@@ -49,7 +57,11 @@ public class DashboardController {
     @FXML private Label todayReservationsLabel;
     @FXML private Label reservationsChangeLabel;
     
-    @FXML private ListView<String> scheduleList; // <-- Inyección para el horario de hoy
+    @FXML private TableView<ClaseInfo> scheduleTable;
+    @FXML private TableColumn<ClaseInfo, String> colHoyHora;
+    @FXML private TableColumn<ClaseInfo, String> colHoyActividad;
+    @FXML private TableColumn<ClaseInfo, String> colHoyInstructor;
+    
 
     
     private EstadisticasService estadisticasService;
@@ -61,10 +73,45 @@ public class DashboardController {
     public void initialize() {
         estadisticasService = new EstadisticasService();
         
+        setupScheduleTableColumns();
+        
         loadDashboardData();
         loadOcupacionPorClaseData();
-        loadTodaySchedule(); // <-- AÑADIDA LA LLAMADA
+        loadTodaySchedule(); 
     }
+    
+    private void setupScheduleTableColumns() {
+        colHoyHora.setCellValueFactory(cellData -> {
+            LocalTime hora = cellData.getValue().getHoraInicio();
+            return new SimpleStringProperty(hora.format(DateTimeFormatter.ofPattern("HH:mm")));
+        });
+
+        colHoyInstructor.setCellValueFactory(cellData -> 
+            new SimpleStringProperty(cellData.getValue().getNombreInstructor())
+        );
+        
+        colHoyActividad.setCellValueFactory(cellData -> 
+            new SimpleStringProperty(cellData.getValue().getNombreActividad())
+        );
+        
+        colHoyActividad.setCellFactory(column -> new TableCell<ClaseInfo, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    setText(item);
+                    String activityName = item.toLowerCase();
+                    String bgColor = getColor(activityName);
+                    String textColor = getTextColor(activityName);
+                    setStyle("-fx-background-color: " + bgColor + "; -fx-text-fill: " + textColor + "; -fx-font-weight: bold; -fx-alignment: CENTER;");
+                }
+            }
+        });
+    }
+
     
     private void loadDashboardData() {
         try {
@@ -83,7 +130,6 @@ public class DashboardController {
             totalClientsLabel.setText(String.valueOf(totalClients));
             clientsChangeLabel.setText("+" + newClients + " esta semana");
             clientsChangeLabel.setStyle("-fx-text-fill: green;");
-
 
             // --- 3. Reservas ---
             int todayReservations = reservasService.getReservasHoy();
@@ -110,25 +156,20 @@ public class DashboardController {
         }
     }
 
-    /**
-     * MÉTODO NUEVO
-     * Carga el horario del día de hoy en el ListView.
-     */
     private void loadTodaySchedule() {
         try {
-            // Asumimos que el servicio tiene este método
-            List<String> todayClasses = estadisticasService.getClasesDeHoy();
+            List<ClaseInfo> todayClasses = estadisticasService.getClasesDeHoy();
             
             if (todayClasses.isEmpty()) {
-                scheduleList.setPlaceholder(new Label("No hay clases programadas para hoy."));
+                scheduleTable.setPlaceholder(new Label("No hay clases programadas para hoy."));
             } else {
-                ObservableList<String> items = FXCollections.observableArrayList(todayClasses);
-                scheduleList.setItems(items);
+                ObservableList<ClaseInfo> items = FXCollections.observableArrayList(todayClasses);
+                scheduleTable.setItems(items);
             }
 
         } catch (Exception e) {
              System.err.println("Error al cargar el horario de hoy: " + e.getMessage());
-             scheduleList.setPlaceholder(new Label("Error al cargar el horario."));
+             scheduleTable.setPlaceholder(new Label("Error al cargar el horario."));
              e.printStackTrace();
         }
     }
@@ -198,8 +239,6 @@ public class DashboardController {
                 Map<String, Integer> ocupacion = entry.getValue();
                 
                 aforoSeries.getData().add(new XYChart.Data<>(etiquetaLimpia, ocupacion.get("AFORO")));
-                
-                // --- CORRECCIÓN DE TIPEO ---
                 inscritosSeries.getData().add(new XYChart.Data<>(etiquetaLimpia, ocupacion.get("INSCRITOS")));
             }
 
@@ -211,6 +250,40 @@ public class DashboardController {
 
         } catch (SQLException e) {
             System.err.println("Error al cargar datos de Ocupación por Clase: " + e.getMessage());
+        }
+    }
+    
+    // --- MÉTODOS DE COLOR (Copiados de HorarioController) ---
+
+    private Color getColorObject(String activityName) {
+        switch (activityName.toLowerCase()) {
+            case "yoga": return Color.web("#e74c3c");
+            case "crossfit": return Color.web("#3498db");
+            case "spinning": return Color.web("#f1c40f");
+            case "zumba": return Color.web("#9b59b6");
+            case "pilates": return Color.web("#1abc9c");
+            default:
+                int hash = activityName.hashCode();
+                double hue = (Math.abs(hash) % 360);
+                return Color.hsb(hue, 0.75, 0.85); 
+        }
+    }
+
+    private String getColor(String activityName) {
+        Color color = getColorObject(activityName);
+        return String.format("#%02X%02X%02X",
+            (int) (color.getRed() * 255),
+            (int) (color.getGreen() * 255),
+            (int) (color.getBlue() * 255));
+    }
+
+    private String getTextColor(String activityName) {
+        Color color = getColorObject(activityName);
+        double luminance = (0.299 * color.getRed() + 0.587 * color.getGreen() + 0.114 * color.getBlue());
+        if (luminance > 0.5) {
+            return "#2c3e50"; // Texto oscuro
+        } else {
+            return "white"; // Texto claro
         }
     }
 }
