@@ -11,12 +11,10 @@ import java.sql.ResultSet;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 
-
 public class ClienteService {
 
     public ObservableList<Cliente> getAllClientes() {
         ObservableList<Cliente> clientes = FXCollections.observableArrayList();
-        // **ACTUALIZADO**: Añadidos los nuevos campos
         String sql = "SELECT id_cliente, dni, nombre, apellido, password, IBAN, telefono, cod_postal, activo FROM clientes";
         try (Connection conn = Database.getConnection();
              Statement stmt = conn.createStatement();
@@ -31,7 +29,8 @@ public class ClienteService {
                     rs.getString("IBAN"),
                     rs.getString("telefono"),
                     rs.getString("cod_postal"),
-                    rs.getInt("activo") == 0 // 0 = Activo (true)
+                    // ** CAMBIO 1: 1 ahora es 'true' (Activo) **
+                    rs.getInt("activo") == 1 
                 ));
             }
         } catch (SQLException e) {
@@ -40,11 +39,6 @@ public class ClienteService {
         return clientes;
     }
 
-    /**
-     * Comprueba si un DNI ya existe en la base de datos.
-     * @param dni El DNI a comprobar.
-     * @return true si el DNI ya existe, false en caso contrario.
-     */
     public boolean dniExiste(String dni) {
         String sql = "SELECT COUNT(*) FROM clientes WHERE dni = ?";
         try (Connection conn = Database.getConnection();
@@ -62,7 +56,8 @@ public class ClienteService {
     }
 
     public boolean agregarCliente(Cliente cliente) {
-        String sql = "INSERT INTO clientes(dni, nombre, apellido, password, IBAN, telefono, cod_postal, activo) VALUES(?,?,?,?,?,?,?,0)";
+        // ** CAMBIO 2: Se inserta '1' (Activo) por defecto **
+        String sql = "INSERT INTO clientes(dni, nombre, apellido, password, IBAN, telefono, cod_postal, activo) VALUES(?,?,?,?,?,?,?,1)";
         try (Connection conn = Database.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, cliente.getDni());
@@ -72,7 +67,6 @@ public class ClienteService {
             pstmt.setString(5, cliente.getIban());
             pstmt.setString(6, cliente.getTelefono());
             pstmt.setString(7, cliente.getCodPostal());
-            // 'activo' se inserta como 0 (activo) por defecto
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -99,17 +93,9 @@ public class ClienteService {
         }
     }
 
-    /**
-     * **MÉTODO NUEVO** (Reemplaza a desactivarCliente)
-     * Activa (activo=0) o desactiva (activo=1) un cliente.
-     * @param idCliente El ID del cliente a modificar.
-     * @param activar true para activar (poner a 0), false para desactivar (poner a 1).
-     * @return true si tuvo éxito, false si no.
-     */
     public boolean setEstadoCliente(int idCliente, boolean activar) {
-        // Si 'activar' es true, 'nuevoValorDB' será 0.
-        // Si 'activar' es false, 'nuevoValorDB' será 1.
-        int nuevoValorDB = activar ? 0 : 1; 
+        // ** CAMBIO 3: 'activar' = true es 1, 'activar' = false es 0 **
+        int nuevoValorDB = activar ? 1 : 0; 
         
         String sql = "UPDATE clientes SET activo = ? WHERE id_cliente = ?";
         try (Connection conn = Database.getConnection();
@@ -124,8 +110,8 @@ public class ClienteService {
     }
     
     public int getTotalClientes() {
-        // Asumiendo que 0 es activo (activo=false en la BD)
-        String sql = "SELECT COUNT(*) FROM clientes WHERE activo = 0";
+        // ** CAMBIO 4: Contar donde activo = 1 (Activo) **
+        String sql = "SELECT COUNT(*) FROM clientes WHERE activo = 1";
         int total = 0;
         try (Connection conn = Database.getConnection(); 
              PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -144,7 +130,6 @@ public class ClienteService {
         LocalDate today = LocalDate.now();
         LocalDate startOfWeek = today.with(DayOfWeek.MONDAY);
 
-        // Asumiendo que tienes una columna 'fecha_alta'
         String sql = "SELECT COUNT(*) FROM clientes WHERE fecha_alta >= ?";
         int newClients = 0;
 
