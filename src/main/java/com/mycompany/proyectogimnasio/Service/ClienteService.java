@@ -41,7 +41,6 @@ public class ClienteService {
     }
 
     /**
-     * **MÉTODO QUE FALTABA**
      * Comprueba si un DNI ya existe en la base de datos.
      * @param dni El DNI a comprobar.
      * @return true si el DNI ya existe, false en caso contrario.
@@ -63,7 +62,6 @@ public class ClienteService {
     }
 
     public boolean agregarCliente(Cliente cliente) {
-        // **ACTUALIZADO**: Añadidos los nuevos campos
         String sql = "INSERT INTO clientes(dni, nombre, apellido, password, IBAN, telefono, cod_postal, activo) VALUES(?,?,?,?,?,?,?,0)";
         try (Connection conn = Database.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -83,7 +81,6 @@ public class ClienteService {
     }
     
     public boolean actualizarCliente(Cliente cliente) {
-        // **ACTUALIZADO**: Añadidos los nuevos campos (sin incluir 'activo')
         String sql = "UPDATE clientes SET dni = ?, nombre = ?, apellido = ?, password = ?, IBAN = ?, telefono = ?, cod_postal = ? WHERE id_cliente = ?";
         try (Connection conn = Database.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -103,14 +100,22 @@ public class ClienteService {
     }
 
     /**
-     * **MÉTODO ACTUALIZADO**
-     * Desactiva un cliente poniendo su estado 'activo' a 1.
+     * **MÉTODO NUEVO** (Reemplaza a desactivarCliente)
+     * Activa (activo=0) o desactiva (activo=1) un cliente.
+     * @param idCliente El ID del cliente a modificar.
+     * @param activar true para activar (poner a 0), false para desactivar (poner a 1).
+     * @return true si tuvo éxito, false si no.
      */
-    public boolean desactivarCliente(int idCliente) {
-        String sql = "UPDATE clientes SET activo = 1 WHERE id_cliente = ?";
+    public boolean setEstadoCliente(int idCliente, boolean activar) {
+        // Si 'activar' es true, 'nuevoValorDB' será 0.
+        // Si 'activar' es false, 'nuevoValorDB' será 1.
+        int nuevoValorDB = activar ? 0 : 1; 
+        
+        String sql = "UPDATE clientes SET activo = ? WHERE id_cliente = ?";
         try (Connection conn = Database.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, idCliente);
+            pstmt.setInt(1, nuevoValorDB);
+            pstmt.setInt(2, idCliente);
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -119,7 +124,8 @@ public class ClienteService {
     }
     
     public int getTotalClientes() {
-        String sql = "SELECT COUNT(*) FROM clientes WHERE activo = FALSE";
+        // Asumiendo que 0 es activo (activo=false en la BD)
+        String sql = "SELECT COUNT(*) FROM clientes WHERE activo = 0";
         int total = 0;
         try (Connection conn = Database.getConnection(); 
              PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -135,20 +141,16 @@ public class ClienteService {
     }
     
     public int getNuevosClientesEstaSemana() {
-        // En Java: calcular la fecha de inicio de la semana actual (Lunes)
         LocalDate today = LocalDate.now();
-        // Encuentra el último lunes (o el lunes de esta semana)
         LocalDate startOfWeek = today.with(DayOfWeek.MONDAY);
 
-        // Consulta SQL para contar clientes registrados desde el inicio de la semana.
-        // Usando un marcador de posición (?) para la fecha en la consulta JDBC.
+        // Asumiendo que tienes una columna 'fecha_alta'
         String sql = "SELECT COUNT(*) FROM clientes WHERE fecha_alta >= ?";
         int newClients = 0;
 
         try (Connection conn = Database.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            // Convertir LocalDate a java.sql.Date y establecer el parámetro
             pstmt.setDate(1, java.sql.Date.valueOf(startOfWeek)); 
             
             try (ResultSet rs = pstmt.executeQuery()) {

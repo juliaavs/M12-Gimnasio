@@ -4,45 +4,72 @@ import com.mycompany.proyectogimnasio.Models.Instructor;
 import com.mycompany.proyectogimnasio.Service.InstructorService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors; // <-- IMPORTACIÓN AÑADIDA
 import javafx.beans.property.SimpleStringProperty;
-import javafx.scene.layout.HBox; // <-- Importante: Añadir import para HBox
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import java.util.Optional;
+
 
 public class InstructorController {
 
     // --- Campos FXML ---
     @FXML private TableView<Instructor> instructorTable;
-    @FXML private TableColumn<Instructor, Integer> idColumn;
+    @FXML private TableColumn<Instructor, String> colTipoDoc; 
     @FXML private TableColumn<Instructor, String> nombreColumn;
     @FXML private TableColumn<Instructor, String> apellidoColumn;
     @FXML private TableColumn<Instructor, String> dniColumn;
     @FXML private TableColumn<Instructor, Boolean> activoColumn;
-    @FXML private TableColumn<Instructor, String> clasesColumn;
+
+    @FXML private TextField txtFiltro;
 
     @FXML private TextField nombreField;
     @FXML private TextField apellidoField;
-    @FXML private TextField dniField;
     @FXML private Button btnCambiarEstado;
+    @FXML private Button btnVerClases; 
     
-    // Campos FXML para el nuevo layout
-    @FXML private TextField txtIdInstructor; // Campo oculto para el ID
-    @FXML private HBox hboxCrear;           // Contenedor botones de crear
-    @FXML private HBox hboxEditar;          // Contenedor botones de editar
+    // --- Campos DNI/NIE ---
+    @FXML private ComboBox<String> cbTipoDoc;
+    @FXML private StackPane stackDoc;
+    @FXML private HBox paneDni;
+    @FXML private TextField txtDni;
+    @FXML private TextField txtDniLetra;
+    @FXML private HBox paneNie;
+    @FXML private ComboBox<String> cbNiePrefix;
+    @FXML private TextField txtNieNum;
+    @FXML private TextField txtNieLetra;
+    
+    @FXML private TextField txtIdInstructor;
+    @FXML private HBox hboxCrear;
+    @FXML private HBox hboxEditar;
     
     // --- Campos de Servicio y Lógica ---
     private InstructorService instructorService;
     private ObservableList<Instructor> instructorList;
     private Instructor selectedInstructor;
 
+    private static final String TIPO_DNI = "DNI";
+    private static final String TIPO_NIE = "NIE";
+
     @FXML
     public void initialize() {
         instructorService = new InstructorService();
         instructorList = FXCollections.observableArrayList();
         
-        // Configuración de columnas (tu código original - está perfecto)
-        idColumn.setCellValueFactory(cellData -> cellData.getValue().idInstructorProperty().asObject());
+        // --- Configuración de Columnas ---
+        colTipoDoc.setCellValueFactory(cellData -> {
+            String doc = cellData.getValue().getDni();
+            String tipo = (doc.matches("[XYZ]\\d{7}[A-Z]")) ? TIPO_NIE : TIPO_DNI;
+            return new SimpleStringProperty(tipo);
+        });
+        
         nombreColumn.setCellValueFactory(cellData -> cellData.getValue().nombreProperty());
         apellidoColumn.setCellValueFactory(cellData -> cellData.getValue().apellidoProperty());
         dniColumn.setCellValueFactory(cellData -> cellData.getValue().dniProperty());
@@ -58,141 +85,174 @@ public class InstructorController {
             }
         });
         
-        clasesColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getClasesConcatenadas()));
-        
-        instructorTable.setItems(instructorList);
-        
-        // Listener de selección
         instructorTable.getSelectionModel().selectedItemProperty().addListener(
-            (observable, oldValue, newValue) -> showInstructorDetails(newValue));
+                (observable, oldValue, newValue) -> showInstructorDetails(newValue));
+
+        // --- Configuración de Campos de Documento ---
+        cbTipoDoc.setItems(FXCollections.observableArrayList(TIPO_DNI, TIPO_NIE));
+        cbNiePrefix.setItems(FXCollections.observableArrayList("X", "Y", "Z"));
+        
+        cbTipoDoc.valueProperty().addListener((obs, oldVal, newVal) -> gestionarVisibilidadCamposDoc(newVal));
+        
+        txtDni.textProperty().addListener((obs, oldVal, newVal) -> actualizarLetraDni());
+        txtNieNum.textProperty().addListener((obs, oldVal, newVal) -> actualizarLetraNie());
+        cbNiePrefix.valueProperty().addListener((obs, oldVal, newVal) -> actualizarLetraNie());
+
+        addNumericLimiter(txtDni, 8);
+        addNumericLimiter(txtNieNum, 7);
 
         loadInstructors();
+        configurarFiltro();
         
-        // Estado inicial: Modo Creación
-        clearFields(); 
+        clearFields();
     }
-
     
-    /**
-     * Carga o recarga los instructores desde la BD a la tabla.
-     */
+    private void configurarFiltro() {
+        FilteredList<Instructor> filteredData = new FilteredList<>(instructorList, p -> true);
+
+        txtFiltro.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(instructor -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                if (instructor.getDni() != null && instructor.getDni().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (instructor.getNombre() != null && instructor.getNombre().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (instructor.getApellido() != null && instructor.getApellido().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                
+                return false;
+            });
+        });
+
+        SortedList<Instructor> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(instructorTable.comparatorProperty());
+        instructorTable.setItems(sortedData);
+    }
+    
     private void loadInstructors() {
          try {
-               instructorList.clear();
-               instructorList.addAll(instructorService.getAllInstructors());
+            instructorList.clear();
+            instructorList.addAll(instructorService.getAllInstructors());
          } catch (SQLException e) {
-               showAlert("Error de BD", "No se pudieron cargar los instructores: " + e.getMessage(), Alert.AlertType.ERROR);
+            showAlert("Error de BD", "No se pudieron cargar los instructores: " + e.getMessage(), Alert.AlertType.ERROR);
          }
     }
     
     
-    /**
-     * Muestra los detalles de un instructor en el formulario.
-     * Gestiona la visibilidad de los botones de Crear/Editar.
-     * @param instructor El instructor seleccionado (o null para limpiar).
-     */
     private void showInstructorDetails(Instructor instructor) {
         selectedInstructor = instructor;
         
         if (instructor != null) {
-            // MODO EDICIÓN: Rellenar campos y mostrar botones de edición
+            // MODO EDICIÓN
             nombreField.setText(instructor.getNombre());
             apellidoField.setText(instructor.getApellido());
-            dniField.setText(instructor.getDni());
-            txtIdInstructor.setText(String.valueOf(instructor.getIdInstructor())); // Carga el ID
-
-            // Muestra HBox de Editar, Oculta HBox de Crear
-            hboxCrear.setVisible(false);
-            hboxCrear.setManaged(false);
-            hboxEditar.setVisible(true);
-            hboxEditar.setManaged(true);
+            txtIdInstructor.setText(String.valueOf(instructor.getIdInstructor()));
+            
+            String doc = instructor.getDni();
+            if (doc.matches("[XYZ]\\d{7}[A-Z]")) {
+                cbTipoDoc.setValue(TIPO_NIE);
+                cbNiePrefix.setValue(doc.substring(0, 1));
+                txtNieNum.setText(doc.substring(1, 8));
+                txtNieLetra.setText(doc.substring(8));
+            } else {
+                cbTipoDoc.setValue(TIPO_DNI);
+                if (doc.matches("\\d{8}[A-Z]")) {
+                    txtDni.setText(doc.substring(0, 8));
+                    txtDniLetra.setText(doc.substring(8));
+                } else {
+                    txtDni.setText(doc);
+                    txtDniLetra.clear();
+                }
+            }
+            
+            setEstadoFormulario(true);
             
         } else {
-            // MODO CREACIÓN: Limpiar campos (se gestiona en clearFields)
+            // MODO CREACIÓN
             clearFields();
         }
     }
 
     
-    /**
-     * Guarda un instructor nuevo o actualiza uno existente.
-     * Se llama tanto desde el botón "Crear" como "Actualizar".
-     */
     @FXML
     private void handleSaveInstructor() {
         if (!validarCampos()) { 
             return; 
         }
         
-        String dni = dniField.getText();
+        String dniFinal;
+        String tipoDoc = cbTipoDoc.getValue();
+        
+        if (TIPO_DNI.equals(tipoDoc)) {
+            dniFinal = txtDni.getText().trim() + txtDniLetra.getText().trim();
+        } else {
+            dniFinal = cbNiePrefix.getValue() + txtNieNum.getText().trim() + txtNieLetra.getText().trim();
+        }
+        
         Integer currentId = (selectedInstructor != null) ? selectedInstructor.getIdInstructor() : null;
 
         try {
-            if (instructorService.existsDni(dni, currentId)) {
+            if (instructorService.existsDni(dniFinal, currentId)) {
                 showAlert("Error de Validación", 
-                          "El DNI/NIE " + dni + " ya está registrado y no puede usarse.", 
+                          "El DNI/NIE " + dniFinal + " ya está registrado y no puede usarse.", 
                           Alert.AlertType.ERROR);
                 return; 
             }
             
             if (selectedInstructor != null) {
-                // Actualizar instructor existente
+                // Actualizar
                 selectedInstructor.setNombre(nombreField.getText());
                 selectedInstructor.setApellido(apellidoField.getText());
-                selectedInstructor.setDni(dni); 
+                selectedInstructor.setDni(dniFinal);
                 
                 instructorService.updateInstructor(selectedInstructor);
                 showAlert("Éxito", "Instructor actualizado correctamente.", Alert.AlertType.INFORMATION);
                 
             } else {
-                // Crear nuevo instructor
+                // Crear
                 Instructor newInstructor = new Instructor(
                     0,
                     nombreField.getText(),
                     apellidoField.getText(),
-                    dni,
-                    true // Nuevo instructor siempre activo por defecto
+                    dniFinal,
+                    true
                 );
                 
                 instructorService.addInstructor(newInstructor);
                 showAlert("Éxito", "Instructor guardado y activado correctamente.", Alert.AlertType.INFORMATION);
             }
             
-            // Limpiar y recargar después de guardar
-            clearFields();
             loadInstructors();
+            clearFields();
             
         } catch (SQLException e) {
             showAlert("Error de Base de Datos", "Error al guardar/actualizar el instructor: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
     
-    /**
-     * Limpia el formulario y vuelve al modo "Creación".
-     * Se llama desde ambos botones "Limpiar".
-     */
     @FXML
     private void handleClearInstructor() {
-        // showInstructorDetails(null) llama a clearFields() y gestiona los botones
-        showInstructorDetails(null); 
+        showInstructorDetails(null);
     }
     
-    /**
-     * Cambia el estado (activo/inactivo) del instructor seleccionado.
-     */
     @FXML
     private void handleCambiarEstado() {
-        Instructor selectedInstructor = instructorTable.getSelectionModel().getSelectedItem();
+        Instructor selected = instructorTable.getSelectionModel().getSelectedItem();
         
-        if (selectedInstructor != null) {
-            boolean nuevoEstado = !selectedInstructor.isActivo(); 
+        if (selected != null) {
+            boolean nuevoEstado = !selected.isActivo();
             String accion = nuevoEstado ? "activado" : "desactivado";
             
             try {
-                boolean success = instructorService.cambiarEstadoActivo(selectedInstructor.getIdInstructor(), nuevoEstado);
+                boolean success = instructorService.cambiarEstadoActivo(selected.getIdInstructor(), nuevoEstado);
                 
                 if (success) {
-                    selectedInstructor.setActivo(nuevoEstado);
+                    selected.setActivo(nuevoEstado);
                     instructorTable.refresh(); 
                     showAlert("Éxito", "El instructor ha sido " + accion + " correctamente.", Alert.AlertType.INFORMATION);
                 } else {
@@ -208,58 +268,82 @@ public class InstructorController {
         }
     }
     
+    @FXML
+    private void handleVerClases() {
+        if (selectedInstructor == null) {
+            showAlert("Error", "No hay un instructor seleccionado.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        List<String> clases = selectedInstructor.getNombresClases();
+        String nombreInstructor = selectedInstructor.getNombre() + " " + selectedInstructor.getApellido();
+        
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Clases Asociadas");
+        alert.setHeaderText("Clases de: " + nombreInstructor);
+
+        if (clases == null || clases.isEmpty()) {
+            alert.setContentText("Este instructor no tiene clases asociadas actualmente.");
+        } else {
+            // *** ESTA ES LA LÍNEA CORREGIDA ***
+            // Antes: .toList()
+            // Ahora: .collect(Collectors.toList())
+            String contenido = String.join("\n", clases.stream().map(c -> "• " + c).collect(Collectors.toList()));
+            
+            TextArea textArea = new TextArea(contenido);
+            textArea.setEditable(false);
+            textArea.setWrapText(true);
+            alert.getDialogPane().setContent(textArea);
+        }
+        
+        alert.showAndWait();
+    }
+    
     // --- Métodos de Validación y Ayuda ---
 
-    /**
-     * Valida la lógica del DNI. (Tu código original - está perfecto)
-     */
     private String getDniValidationError(String dni) {
-        if (dni == null || dni.trim().isEmpty()) {
-            return "El DNI es obligatorio.";
-        }
-        
+        if (dni == null || dni.trim().isEmpty()) { return "El DNI es obligatorio."; }
         String dniLimpio = dni.trim().toUpperCase();
-
-        if (dniLimpio.length() != 9) {
-            return "El DNI debe tener exactamente 9 caracteres (ej: 12345678A).";
-        }
-
+        if (dniLimpio.length() != 9) { return "El DNI debe tener exactamente 9 caracteres (ej: 12345678A)."; }
         String parteNumerica = dniLimpio.substring(0, 8);
         char letraRecibida = dniLimpio.charAt(8);
-
-        if (!parteNumerica.matches("\\d{8}")) {
-            return "Los primeros 8 caracteres del DNI deben ser números.";
-        }
-        
-        if (!Character.isLetter(letraRecibida)) {
-            return "El último carácter del DNI debe ser una letra.";
-        }
-
+        if (!parteNumerica.matches("\\d{8}")) { return "Los primeros 8 caracteres del DNI deben ser números."; }
+        if (!Character.isLetter(letraRecibida)) { return "El último carácter del DNI debe ser una letra."; }
         try {
             int numeroDni = Integer.parseInt(parteNumerica);
             String letras = "TRWAGMYFPDXBNJZSQVHLCKE";
             char letraCalculada = letras.charAt(numeroDni % 23);
-
             if (letraRecibida != letraCalculada) {
-                return "La letra '" + letraRecibida + "' no es correcta para ese número. La letra válida es '" + letraCalculada + "'.";
+                return "La letra '" + letraRecibida + "' no es correcta. Debería ser '" + letraCalculada + "'.";
             }
-        } catch (NumberFormatException e) {
-            return "Error interno al procesar el número de DNI."; 
-        }
-        
-        return null; // Sin errores
+        } catch (NumberFormatException e) { return "Error interno al procesar el número de DNI."; }
+        return null;
+    }
+    
+    private String getNieValidationError(String prefix, String numeros, String letra) {
+        if (prefix == null) { return "Debe seleccionar un prefijo (X, Y, Z) para el NIE."; }
+        if (!numeros.matches("\\d{7}")) { return "El número de NIE debe tener 7 dígitos."; }
+        if (letra.isEmpty()) { return "El número de NIE introducido no es válido."; }
+        return null; 
     }
 
-    /**
-     * Valida todos los campos del formulario antes de guardar.
-     */
     private boolean validarCampos() {
         String mensajeError = "";
-        
-        String errorDni = getDniValidationError(dniField.getText()); 
-        
-        if (errorDni != null) {
-            mensajeError += errorDni + "\n";
+        String tipoDoc = cbTipoDoc.getValue();
+
+        if (tipoDoc == null) {
+            mensajeError += "Debe seleccionar un tipo de documento.\n";
+        } else {
+            switch (tipoDoc) {
+                case TIPO_DNI:
+                    String errorDni = getDniValidationError(txtDni.getText() + txtDniLetra.getText());
+                    if (errorDni != null) mensajeError += errorDni + "\n";
+                    break;
+                case TIPO_NIE:
+                    String errorNie = getNieValidationError(cbNiePrefix.getValue(), txtNieNum.getText(), txtNieLetra.getText());
+                    if (errorNie != null) mensajeError += errorNie + "\n";
+                    break;
+            }
         }
 
         if (nombreField.getText() == null || nombreField.getText().trim().isEmpty()) mensajeError += "El Nombre es obligatorio.\n";
@@ -268,41 +352,119 @@ public class InstructorController {
         if (mensajeError.isEmpty()) {
             return true;
         } else {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Campos Inválidos");
-            alert.setHeaderText("Por favor, corrige los siguientes errores:");
-            alert.setContentText(mensajeError);
-            alert.showAndWait();
+            showAlert("Campos Inválidos", "Por favor, corrige los siguientes errores:", mensajeError, Alert.AlertType.WARNING);
             return false;
         }
     }
     
-    /**
-     * Resetea el formulario al estado "Modo Creación".
-     */
     private void clearFields() {
         selectedInstructor = null;
         nombreField.setText("");
         apellidoField.setText("");
-        dniField.setText("");
-        txtIdInstructor.setText(""); // Limpia el ID oculto
+        txtIdInstructor.setText("");
         instructorTable.getSelectionModel().clearSelection();
         
-        // Muestra HBox de Crear, Oculta HBox de Editar
-        hboxCrear.setVisible(true);
-        hboxCrear.setManaged(true);
-        hboxEditar.setVisible(false);
-        hboxEditar.setManaged(false);
+        cbTipoDoc.setValue(TIPO_DNI);
+        gestionarVisibilidadCamposDoc(TIPO_DNI);
+        txtDni.clear();
+        txtDniLetra.clear();
+        cbNiePrefix.setValue(null);
+        txtNieNum.clear();
+        txtNieLetra.clear();
+        
+        setEstadoFormulario(false);
     }
     
-    /**
-     * Muestra una alerta simple.
-     */
+    private void setEstadoFormulario(boolean isEditing) {
+        hboxCrear.setVisible(!isEditing);
+        hboxCrear.setManaged(!isEditing);
+        hboxEditar.setVisible(isEditing);
+        hboxEditar.setManaged(isEditing);
+        
+        btnVerClases.setVisible(isEditing);
+        btnVerClases.setManaged(isEditing);
+        
+        cbTipoDoc.setDisable(isEditing);
+    }
+    
     private void showAlert(String title, String content, Alert.AlertType type) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    private void showAlert(String title, String header, String content, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    // --- Métodos Helper para limitar texto ---
+    
+    private void addNumericLimiter(TextField textField, int maxLength) {
+        UnaryOperator<TextFormatter.Change> filter = change -> {
+            String newText = change.getControlNewText();
+            if (newText.matches("\\d*") && newText.length() <= maxLength) {
+                return change;
+            }
+            return null; 
+        };
+        textField.setTextFormatter(new TextFormatter<>(filter));
+    }
+    
+    // --- Métodos de gestión de DNI/NIE ---
+    
+    private void gestionarVisibilidadCamposDoc(String tipo) {
+        paneDni.setVisible(TIPO_DNI.equals(tipo));
+        paneDni.setManaged(TIPO_DNI.equals(tipo));
+        
+        paneNie.setVisible(TIPO_NIE.equals(tipo));
+        paneNie.setManaged(TIPO_NIE.equals(tipo));
+    }
+    
+    private void actualizarLetraDni() {
+        String numeros = txtDni.getText().trim();
+        String letra = calcularLetraNif(numeros);
+        txtDniLetra.setText(letra);
+    }
+    
+    private void actualizarLetraNie() {
+        String prefix = cbNiePrefix.getValue();
+        String numeros = txtNieNum.getText().trim();
+        
+        if (prefix == null || !numeros.matches("\\d{7}")) {
+            txtNieLetra.setText("");
+            return;
+        }
+        
+        String numerosParaCalculo = "";
+        if (prefix.equals("X")) {
+            numerosParaCalculo = "0" + numeros;
+        } else if (prefix.equals("Y")) {
+            numerosParaCalculo = "1" + numeros;
+        } else { // Z
+            numerosParaCalculo = "2" + numeros;
+        }
+        
+        String letra = calcularLetraNif(numerosParaCalculo);
+        txtNieLetra.setText(letra);
+    }
+    
+    private String calcularLetraNif(String numeros) {
+        if (numeros == null || !numeros.matches("\\d{8}")) {
+            return "";
+        }
+        try {
+            int numeroDni = Integer.parseInt(numeros);
+            String letras = "TRWAGMYFPDXBNJZSQVHLCKE";
+            char letraCalculada = letras.charAt(numeroDni % 23);
+            return String.valueOf(letraCalculada);
+        } catch (NumberFormatException e) {
+            return "";
+        }
     }
 }

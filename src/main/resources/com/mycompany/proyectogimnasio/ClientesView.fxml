@@ -75,6 +75,7 @@
                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
                         <Label text="Tipo Doc.:" GridPane.rowIndex="0" />
@@ -117,24 +118,27 @@
                         <TextField fx:id="txtTelefono" promptText="600123456" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                         <Label text="C. Postal:" GridPane.rowIndex="6" />
                         <TextField fx:id="txtCodPostal" promptText="08001" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                        
+                        <Label text="Estado:" GridPane.rowIndex="7" />
+                        <Label fx:id="lblEstado" text="Activo" style="-fx-font-weight: bold;" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                        
                      </children>
                   </GridPane>
                   <VBox VBox.vgrow="ALWAYS" />
                   <VBox spacing="10.0">
-                     <children>
-                        <HBox fx:id="hboxEditar" alignment="CENTER" spacing="10.0">
-                           <children>
-                              <Button fx:id="btnEliminar" onAction="#handleEliminar" text="Dar de Baja" prefWidth="120.0" style="-fx-background-color: #e74c3c; -fx-text-fill: white;" />
-                              <Button fx:id="btnActualizar" onAction="#handleGuardar" text="Actualizar" HBox.hgrow="ALWAYS" maxWidth="Infinity" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold;" />
-                           </children>
-                        </HBox>
-                        <HBox fx:id="hboxCrear" alignment="CENTER" spacing="10.0">
-                           <children>
-                              <Button fx:id="btnLimpiar" onAction="#handleLimpiar" text="Limpiar" prefWidth="120.0" style="-fx-background-color: #7f8c8d; -fx-text-fill: white;" />
-                              <Button fx:id="btnCrear" onAction="#handleGuardar" text="Crear" HBox.hgrow="ALWAYS" maxWidth="Infinity" style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold;" />
-                           </children>
-                        </HBox>
-                     </children>
+                     <HBox fx:id="hboxEditar" alignment="CENTER" spacing="10.0">
+                        <children>
+                           <Button onAction="#handleLimpiar" text="Limpiar" prefWidth="120.0" style="-fx-background-color: #7f8c8d; -fx-text-fill: white;" />
+                           <Button fx:id="btnActualizar" onAction="#handleGuardar" text="Actualizar" HBox.hgrow="ALWAYS" maxWidth="Infinity" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold;" />
+                           <Button fx:id="btnCambiarEstado" onAction="#handleCambiarEstado" text="Dar de Baja" prefWidth="100.0" style="-fx-background-color: #e74c3c; -fx-text-fill: white;" />
+                        </children>
+                     </HBox>
+                     <HBox fx:id="hboxCrear" alignment="CENTER" spacing="10.0">
+                        <children>
+                           <Button fx:id="btnLimpiar" onAction="#handleLimpiar" text="Limpiar" prefWidth="120.0" style="-fx-background-color: #7f8c8d; -fx-text-fill: white;" />
+                           <Button fx:id="btnCrear" onAction="#handleGuardar" text="Crear" HBox.hgrow="ALWAYS" maxWidth="Infinity" style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold;" />
+                        </children>
+                     </HBox>
                   </VBox>
                </children>
             </VBox>

@@ -28,7 +28,7 @@ public class ClientesController {
     @FXML private TableColumn<Cliente, String> colCodPostal;
     @FXML private TableColumn<Cliente, Boolean> colActivo;
     
-    @FXML private TextField txtFiltro;
+    @FXML private TextField txtFiltro; 
 
     // --- Campos de Documento ---
     @FXML private ComboBox<String> cbTipoDoc;
@@ -54,8 +54,11 @@ public class ClientesController {
     @FXML private HBox hboxCrear;
     @FXML private Button btnCrear;
     @FXML private Button btnActualizar;
-    @FXML private Button btnEliminar;
     @FXML private Button btnLimpiar;
+    
+    // --- NUEVOS CAMPOS ---
+    @FXML private Button btnCambiarEstado;
+    @FXML private Label lblEstado;
     //</editor-fold>
 
     private final ClienteService clienteService = new ClienteService();
@@ -133,11 +136,6 @@ public class ClientesController {
         handleLimpiar(); 
     }
     
-    /**
-     * MÉTODO CORREGIDO
-     * Se añaden comprobaciones '!= null' a todos los campos
-     * para evitar NullPointerExceptions si un dato falta en la BD.
-     */
     private void configurarFiltro() {
         FilteredList<Cliente> filteredData = new FilteredList<>(masterData, p -> true);
 
@@ -146,11 +144,7 @@ public class ClientesController {
                 if (newValue == null || newValue.isEmpty()) {
                     return true;
                 }
-
                 String lowerCaseFilter = newValue.toLowerCase();
-
-                // **LA CORRECCIÓN ESTÁ AQUÍ**
-                // Comprobar cada campo solo si no es nulo
                 
                 if (cliente.getDni() != null && cliente.getDni().toLowerCase().contains(lowerCaseFilter)) {
                     return true;
@@ -160,13 +154,13 @@ public class ClientesController {
                     return true;
                 } else if (cliente.getIban() != null && cliente.getIban().toLowerCase().contains(lowerCaseFilter)) {
                     return true;
-                } else if (cliente.getTelefono() != null && cliente.getTelefono().toLowerCase().contains(lowerCaseFilter)) { // <-- FIX
+                } else if (cliente.getTelefono() != null && cliente.getTelefono().toLowerCase().contains(lowerCaseFilter)) {
                     return true;
                 } else if (cliente.getCodPostal() != null && cliente.getCodPostal().toLowerCase().contains(lowerCaseFilter)) {
                     return true;
                 }
                 
-                return false; // No hay coincidencia
+                return false; 
             });
         });
 
@@ -234,6 +228,12 @@ public class ClientesController {
         hboxEditar.setManaged(isEditing);
         hboxCrear.setVisible(!isEditing);
         hboxCrear.setManaged(!isEditing);
+        
+        // --- NUEVA LÓGICA DE VISIBILIDAD ---
+        btnCambiarEstado.setVisible(isEditing);
+        btnCambiarEstado.setManaged(isEditing);
+        lblEstado.setVisible(isEditing);
+        
         cbTipoDoc.setDisable(isEditing);
     }
     
@@ -272,6 +272,20 @@ public class ClientesController {
             txtApellido.setText(cliente.getApellido());
             txtTelefono.setText(cliente.getTelefono());
             txtCodPostal.setText(cliente.getCodPostal());
+            
+            // --- NUEVA LÓGICA DE ESTADO ---
+            if (cliente.isActivo()) {
+                lblEstado.setText("Activo");
+                lblEstado.setStyle("-fx-text-fill: green; -fx-font-weight: bold;");
+                btnCambiarEstado.setText("Dar de Baja");
+                btnCambiarEstado.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white;");
+            } else {
+                lblEstado.setText("Inactivo");
+                lblEstado.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+                btnCambiarEstado.setText("Dar de Alta");
+                btnCambiarEstado.setStyle("-fx-background-color: #2ecc71; -fx-text-fill: white;");
+            }
+            
             setEstadoFormulario(true);
         } else {
             handleLimpiar();
@@ -329,22 +343,32 @@ public class ClientesController {
         }
     }
 
+    /**
+     * NUEVO MÉTODO
+     * Se llama desde el botón 'btnCambiarEstado'
+     */
     @FXML
-    private void handleEliminar() {
+    private void handleCambiarEstado() {
         if (clienteSeleccionado == null) {
             mostrarAlerta(false, "Error", "No hay ningún cliente seleccionado.", "");
             return;
         }
         
+        boolean estadoActual = clienteSeleccionado.isActivo();
+        boolean nuevoEstado = !estadoActual;
+        String accion = nuevoEstado ? "Dar de Alta" : "Dar de Baja";
+        String accionHecha = nuevoEstado ? "dado de alta" : "dado de baja";
+
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirmar Baja");
-        alert.setHeaderText("Dar de baja a: " + clienteSeleccionado.getNombre() + " " + clienteSeleccionado.getApellido());
-        alert.setContentText("¿Estás seguro de que quieres marcar a este cliente como 'Inactivo'?");
+        alert.setTitle("Confirmar " + accion);
+        alert.setHeaderText(accion + " a: " + clienteSeleccionado.getNombre() + " " + clienteSeleccionado.getApellido());
+        alert.setContentText("¿Estás seguro?");
         
         Optional<ButtonType> resultado = alert.showAndWait();
         if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
-            boolean exito = clienteService.desactivarCliente(clienteSeleccionado.getIdCliente());
-            mostrarAlerta(exito, "Cliente Dado de Baja", "El cliente ha sido marcado como 'Inactivo'.", "Error al dar de baja al cliente.");
+            // Llamamos al nuevo método del servicio
+            boolean exito = clienteService.setEstadoCliente(clienteSeleccionado.getIdCliente(), nuevoEstado);
+            mostrarAlerta(exito, "Cliente " + accionHecha, "El cliente ha sido " + accionHecha + ".", "Error al cambiar el estado del cliente.");
             if (exito) {
                 cargarClientes();
                 handleLimpiar();
@@ -368,6 +392,7 @@ public class ClientesController {
         txtIban.clear();
         txtTelefono.clear();
         txtCodPostal.clear();
+        lblEstado.setText(""); // Limpiar label de estado
         
         tablaClientes.getSelectionModel().clearSelection();
         this.clienteSeleccionado = null;
