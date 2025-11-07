@@ -12,13 +12,19 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TableCell;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 
 public class ReservasController implements Initializable {
     
     // Elementos del FXML
+   
     @FXML private TableView<Reservas> reservasTable;
     
     // Columnas que muestran los IDs (visibilidad opcional)
@@ -31,104 +37,161 @@ public class ReservasController implements Initializable {
     @FXML private TableColumn<Reservas, String> statusColumn;
     @FXML private TableColumn<Reservas, LocalDate> diaReservaColumn;
     
+    @FXML private TextField txtFiltro;
+    
     @FXML private Button toggleStatusButton;
+    private Reservas selectedReserva;
 
     private final ReservasService reservasService = new ReservasService();
     private ObservableList<Reservas> reservasList;
 
+  
+       
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // 1. Mapeo de Columnas (Binding)
-        idClaseColumn.setCellValueFactory(cellData -> cellData.getValue().idClaseProperty());
-        idClienteColumn.setCellValueFactory(cellData -> cellData.getValue().idClienteProperty());
-        statusColumn.setCellValueFactory(cellData -> cellData.getValue().statusProperty());
-        diaReservaColumn.setCellValueFactory(cellData -> cellData.getValue().diaReservaProperty());
-        
-        // Mapeo de los nombres
-        nombreClaseColumn.setCellValueFactory(cellData -> cellData.getValue().nombreClaseProperty());
-        nombreClienteColumn.setCellValueFactory(cellData -> cellData.getValue().nombreClienteProperty());
+        // 1. Configuración de CellValueFactory para las columnas
+        nombreClaseColumn.setCellValueFactory(new PropertyValueFactory<>("nombreClase"));
+        nombreClienteColumn.setCellValueFactory(new PropertyValueFactory<>("nombreCliente"));
+        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+        statusColumn.setCellFactory(column -> {
+        return new TableCell<Reservas, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
 
-        // Configuración visual del Status
-       statusColumn.setCellFactory(column -> new javafx.scene.control.TableCell<Reservas, String>() {
-    @Override
-    protected void updateItem(String item, boolean empty) {
-        super.updateItem(item, empty);
-        
-        // Limpiar estilos anteriores
-        setStyle(""); 
-        
-        if (empty || item == null) {
-            setText(null);
-        } else {
-            setText(item.toUpperCase()); // Mostrar el texto en mayúsculas
+                // Si la celda está vacía o el item es nulo, no mostrar nada
+                if (empty || item == null) {
+                    setText(null);
+                    setStyle(null);
+                } else {
+                    setText(item.toUpperCase()); // Mostrar el texto del estado
 
-            // Aplicar estilo en línea basado en el estado
-            if ("confirmado".equalsIgnoreCase(item)) {
-                // Fondo verde claro y texto verde oscuro
-                setStyle("-fx-text-fill: green;");
-            } else if ("cancelado".equalsIgnoreCase(item)) {
-                // Fondo rojo claro y texto rojo oscuro
-                setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+                    // Lógica para aplicar el color
+                    if ("confirmado".equalsIgnoreCase(item)) {
+                        // Estado Confirmado: Texto Verde
+                        setStyle("-fx-text-fill: #2ecc71; -fx-font-weight: bold;"); // #2ecc71 es Verde Esmeralda
+                    } else if ("cancelado".equalsIgnoreCase(item)) {
+                        // Estado Cancelado: Texto Rojo
+                        setStyle("-fx-text-fill: #e74c3c; -fx-font-weight: bold;"); // #e74c3c es Rojo
+                    } else {
+                        // Otros estados (por defecto)
+                        setStyle(null); 
+                    }
+                }
             }
-        }
-    }
-});
-        
-        // 2. Cargar Datos
-        loadReservas();
-        
-        // 3. Listener de Selección
-        toggleStatusButton.setDisable(true); 
-        reservasTable.getSelectionModel().selectedItemProperty().addListener(
-            (observable, oldValue, newValue) -> updateButtonState(newValue));
-    }
+        };
+    });
+        diaReservaColumn.setCellValueFactory(new PropertyValueFactory<>("diaReserva"));
+        idClaseColumn.setCellValueFactory(new PropertyValueFactory<>("idClase"));
+        idClienteColumn.setCellValueFactory(new PropertyValueFactory<>("idCliente"));
 
-    /**
-     * Carga las reservas desde el Service.
-     */
-    private void loadReservas() {
-        reservasList = FXCollections.observableArrayList(reservasService.getAll());
-        reservasTable.setItems(reservasList);
-    }
+        // 2. Cargar datos
+        loadReservas(); // Carga la ObservableList<Reservas>
+    
+        // -----------------------------------------------------------
+        // 3. LÓGICA DE FILTRADO Y BÚSQUEDA CON FilteredList
+        // -----------------------------------------------------------
+    
+        // Crear una FilteredList a partir de la ObservableList original
+        FilteredList<Reservas> filteredData = new FilteredList<>(reservasList, p -> true);
+
+        // Agregar un Listener al campo de texto de filtro
+        txtFiltro.textProperty().addListener((observable, oldValue, newValue) -> {
+        filteredData.setPredicate(reserva -> {
+            // Si el campo de filtro está vacío, mostrar todas las reservas.
+            if (newValue == null || newValue.isEmpty()) {
+                return true;
+            }
+
+            // Comparar la cadena de filtro (en minúsculas) con campos relevantes
+            String lowerCaseFilter = newValue.toLowerCase();
+
+            if (reserva.getNombreCliente().toLowerCase().contains(lowerCaseFilter)) {
+                return true; // Coincidencia por Nombre de Cliente
+            } else if (reserva.getNombreClase().toLowerCase().contains(lowerCaseFilter)) {
+                return true; // Coincidencia por Nombre de Clase
+            } else if (reserva.getStatus().toLowerCase().contains(lowerCaseFilter)) {
+                return true; // Coincidencia por Estado (Status)
+            }
+            return false; // No hay coincidencias
+        });
+    });
+
+        // Envolver la FilteredList en una SortedList
+        SortedList<Reservas> sortedData = new SortedList<>(filteredData);
+
+        // Vincular el comparador de SortedList con el comparador de la TableView
+         sortedData.comparatorProperty().bind(reservasTable.comparatorProperty());
+
+        // Establecer la SortedList como la fuente de datos de la tabla
+        reservasTable.setItems(sortedData);
+    
+        // -----------------------------------------------------------
+        // 4. LÓGICA DE SELECCIÓN Y BOTÓN DE ESTADO
+        // -----------------------------------------------------------
+
+        // Inicialmente ocultar el botón de estado
+        toggleStatusButton.setVisible(false);
+        toggleStatusButton.setManaged(false); // No ocupa espacio en el layout
+
+        // Agregar Listener para actualizar el botón cada vez que cambia la selección
+        reservasTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            selectedReserva = newSelection;
+            updateToggleButton(); // Llama al método de actualización de estilo/visibilidad
+    });
+}
     
     /**
      * Maneja el clic en el botón para cambiar el estado de la reserva.
      */
+    
+     private void loadReservas() {
+        reservasList = FXCollections.observableArrayList(reservasService.getAll());
+        reservasTable.setItems(reservasList);
+    }
+
     @FXML
     private void handleToggleStatus() {
-        Reservas selectedReserva = reservasTable.getSelectionModel().getSelectedItem();
-        
-        if (selectedReserva == null) {
-            showAlert("Advertencia", "Selecciona una reserva para modificar su estado.", Alert.AlertType.WARNING);
-            return;
-        }
-        
-        String newStatus = selectedReserva.isConfirmado() ? "cancelado" : "confirmado";
-        String action = selectedReserva.isConfirmado() ? "CANCELAR" : "CONFIRMAR";
-        
-        if (!confirmAction("Confirmación de Cambio", 
-                           "¿Deseas realmente " + action + " la reserva de " + selectedReserva.getNombreCliente() + "?")) {
-            return;
-        }
-        
-        // 1. Actualizar en la Base de Datos (Service)
-        boolean success = reservasService.updateStatus(
-            selectedReserva.getIdClase(), 
-            selectedReserva.getIdCliente(), 
-            newStatus
-        );
-
-        if (success) {
-            // 2. Actualizar el Modelo en JavaFX (la tabla se refresca automáticamente)
-            selectedReserva.setStatus(newStatus);
-            
-            // 3. Actualizar la UI
-            updateButtonState(selectedReserva); 
-            showAlert("Éxito", "El estado de la reserva ha sido cambiado a: " + newStatus.toUpperCase(), Alert.AlertType.INFORMATION);
-        } else {
-            showAlert("Error", "No se pudo actualizar el estado de la reserva en la base de datos.", Alert.AlertType.ERROR);
-        }
+    Reservas selectedReserva = reservasTable.getSelectionModel().getSelectedItem(); // Correcto
+    
+    if (selectedReserva == null) {
+        showAlert("Advertencia", "Selecciona una reserva para modificar su estado.", Alert.AlertType.WARNING);
+        return;
     }
+    
+    // Usamos el status actual del OBJETO para determinar el status y acción FUTUROS
+    // Asumimos: Si el status NO es "cancelado", la próxima acción es "cancelar"
+    boolean isCurrentlyConfirmed = "confirmado".equalsIgnoreCase(selectedReserva.getStatus());
+    
+    String newStatus = isCurrentlyConfirmed ? "cancelado" : "confirmado";
+    String action = isCurrentlyConfirmed ? "CANCELAR" : "CONFIRMAR";
+    
+    if (!confirmAction("Confirmación de Cambio", 
+                       "¿Deseas realmente " + action + " la reserva de " + selectedReserva.getNombreCliente() + "?")) {
+        return;
+    }
+    
+    // 1. Actualizar en la Base de Datos (Service)
+    boolean success = reservasService.updateStatus(
+        selectedReserva.getIdClase(), 
+        selectedReserva.getIdCliente(), 
+        newStatus
+    );
+
+    if (success) {
+        // 2. Actualizar el Modelo en JavaFX
+        selectedReserva.setStatus(newStatus);
+        
+        // Forzar a la tabla a refrescar la fila (necesario cuando se modifica el objeto sin reemplazarlo)
+        reservasTable.refresh(); 
+        
+        // 3. Actualizar la UI del botón (llama al método con la nueva lógica)
+        updateToggleButton(); 
+        showAlert("Éxito", "El estado de la reserva ha sido cambiado a: " + newStatus.toUpperCase(), Alert.AlertType.INFORMATION);
+    } else {
+        showAlert("Error", "No se pudo actualizar el estado de la reserva en la base de datos.", Alert.AlertType.ERROR);
+    }
+}
     
     /**
      * Actualiza el texto y el estado de habilitación del botón.
@@ -137,9 +200,9 @@ public class ReservasController implements Initializable {
         if (selected != null) {
             toggleStatusButton.setDisable(false);
             if (selected.isConfirmado()) {
-                toggleStatusButton.setText("Cambiar a CANCELADO");
+                toggleStatusButton.setText("Cancelar Reserva");
             } else {
-                toggleStatusButton.setText("Cambiar a CONFIRMADO (Activar)");
+                toggleStatusButton.setText("Activar Reserva");
             }
         } else {
             toggleStatusButton.setText("Seleccionar Reserva");
@@ -158,14 +221,64 @@ public class ReservasController implements Initializable {
         alert.showAndWait();
     }
     
-    /**
-     * Método auxiliar para confirmar una acción.
-     */
-     private boolean confirmAction(String title, String message) {
+    
+    
+    private boolean confirmAction(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
         return alert.showAndWait().filter(response -> response == ButtonType.OK).isPresent();
     }
+     
+    private void updateToggleButton() {
+    // Caso 1: No hay selección
+    if (selectedReserva == null) {
+        toggleStatusButton.setVisible(false);
+        toggleStatusButton.setManaged(false);
+        return; 
+    }
+    
+    // Caso 2: Hay selección, mostrar el botón y aplicar estilo
+    toggleStatusButton.setVisible(true);
+    toggleStatusButton.setManaged(true); 
+
+    String status = selectedReserva.getStatus();
+    
+    // Asumimos que "confirmado" significa que está activa y se puede cancelar.
+    if ("confirmado".equalsIgnoreCase(status)) {
+        
+        toggleStatusButton.setText("Cancelar Reserva");
+        
+        // 🚨 Estilo Rojo para CANCELAR
+        toggleStatusButton.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;");
+        
+    } 
+    // Asumimos que "cancelado" significa que está inactiva y se puede reactivar/confirmar.
+    else if ("cancelado".equalsIgnoreCase(status)) {
+        
+        toggleStatusButton.setText("Activar Reserva");
+        
+        // ✅ Estilo Verde y Texto Blanco para ACTIVAR
+        toggleStatusButton.setStyle("-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold;");
+        
+    } else {
+        // Ocultar si hay otros estados (e.g., "finalizada")
+        toggleStatusButton.setVisible(false);
+        toggleStatusButton.setManaged(false);
+    }
+    }
+    
+    @FXML
+    private void handleClearSelection() {
+        // 1. Limpiar la selección de la tabla
+        reservasTable.getSelectionModel().clearSelection();
+    
+        // 2. Resetear la referencia local y el botón de estado
+        // Ya que el listener de la tabla se activa al llamar a clearSelection(), 
+        // y pone selectedReserva = null, updateToggleButton() debería ocultarlo automáticamente.
+        // Pero si quieres ser explícito:
+        selectedReserva = null;
+        updateToggleButton(); 
+}
 }
