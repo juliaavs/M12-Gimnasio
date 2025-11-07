@@ -2,22 +2,24 @@ package com.mycompany.proyectogimnasio.Controllers;
 
 import com.mycompany.proyectogimnasio.Models.Cliente;
 import com.mycompany.proyectogimnasio.Service.ClienteService;
-import javafx.beans.property.SimpleStringProperty; // <-- IMPORTAR
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import java.util.Optional;
-import java.util.function.UnaryOperator; // <-- IMPORTAR
+import java.util.function.UnaryOperator;
 import javafx.scene.control.TextFormatter;
 
 public class ClientesController {
 
     //<editor-fold desc="FXML Components">
     @FXML private TableView<Cliente> tablaClientes;
-    @FXML private TableColumn<Cliente, String> colTipoDoc; // <-- NUEVO
+    @FXML private TableColumn<Cliente, String> colTipoDoc;
     @FXML private TableColumn<Cliente, String> colDni;
     @FXML private TableColumn<Cliente, String> colNombre;
     @FXML private TableColumn<Cliente, String> colApellido;
@@ -25,20 +27,19 @@ public class ClientesController {
     @FXML private TableColumn<Cliente, String> colTelefono;
     @FXML private TableColumn<Cliente, String> colCodPostal;
     @FXML private TableColumn<Cliente, Boolean> colActivo;
+    
+    @FXML private TextField txtFiltro;
 
     // --- Campos de Documento ---
     @FXML private ComboBox<String> cbTipoDoc;
     @FXML private StackPane stackDoc;
-    // DNI
     @FXML private HBox paneDni;
     @FXML private TextField txtDni;
     @FXML private TextField txtDniLetra;
-    // NIE
     @FXML private HBox paneNie;
     @FXML private ComboBox<String> cbNiePrefix;
     @FXML private TextField txtNieNum;
     @FXML private TextField txtNieLetra;
-    // Pasaporte
     @FXML private HBox panePasaporte;
     @FXML private TextField txtPasaporte;
     // --- Fin Campos de Documento ---
@@ -60,6 +61,8 @@ public class ClientesController {
     private final ClienteService clienteService = new ClienteService();
     private Cliente clienteSeleccionado;
     
+    private ObservableList<Cliente> masterData = FXCollections.observableArrayList();
+    
     private static final String TIPO_DNI = "DNI";
     private static final String TIPO_NIE = "NIE";
     private static final String TIPO_PASAPORTE = "Pasaporte";
@@ -68,8 +71,6 @@ public class ClientesController {
     public void initialize() {
         
         // --- Configuración de Columnas de la Tabla ---
-        
-        // **NUEVA COLUMNA TIPO DOC**
         colTipoDoc.setCellValueFactory(cellData -> {
             String doc = cellData.getValue().getDni();
             String tipo = "";
@@ -123,13 +124,57 @@ public class ClientesController {
         addNumericLimiter(txtIban, 22);
         addNumericLimiter(txtTelefono, 9);
         addNumericLimiter(txtCodPostal, 5);
-        
-        // Formateador para Pasaporte (3 letras, 4 números)
         addPasaporteLimiter(txtPasaporte, 7);
         
-        cargarClientes();
+        // --- Carga inicial y configuración del filtro ---
+        cargarClientes(); 
+        configurarFiltro(); 
+        
         handleLimpiar(); 
     }
+    
+    /**
+     * MÉTODO CORREGIDO
+     * Se añaden comprobaciones '!= null' a todos los campos
+     * para evitar NullPointerExceptions si un dato falta en la BD.
+     */
+    private void configurarFiltro() {
+        FilteredList<Cliente> filteredData = new FilteredList<>(masterData, p -> true);
+
+        txtFiltro.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(cliente -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                // **LA CORRECCIÓN ESTÁ AQUÍ**
+                // Comprobar cada campo solo si no es nulo
+                
+                if (cliente.getDni() != null && cliente.getDni().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (cliente.getNombre() != null && cliente.getNombre().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (cliente.getApellido() != null && cliente.getApellido().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (cliente.getIban() != null && cliente.getIban().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (cliente.getTelefono() != null && cliente.getTelefono().toLowerCase().contains(lowerCaseFilter)) { // <-- FIX
+                    return true;
+                } else if (cliente.getCodPostal() != null && cliente.getCodPostal().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                
+                return false; // No hay coincidencia
+            });
+        });
+
+        SortedList<Cliente> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(tablaClientes.comparatorProperty());
+        tablaClientes.setItems(sortedData);
+    }
+
     
     private void gestionarVisibilidadCamposDoc(String tipo) {
         paneDni.setVisible(TIPO_DNI.equals(tipo));
@@ -193,8 +238,8 @@ public class ClientesController {
     }
     
     private void cargarClientes() {
-        ObservableList<Cliente> clientes = clienteService.getAllClientes();
-        tablaClientes.setItems(clientes);
+        masterData.clear();
+        masterData.addAll(clienteService.getAllClientes());
     }
 
     private void mostrarDetallesCliente(Cliente cliente) {
@@ -202,7 +247,6 @@ public class ClientesController {
         if (cliente != null) {
             String doc = cliente.getDni();
             
-            // Detectar tipo de documento
             if (doc.matches("\\d{8}[A-Z]")) {
                 cbTipoDoc.setValue(TIPO_DNI);
                 txtDni.setText(doc.substring(0, 8));
@@ -211,7 +255,6 @@ public class ClientesController {
                 cbTipoDoc.setValue(TIPO_NIE);
                 cbNiePrefix.setValue(doc.substring(0, 1));
                 txtNieNum.setText(doc.substring(1, 8));
-                // **CORRECCIÓN BUG NIE**: Simplemente mostrar la letra, no recalcular
                 txtNieLetra.setText(doc.substring(8));
             } else {
                 cbTipoDoc.setValue(TIPO_PASAPORTE);
@@ -427,10 +470,6 @@ public class ClientesController {
     
     // --- MÉTODOS HELPER PARA LIMITAR TEXTO ---
 
-    /**
-     * Aplica un TextFormatter a un TextField para permitir solo números
-     * y limitar la longitud total.
-     */
     private void addNumericLimiter(TextField textField, int maxLength) {
         UnaryOperator<TextFormatter.Change> filter = change -> {
             String newText = change.getControlNewText();
@@ -442,26 +481,26 @@ public class ClientesController {
         textField.setTextFormatter(new TextFormatter<>(filter));
     }
     
-    /**
-     * Aplica un TextFormatter para el Pasaporte.
-     * Limita a 'maxLength' y fuerza mayúsculas.
-     * La validación de patrón (LLLNNNN) se hace al guardar.
-     */
     private void addPasaporteLimiter(TextField textField, int maxLength) {
         UnaryOperator<TextFormatter.Change> filter = change -> {
             String newText = change.getControlNewText();
 
             if (newText.length() > maxLength) {
-                return null; // Demasiado largo
+                return null;
             }
             
-            // Permite solo letras y números (luego validará el patrón exacto)
             if (!newText.matches("^[a-zA-Z0-9]*$")) {
-                return null; // Caracteres inválidos
+                return null;
             }
 
-            // Forzar mayúsculas
-            change.setText(change.getText().toUpperCase());
+            if (!change.isDeleted()) {
+                String originalText = change.getText();
+                String upperText = originalText.toUpperCase();
+                if (!originalText.equals(upperText)) {
+                    change.setText(upperText);
+                    change.selectRange(change.getAnchor(), change.getCaretPosition());
+                }
+            }
             return change;
         };
         textField.setTextFormatter(new TextFormatter<>(filter));

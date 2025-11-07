@@ -30,10 +30,14 @@
                         <Insets bottom="10.0" />
                      </VBox.margin>
                   </Label>
+                  <TextField fx:id="txtFiltro" promptText="Buscar por DNI, nombre, apellido, IBAN, teléfono...">
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </TextField>
                   <TableView fx:id="tablaClientes" VBox.vgrow="ALWAYS">
                      <columns>
                         <TableColumn fx:id="colTipoDoc" prefWidth="80.0" text="Tipo Doc." />
-                        
                         <TableColumn fx:id="colDni" prefWidth="100.0" text="Documento" />
                         <TableColumn fx:id="colNombre" prefWidth="120.0" text="Nombre" />
                         <TableColumn fx:id="colApellido" prefWidth="150.0" text="Apellido" />
