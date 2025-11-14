@@ -8,6 +8,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -28,6 +29,13 @@
                                 <Insets bottom="10.0" />
                             </VBox.margin>
                         </Label>
+                        
+                        <TextField fx:id="txtFiltro" promptText="Buscar por Nombre o Aforo...">
+                            <VBox.margin>
+                                <Insets bottom="10.0" />
+                            </VBox.margin>
+                        </TextField>
+                        
                         <TableView fx:id="tablaActividades" VBox.vgrow="ALWAYS">
                             <columns>
                                 <TableColumn fx:id="colId" prefWidth="50.0" text="ID">
@@ -44,6 +52,9 @@
                                 </TableColumn>
                                 <TableColumn fx:id="colAforo" prefWidth="80.0" text="Aforo">
                                     <cellValueFactory><PropertyValueFactory property="aforo" /></cellValueFactory>
+                                </TableColumn>
+                                <TableColumn fx:id="colActivo" prefWidth="80.0" text="Activo">
+                                    <cellValueFactory><PropertyValueFactory property="activo" /></cellValueFactory>
                                 </TableColumn>
                             </columns>
                             <columnResizePolicy>
@@ -69,7 +80,10 @@
                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                             </columnConstraints>
                             <rowConstraints>
-                                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" /> <RowConstraints minHeight="10.0" vgrow="SOMETIMES" /> <RowConstraints minHeight="10.0" vgrow="SOMETIMES" /> </rowConstraints>
+                                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                            </rowConstraints>
                             <children>
                                 <Label text="Nombre:" GridPane.rowIndex="0" />
                                 <TextField fx:id="txtNombre" promptText="Ej: Spinning" GridPane.columnIndex="1" GridPane.rowIndex="0" />
@@ -83,7 +97,7 @@
                         </GridPane>
 
                         <Label text="Descripción:">
-                             <VBox.margin>
+                            <VBox.margin>
                                 <Insets top="5.0" />
                             </VBox.margin>
                         </Label>
@@ -91,16 +105,24 @@
                         
                         <VBox VBox.vgrow="ALWAYS" />
 
-                        <HBox alignment="CENTER" spacing="10.0">
+                        <HBox alignment="CENTER_RIGHT" spacing="10.0">
                             <padding>
                                 <Insets top="10.0" />
                             </padding>
                             <children>
-                                <Button onAction="#limpiarCampos" text="Limpiar" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+                                <Button onAction="#limpiarCampos" text="Limpiar" />
                                 
-                                <Button fx:id="btnActualizar" onAction="#actualizarActividad" style="-fx-background-color: #f39c12; -fx-text-fill: white;" text="Actualizar" visible="false" managed="false" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+                                <ToggleButton fx:id="tglActivo" onAction="#manejarToggleActivo" 
+                                              style="-fx-font-weight: bold;" 
+                                              managed="false" visible="false" />
                                 
-                                <Button fx:id="btnAgregar" onAction="#agregarActividad" style="-fx-background-color: #2ecc71; -fx-text-fill: white;" text="Agregar" visible="true" managed="true" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+                                <Button fx:id="btnActualizar" onAction="#actualizarActividad" 
+                                        style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-weight: bold;" 
+                                        text="Actualizar" managed="false" visible="false" />
+                                
+                                <Button fx:id="btnAgregar" onAction="#agregarActividad" 
+                                        style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold;" 
+                                        text="Agregar" managed="true" visible="true" />
                             </children>
                         </HBox>
                     </children>

@@ -64,7 +64,7 @@ public class ClaseService {
 
     public List<Actividad> getActividadesDisponibles() {
         List<Actividad> actividades = new ArrayList<>();
-        String sql = "SELECT id_actividad, nombre, descripcion, duracion, aforo FROM actividades";
+        String sql = "SELECT id_actividad, nombre, descripcion, duracion, aforo, activo FROM actividades";
         try (Connection conn = Database.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -74,7 +74,8 @@ public class ClaseService {
                         rs.getString("nombre"),
                         rs.getString("descripcion"),
                         rs.getInt("duracion"),
-                        rs.getInt("aforo")
+                        rs.getInt("aforo"),
+                        rs.getBoolean("activo")
                 ));
             }
         } catch (SQLException e) {

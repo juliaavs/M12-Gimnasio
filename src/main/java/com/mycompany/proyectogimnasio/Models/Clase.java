@@ -1,5 +1,13 @@
 package com.mycompany.proyectogimnasio.Models;
 
+import javafx.beans.property.*;
+import java.io.Serializable;
+import java.util.List;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
+
+
 public class Clase {
     private int idClase;
     private int idInstructor;
