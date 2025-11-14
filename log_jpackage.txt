@@ -1,0 +1,351 @@
+[1mApache Maven 3.8.7[m
+Maven home: /usr/share/maven
+Java version: 17.0.16, vendor: Ubuntu, runtime: /usr/lib/jvm/java-17-openjdk-amd64
+Default locale: ca_ES, platform encoding: UTF-8
+OS name: "linux", version: "6.14.0-35-generic", arch: "amd64", family: "unix"
+[[1;36mDEBUG[m] Created new class realm maven.api
+[[1;36mDEBUG[m] Importing foreign packages into class realm maven.api
+[[1;36mDEBUG[m]   Imported: javax.annotation.* < plexus.core
+[[1;36mDEBUG[m]   Imported: javax.annotation.security.* < plexus.core
+[[1;36mDEBUG[m]   Imported: javax.inject.* < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.* < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.artifact < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.classrealm < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.cli < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.configuration < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.exception < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.execution < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.execution.scope < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.lifecycle < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.model < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.monitor < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.plugin < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.profiles < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.project < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.reporting < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.repository < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.rtinfo < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.settings < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.toolchain < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.usability < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.wagon.* < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.wagon.authentication < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.wagon.authorization < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.wagon.events < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.wagon.observers < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.wagon.proxy < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.wagon.repository < plexus.core
+[[1;36mDEBUG[m]   Imported: org.apache.maven.wagon.resource < plexus.core
+[[1;36mDEBUG[m]   Imported: org.codehaus.classworlds < plexus.core
+[[1;36mDEBUG[m]   Imported: org.codehaus.plexus.* < plexus.core
+[[1;36mDEBUG[m]   Imported: org.codehaus.plexus.classworlds < plexus.core
+[[1;36mDEBUG[m]   Imported: org.codehaus.plexus.component < plexus.core
+[[1;36mDEBUG[m]   Imported: org.codehaus.plexus.configuration < plexus.core
+[[1;36mDEBUG[m]   Imported: org.codehaus.plexus.container < plexus.core
+[[1;36mDEBUG[m]   Imported: org.codehaus.plexus.context < plexus.core
+[[1;36mDEBUG[m]   Imported: org.codehaus.plexus.lifecycle < plexus.core
+[[1;36mDEBUG[m]   Imported: org.codehaus.plexus.logging < plexus.core
+[[1;36mDEBUG[m]   Imported: org.codehaus.plexus.personality < plexus.core
+[[1;36mDEBUG[m]   Imported: org.codehaus.plexus.util.xml.Xpp3Dom < plexus.core
+[[1;36mDEBUG[m]   Imported: org.codehaus.plexus.util.xml.pull.XmlPullParser < plexus.core
+[[1;36mDEBUG[m]   Imported: org.codehaus.plexus.util.xml.pull.XmlPullParserException < plexus.core
+[[1;36mDEBUG[m]   Imported: org.codehaus.plexus.util.xml.pull.XmlSerializer < plexus.core
+[[1;36mDEBUG[m]   Imported: org.eclipse.aether.* < plexus.core
+[[1;36mDEBUG[m]   Imported: org.eclipse.aether.artifact < plexus.core
+[[1;36mDEBUG[m]   Imported: org.eclipse.aether.collection < plexus.core
+[[1;36mDEBUG[m]   Imported: org.eclipse.aether.deployment < plexus.core
+[[1;36mDEBUG[m]   Imported: org.eclipse.aether.graph < plexus.core
+[[1;36mDEBUG[m]   Imported: org.eclipse.aether.impl < plexus.core
+[[1;36mDEBUG[m]   Imported: org.eclipse.aether.installation < plexus.core
+[[1;36mDEBUG[m]   Imported: org.eclipse.aether.internal.impl < plexus.core
+[[1;36mDEBUG[m]   Imported: org.eclipse.aether.metadata < plexus.core
+[[1;36mDEBUG[m]   Imported: org.eclipse.aether.repository < plexus.core
+[[1;36mDEBUG[m]   Imported: org.eclipse.aether.resolution < plexus.core
+[[1;36mDEBUG[m]   Imported: org.eclipse.aether.spi < plexus.core
+[[1;36mDEBUG[m]   Imported: org.eclipse.aether.transfer < plexus.core
+[[1;36mDEBUG[m]   Imported: org.eclipse.aether.version < plexus.core
+[[1;36mDEBUG[m]   Imported: org.fusesource.jansi.* < plexus.core
+[[1;36mDEBUG[m]   Imported: org.slf4j.* < plexus.core
+[[1;36mDEBUG[m]   Imported: org.slf4j.event.* < plexus.core
+[[1;36mDEBUG[m]   Imported: org.slf4j.helpers.* < plexus.core
+[[1;36mDEBUG[m]   Imported: org.slf4j.spi.* < plexus.core
+[[1;36mDEBUG[m] Populating class realm maven.api
+[[1;34mINFO[m] Error stacktraces are turned on.
+[[1;36mDEBUG[m] Message scheme: color
+[[1;36mDEBUG[m] Message styles: [1;36mdebug[m [1;34minfo[m [1;33mwarning[m [1;31merror[m [1;32msuccess[m [1;31mfailure[m [1mstrong[m [32mmojo[m [36mproject[m
+[[1;36mDEBUG[m] Reading global settings from /usr/share/maven/conf/settings.xml
+[[1;36mDEBUG[m] Reading user settings from /home/asix1/.m2/settings.xml
+[[1;36mDEBUG[m] Reading global toolchains from /usr/share/maven/conf/toolchains.xml
+[[1;36mDEBUG[m] Reading user toolchains from /home/asix1/.m2/toolchains.xml
+[[1;36mDEBUG[m] Using local repository at /home/asix1/.m2/repository
+[[1;36mDEBUG[m] Using manager EnhancedLocalRepositoryManager with priority 10.0 for /home/asix1/.m2/repository
+[[1;34mINFO[m] Scanning for projects...
+[[1;36mDEBUG[m] Extension realms for project com.mycompany:ProyectoGimnasio:jar:1.0-SNAPSHOT: (none)
+[[1;36mDEBUG[m] Looking up lifecycle mappings for packaging jar from ClassRealm[plexus.core, parent: null]
+[[1;36mDEBUG[m] Resolving plugin prefix jpackage from [org.apache.maven.plugins, org.codehaus.mojo]
+[[1;36mDEBUG[m] Resolved plugin prefix jpackage to org.panteleyev:jpackage-maven-plugin from POM com.mycompany:ProyectoGimnasio:jar:1.0-SNAPSHOT
+[[1;36mDEBUG[m] === REACTOR BUILD PLAN ================================================
+[[1;36mDEBUG[m] Project: com.mycompany:ProyectoGimnasio:jar:1.0-SNAPSHOT
+[[1;36mDEBUG[m] Tasks:   [jpackage:jpackage]
+[[1;36mDEBUG[m] Style:   Regular
+[[1;36mDEBUG[m] =======================================================================
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------------------< [0;36mcom.mycompany:ProyectoGimnasio[0;1m >-------------------[m
+[[1;34mINFO[m] [1mBuilding ProyectoGimnasio 1.0-SNAPSHOT[m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;36mDEBUG[m] Resolving plugin prefix jpackage from [org.apache.maven.plugins, org.codehaus.mojo]
+[[1;36mDEBUG[m] Resolved plugin prefix jpackage to org.panteleyev:jpackage-maven-plugin from POM com.mycompany:ProyectoGimnasio:jar:1.0-SNAPSHOT
+[[1;36mDEBUG[m] Lifecycle default -> [validate, initialize, generate-sources, process-sources, generate-resources, process-resources, compile, process-classes, generate-test-sources, process-test-sources, generate-test-resources, process-test-resources, test-compile, process-test-classes, test, prepare-package, package, pre-integration-test, integration-test, post-integration-test, verify, install, deploy]
+[[1;36mDEBUG[m] Lifecycle clean -> [pre-clean, clean, post-clean]
+[[1;36mDEBUG[m] Lifecycle site -> [pre-site, site, post-site, site-deploy]
+[[1;36mDEBUG[m] === PROJECT BUILD PLAN ================================================
+[[1;36mDEBUG[m] Project:       com.mycompany:ProyectoGimnasio:1.0-SNAPSHOT
+[[1;36mDEBUG[m] Dependencies (collect): []
+[[1;36mDEBUG[m] Dependencies (resolve): []
+[[1;36mDEBUG[m] Repositories (dependencies): [central (https://repo.maven.apache.org/maven2, default, releases)]
+[[1;36mDEBUG[m] Repositories (plugins)     : [central (https://repo.maven.apache.org/maven2, default, releases)]
+[[1;36mDEBUG[m] -----------------------------------------------------------------------
+[[1;36mDEBUG[m] Goal:          org.panteleyev:jpackage-maven-plugin:1.5.0:jpackage (default-cli)
+[[1;36mDEBUG[m] Style:         Regular
+[[1;36mDEBUG[m] Configuration: <?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <addModules>javafx.controls,javafx.fxml,javafx.graphics,java.sql</addModules>
+  <appVersion default-value="${project.version}"/>
+  <copyright>Copyright © 2025</copyright>
+  <destination>/home/asix1/Desktop/M12-Gimnasio/target/dist</destination>
+  <input>/home/asix1/Desktop/M12-Gimnasio/target</input>
+  <linuxMenuGroup>Office</linuxMenuGroup>
+  <linuxShortcut>true</linuxShortcut>
+  <mainClass>com.mycompany.proyectogimnasio.App</mainClass>
+  <mainJar>ProyectoGimnasio-1.0-SNAPSHOT.jar</mainJar>
+  <name default-value="${project.name}">administracion-gimnasio</name>
+  <session default-value="${session}"/>
+  <vendor>IES Pompeu Fabra</vendor>
+</configuration>
+[[1;36mDEBUG[m] =======================================================================
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mjpackage-maven-plugin:1.5.0:jpackage[m [1m(default-cli)[m @ [36mProyectoGimnasio[0;1m ---[m
+[[1;36mDEBUG[m] Using mirror maven-default-http-blocker (http://0.0.0.0/) for codehaus.snapshots (http://snapshots.repository.codehaus.org).
+[[1;36mDEBUG[m] Using mirror maven-default-http-blocker (http://0.0.0.0/) for repository.jboss.org (http://repository.jboss.org/maven2).
+[[1;36mDEBUG[m] Using mirror maven-default-http-blocker (http://0.0.0.0/) for snapshots.jboss.org (http://snapshots.jboss.org/maven2).
+[[1;36mDEBUG[m] Using mirror maven-default-http-blocker (http://0.0.0.0/) for oss.sonatype.org/jboss-snapshots (http://oss.sonatype.org/content/repositories/jboss-snapshots).
+[[1;36mDEBUG[m] Using mirror maven-default-http-blocker (http://0.0.0.0/) for apache.snapshots (http://repository.apache.org/snapshots).
+[[1;36mDEBUG[m] Using mirror maven-default-http-blocker (http://0.0.0.0/) for codehaus-snapshots (http://nexus.codehaus.org/snapshots/).
+[[1;36mDEBUG[m] Using mirror maven-default-http-blocker (http://0.0.0.0/) for snapshots (http://snapshots.maven.codehaus.org/maven2).
+[[1;36mDEBUG[m] Using mirror maven-default-http-blocker (http://0.0.0.0/) for central (http://repo1.maven.org/maven2).
+[[1;36mDEBUG[m] Dependency collection stats {ConflictMarker.analyzeTime=564087, ConflictMarker.markTime=205675, ConflictMarker.nodeCount=117, ConflictIdSorter.graphTime=311400, ConflictIdSorter.topsortTime=187777, ConflictIdSorter.conflictIdCount=47, ConflictIdSorter.conflictIdCycleCount=0, ConflictResolver.totalTime=3682458, ConflictResolver.conflictItemCount=107, DefaultDependencyCollector.collectTime=132162459, DefaultDependencyCollector.transformTime=5994605}
+[[1;36mDEBUG[m] org.panteleyev:jpackage-maven-plugin:jar:1.5.0
+[[1;36mDEBUG[m]    org.apache.maven:maven-core:jar:3.6.0:compile
+[[1;36mDEBUG[m]       org.apache.maven:maven-model:jar:3.6.0:compile
+[[1;36mDEBUG[m]       org.apache.maven:maven-settings:jar:3.6.0:compile
+[[1;36mDEBUG[m]       org.apache.maven:maven-settings-builder:jar:3.6.0:compile
+[[1;36mDEBUG[m]          org.sonatype.plexus:plexus-sec-dispatcher:jar:1.4:compile
+[[1;36mDEBUG[m]             org.sonatype.plexus:plexus-cipher:jar:1.4:compile
+[[1;36mDEBUG[m]       org.apache.maven:maven-builder-support:jar:3.6.0:compile
+[[1;36mDEBUG[m]       org.apache.maven:maven-repository-metadata:jar:3.6.0:compile
+[[1;36mDEBUG[m]       org.apache.maven:maven-artifact:jar:3.6.0:compile
+[[1;36mDEBUG[m]       org.apache.maven:maven-model-builder:jar:3.6.0:compile
+[[1;36mDEBUG[m]       org.apache.maven:maven-resolver-provider:jar:3.6.0:compile
+[[1;36mDEBUG[m]          org.slf4j:slf4j-api:jar:1.7.25:compile
+[[1;36mDEBUG[m]       org.apache.maven.resolver:maven-resolver-impl:jar:1.3.1:compile
+[[1;36mDEBUG[m]       org.apache.maven.resolver:maven-resolver-api:jar:1.3.1:compile
+[[1;36mDEBUG[m]       org.apache.maven.resolver:maven-resolver-spi:jar:1.3.1:compile
+[[1;36mDEBUG[m]       org.apache.maven.resolver:maven-resolver-util:jar:1.3.1:compile
+[[1;36mDEBUG[m]       org.apache.maven.shared:maven-shared-utils:jar:3.2.1:compile
+[[1;36mDEBUG[m]          commons-io:commons-io:jar:2.5:compile
+[[1;36mDEBUG[m]       org.eclipse.sisu:org.eclipse.sisu.plexus:jar:0.3.3:compile
+[[1;36mDEBUG[m]          javax.enterprise:cdi-api:jar:1.0:compile
+[[1;36mDEBUG[m]             javax.annotation:jsr250-api:jar:1.0:compile
+[[1;36mDEBUG[m]       org.eclipse.sisu:org.eclipse.sisu.inject:jar:0.3.3:compile
+[[1;36mDEBUG[m]       com.google.inject:guice:jar:no_aop:4.2.1:compile
+[[1;36mDEBUG[m]          aopalliance:aopalliance:jar:1.0:compile
+[[1;36mDEBUG[m]          com.google.guava:guava:jar:25.1-android:compile
+[[1;36mDEBUG[m]             com.google.code.findbugs:jsr305:jar:3.0.2:compile
+[[1;36mDEBUG[m]             org.checkerframework:checker-compat-qual:jar:2.0.0:compile
+[[1;36mDEBUG[m]             com.google.errorprone:error_prone_annotations:jar:2.1.3:compile
+[[1;36mDEBUG[m]             com.google.j2objc:j2objc-annotations:jar:1.1:compile
+[[1;36mDEBUG[m]             org.codehaus.mojo:animal-sniffer-annotations:jar:1.14:compile
+[[1;36mDEBUG[m]       javax.inject:javax.inject:jar:1:compile
+[[1;36mDEBUG[m]       org.codehaus.plexus:plexus-utils:jar:3.1.0:compile
+[[1;36mDEBUG[m]       org.codehaus.plexus:plexus-classworlds:jar:2.5.2:compile
+[[1;36mDEBUG[m]       org.codehaus.plexus:plexus-component-annotations:jar:1.7.1:compile
+[[1;36mDEBUG[m]       org.apache.commons:commons-lang3:jar:3.8.1:compile
+[[1;36mDEBUG[m]    org.apache.maven:maven-plugin-api:jar:3.6.0:compile
+[[1;36mDEBUG[m]    org.apache.maven.plugin-tools:maven-plugin-annotations:jar:3.6.0:compile (optional)
+[[1;36mDEBUG[m]    org.apache.maven:maven-project:jar:2.2.1:compile
+[[1;36mDEBUG[m]       org.apache.maven:maven-profile:jar:2.2.1:compile
+[[1;36mDEBUG[m]       org.apache.maven:maven-artifact-manager:jar:2.2.1:compile
+[[1;36mDEBUG[m]          backport-util-concurrent:backport-util-concurrent:jar:3.1:compile
+[[1;36mDEBUG[m]       org.apache.maven:maven-plugin-registry:jar:2.2.1:compile
+[[1;36mDEBUG[m]       org.codehaus.plexus:plexus-interpolation:jar:1.11:compile
+[[1;36mDEBUG[m]       org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9-stable-1:compile
+[[1;36mDEBUG[m]          junit:junit:jar:3.8.1:compile
+[[1;36mDEBUG[m]          classworlds:classworlds:jar:1.1-alpha-2:compile
+[[1;36mDEBUG[m] Created new class realm plugin>org.panteleyev:jpackage-maven-plugin:1.5.0
+[[1;36mDEBUG[m] Importing foreign packages into class realm plugin>org.panteleyev:jpackage-maven-plugin:1.5.0
+[[1;36mDEBUG[m]   Imported:  < maven.api
+[[1;36mDEBUG[m] Populating class realm plugin>org.panteleyev:jpackage-maven-plugin:1.5.0
+[[1;36mDEBUG[m]   Included: org.panteleyev:jpackage-maven-plugin:jar:1.5.0
+[[1;36mDEBUG[m]   Included: org.sonatype.plexus:plexus-sec-dispatcher:jar:1.4
+[[1;36mDEBUG[m]   Included: org.sonatype.plexus:plexus-cipher:jar:1.4
+[[1;36mDEBUG[m]   Included: org.apache.maven:maven-builder-support:jar:3.6.0
+[[1;36mDEBUG[m]   Included: org.apache.maven.resolver:maven-resolver-util:jar:1.3.1
+[[1;36mDEBUG[m]   Included: org.apache.maven.shared:maven-shared-utils:jar:3.2.1
+[[1;36mDEBUG[m]   Included: commons-io:commons-io:jar:2.5
+[[1;36mDEBUG[m]   Included: javax.enterprise:cdi-api:jar:1.0
+[[1;36mDEBUG[m]   Included: javax.annotation:jsr250-api:jar:1.0
+[[1;36mDEBUG[m]   Included: org.eclipse.sisu:org.eclipse.sisu.inject:jar:0.3.3
+[[1;36mDEBUG[m]   Included: com.google.inject:guice:jar:no_aop:4.2.1
+[[1;36mDEBUG[m]   Included: aopalliance:aopalliance:jar:1.0
+[[1;36mDEBUG[m]   Included: com.google.guava:guava:jar:25.1-android
+[[1;36mDEBUG[m]   Included: com.google.code.findbugs:jsr305:jar:3.0.2
+[[1;36mDEBUG[m]   Included: org.checkerframework:checker-compat-qual:jar:2.0.0
+[[1;36mDEBUG[m]   Included: com.google.errorprone:error_prone_annotations:jar:2.1.3
+[[1;36mDEBUG[m]   Included: com.google.j2objc:j2objc-annotations:jar:1.1
+[[1;36mDEBUG[m]   Included: org.codehaus.mojo:animal-sniffer-annotations:jar:1.14
+[[1;36mDEBUG[m]   Included: org.codehaus.plexus:plexus-utils:jar:3.1.0
+[[1;36mDEBUG[m]   Included: org.codehaus.plexus:plexus-component-annotations:jar:1.7.1
+[[1;36mDEBUG[m]   Included: org.apache.commons:commons-lang3:jar:3.8.1
+[[1;36mDEBUG[m]   Included: org.apache.maven.plugin-tools:maven-plugin-annotations:jar:3.6.0
+[[1;36mDEBUG[m]   Included: backport-util-concurrent:backport-util-concurrent:jar:3.1
+[[1;36mDEBUG[m]   Included: org.codehaus.plexus:plexus-interpolation:jar:1.11
+[[1;36mDEBUG[m]   Included: junit:junit:jar:3.8.1
+[[1;36mDEBUG[m] Configuring mojo org.panteleyev:jpackage-maven-plugin:1.5.0:jpackage from plugin realm ClassRealm[plugin>org.panteleyev:jpackage-maven-plugin:1.5.0, parent: jdk.internal.loader.ClassLoaders$AppClassLoader@30946e09]
+[[1;36mDEBUG[m] Configuring mojo 'org.panteleyev:jpackage-maven-plugin:1.5.0:jpackage' with basic configurator -->
+[[1;36mDEBUG[m]   (f) addModules = [javafx.controls, javafx.fxml, javafx.graphics, java.sql]
+[[1;36mDEBUG[m]   (f) appVersion = 1.0-SNAPSHOT
+[[1;36mDEBUG[m]   (f) copyright = Copyright © 2025
+[[1;36mDEBUG[m]   (f) destination = /home/asix1/Desktop/M12-Gimnasio/target/dist
+[[1;36mDEBUG[m]   (f) input = /home/asix1/Desktop/M12-Gimnasio/target
+[[1;36mDEBUG[m]   (f) linuxMenuGroup = Office
+[[1;36mDEBUG[m]   (f) linuxShortcut = true
+[[1;36mDEBUG[m]   (f) mainClass = com.mycompany.proyectogimnasio.App
+[[1;36mDEBUG[m]   (f) mainJar = ProyectoGimnasio-1.0-SNAPSHOT.jar
+[[1;36mDEBUG[m]   (f) name = administracion-gimnasio
+[[1;36mDEBUG[m]   (f) session = org.apache.maven.execution.MavenSession@22d1886d
+[[1;36mDEBUG[m]   (f) vendor = IES Pompeu Fabra
+[[1;36mDEBUG[m] -- end configuration --
+[[1;36mDEBUG[m] Looking for jpackage in /usr/lib/jvm/java-17-openjdk-amd64
+[[1;34mINFO[m] Using: /usr/lib/jvm/java-17-openjdk-amd64/bin/jpackage
+[[1;34mINFO[m] jpackage options:
+[[1;34mINFO[m]   --name administracion-gimnasio
+[[1;34mINFO[m]   --dest /home/asix1/Desktop/M12-Gimnasio/target/dist
+[[1;34mINFO[m]   --app-version 1.0-SNAPSHOT
+[[1;34mINFO[m]   --copyright Copyright © 2025
+[[1;34mINFO[m]   --input /home/asix1/Desktop/M12-Gimnasio/target
+[[1;34mINFO[m]   --vendor IES Pompeu Fabra
+[[1;34mINFO[m]   --main-class com.mycompany.proyectogimnasio.App
+[[1;34mINFO[m]   --main-jar ProyectoGimnasio-1.0-SNAPSHOT.jar
+[[1;34mINFO[m]   --add-modules javafx.controls,javafx.fxml,javafx.graphics,java.sql
+[[1;34mINFO[m]   --linux-menu-group Office
+[[1;34mINFO[m]   --linux-shortcut
+[[1;34mINFO[m] jlink failed with: Error: Module javafx.controls not found
+[[1;34mINFO[m] java.lang.module.FindException: Module javafx.controls not found
+[[1;34mINFO[m] 	at java.base/java.lang.module.Resolver.findFail(Resolver.java:893)
+[[1;34mINFO[m] 	at java.base/java.lang.module.Resolver.resolve(Resolver.java:129)
+[[1;34mINFO[m] 	at java.base/java.lang.module.Configuration.resolve(Configuration.java:421)
+[[1;34mINFO[m] 	at java.base/java.lang.module.Configuration.resolve(Configuration.java:255)
+[[1;34mINFO[m] 	at jdk.jlink/jdk.tools.jlink.internal.Jlink$JlinkConfiguration.resolve(Jlink.java:217)
+[[1;34mINFO[m] 	at jdk.jlink/jdk.tools.jlink.internal.JlinkTask.createImageProvider(JlinkTask.java:536)
+[[1;34mINFO[m] 	at jdk.jlink/jdk.tools.jlink.internal.JlinkTask.createImage(JlinkTask.java:424)
+[[1;34mINFO[m] 	at jdk.jlink/jdk.tools.jlink.internal.JlinkTask.run(JlinkTask.java:276)
+[[1;34mINFO[m] 	at jdk.jlink/jdk.tools.jlink.internal.Main.run(Main.java:55)
+[[1;34mINFO[m] 	at jdk.jlink/jdk.tools.jlink.internal.Main$JlinkToolProvider.run(Main.java:66)
+[[1;34mINFO[m] 	at jdk.jpackage/jdk.jpackage.internal.JLinkBundlerHelper.runJLink(JLinkBundlerHelper.java:191)
+[[1;34mINFO[m] 	at jdk.jpackage/jdk.jpackage.internal.JLinkBundlerHelper.execute(JLinkBundlerHelper.java:81)
+[[1;34mINFO[m] 	at jdk.jpackage/jdk.jpackage.internal.AppImageBundler.createAppBundle(AppImageBundler.java:166)
+[[1;34mINFO[m] 	at jdk.jpackage/jdk.jpackage.internal.AppImageBundler.execute(AppImageBundler.java:91)
+[[1;34mINFO[m] 	at jdk.jpackage/jdk.jpackage.internal.LinuxPackageBundler.execute(LinuxPackageBundler.java:136)
+[[1;34mINFO[m] 	at jdk.jpackage/jdk.jpackage.internal.Arguments.generateBundle(Arguments.java:674)
+[[1;34mINFO[m] 	at jdk.jpackage/jdk.jpackage.internal.Arguments.processArguments(Arguments.java:551)
+[[1;34mINFO[m] 	at jdk.jpackage/jdk.jpackage.main.Main.execute(Main.java:91)
+[[1;34mINFO[m] 	at jdk.jpackage/jdk.jpackage.main.Main.main(Main.java:52)
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1;31mBUILD FAILURE[m
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] Total time:  0.539 s
+[[1;34mINFO[m] Finished at: 2025-11-14T10:35:38+01:00
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;31mERROR[m] Failed to execute goal [32morg.panteleyev:jpackage-maven-plugin:1.5.0:jpackage[m [1m(default-cli)[m on project [36mProyectoGimnasio[m: [1;31mError while executing jpackage[m -> [1m[Help 1][m
+[1;31morg.apache.maven.lifecycle.LifecycleExecutionException[m: [1;31mFailed to execute goal [32morg.panteleyev:jpackage-maven-plugin:1.5.0:jpackage[m [1m(default-cli)[m on project [36mProyectoGimnasio[m: [1;31mError while executing jpackage[m[m
+    [1mat[m org.apache.maven.lifecycle.internal.MojoExecutor.doExecute2 ([1mMojoExecutor.java:375[m)
+    [1mat[m org.apache.maven.lifecycle.internal.MojoExecutor.doExecute ([1mMojoExecutor.java:351[m)
+    [1mat[m org.apache.maven.lifecycle.internal.MojoExecutor.execute ([1mMojoExecutor.java:215[m)
+    [1mat[m org.apache.maven.lifecycle.internal.MojoExecutor.execute ([1mMojoExecutor.java:171[m)
+    [1mat[m org.apache.maven.lifecycle.internal.MojoExecutor.execute ([1mMojoExecutor.java:163[m)
+    [1mat[m org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject ([1mLifecycleModuleBuilder.java:117[m)
+    [1mat[m org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject ([1mLifecycleModuleBuilder.java:81[m)
+    [1mat[m org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder.build ([1mSingleThreadedBuilder.java:56[m)
+    [1mat[m org.apache.maven.lifecycle.internal.LifecycleStarter.execute ([1mLifecycleStarter.java:128[m)
+    [1mat[m org.apache.maven.DefaultMaven.doExecute ([1mDefaultMaven.java:298[m)
+    [1mat[m org.apache.maven.DefaultMaven.doExecute ([1mDefaultMaven.java:192[m)
+    [1mat[m org.apache.maven.DefaultMaven.execute ([1mDefaultMaven.java:105[m)
+    [1mat[m org.apache.maven.cli.MavenCli.execute ([1mMavenCli.java:960[m)
+    [1mat[m org.apache.maven.cli.MavenCli.doMain ([1mMavenCli.java:293[m)
+    [1mat[m org.apache.maven.cli.MavenCli.main ([1mMavenCli.java:196[m)
+    [1mat[m jdk.internal.reflect.NativeMethodAccessorImpl.invoke0 ([1mNative Method[m)
+    [1mat[m jdk.internal.reflect.NativeMethodAccessorImpl.invoke ([1mNativeMethodAccessorImpl.java:77[m)
+    [1mat[m jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke ([1mDelegatingMethodAccessorImpl.java:43[m)
+    [1mat[m java.lang.reflect.Method.invoke ([1mMethod.java:569[m)
+    [1mat[m org.codehaus.plexus.classworlds.launcher.Launcher.launchEnhanced ([1mLauncher.java:283[m)
+    [1mat[m org.codehaus.plexus.classworlds.launcher.Launcher.launch ([1mLauncher.java:226[m)
+    [1mat[m org.codehaus.plexus.classworlds.launcher.Launcher.mainWithExitCode ([1mLauncher.java:407[m)
+    [1mat[m org.codehaus.plexus.classworlds.launcher.Launcher.main ([1mLauncher.java:348[m)
+[1mCaused by[m: org.apache.maven.plugin.MojoExecutionException: [1;31mError while executing jpackage[m
+    [1mat[m org.panteleyev.jpackage.JPackageMojo.execute ([1mJPackageMojo.java:494[m)
+    [1mat[m org.apache.maven.plugin.DefaultBuildPluginManager.executeMojo ([1mDefaultBuildPluginManager.java:137[m)
+    [1mat[m org.apache.maven.lifecycle.internal.MojoExecutor.doExecute2 ([1mMojoExecutor.java:370[m)
+    [1mat[m org.apache.maven.lifecycle.internal.MojoExecutor.doExecute ([1mMojoExecutor.java:351[m)
+    [1mat[m org.apache.maven.lifecycle.internal.MojoExecutor.execute ([1mMojoExecutor.java:215[m)
+    [1mat[m org.apache.maven.lifecycle.internal.MojoExecutor.execute ([1mMojoExecutor.java:171[m)
+    [1mat[m org.apache.maven.lifecycle.internal.MojoExecutor.execute ([1mMojoExecutor.java:163[m)
+    [1mat[m org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject ([1mLifecycleModuleBuilder.java:117[m)
+    [1mat[m org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject ([1mLifecycleModuleBuilder.java:81[m)
+    [1mat[m org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder.build ([1mSingleThreadedBuilder.java:56[m)
+    [1mat[m org.apache.maven.lifecycle.internal.LifecycleStarter.execute ([1mLifecycleStarter.java:128[m)
+    [1mat[m org.apache.maven.DefaultMaven.doExecute ([1mDefaultMaven.java:298[m)
+    [1mat[m org.apache.maven.DefaultMaven.doExecute ([1mDefaultMaven.java:192[m)
+    [1mat[m org.apache.maven.DefaultMaven.execute ([1mDefaultMaven.java:105[m)
+    [1mat[m org.apache.maven.cli.MavenCli.execute ([1mMavenCli.java:960[m)
+    [1mat[m org.apache.maven.cli.MavenCli.doMain ([1mMavenCli.java:293[m)
+    [1mat[m org.apache.maven.cli.MavenCli.main ([1mMavenCli.java:196[m)
+    [1mat[m jdk.internal.reflect.NativeMethodAccessorImpl.invoke0 ([1mNative Method[m)
+    [1mat[m jdk.internal.reflect.NativeMethodAccessorImpl.invoke ([1mNativeMethodAccessorImpl.java:77[m)
+    [1mat[m jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke ([1mDelegatingMethodAccessorImpl.java:43[m)
+    [1mat[m java.lang.reflect.Method.invoke ([1mMethod.java:569[m)
+    [1mat[m org.codehaus.plexus.classworlds.launcher.Launcher.launchEnhanced ([1mLauncher.java:283[m)
+    [1mat[m org.codehaus.plexus.classworlds.launcher.Launcher.launch ([1mLauncher.java:226[m)
+    [1mat[m org.codehaus.plexus.classworlds.launcher.Launcher.mainWithExitCode ([1mLauncher.java:407[m)
+    [1mat[m org.codehaus.plexus.classworlds.launcher.Launcher.main ([1mLauncher.java:348[m)
+[1mCaused by[m: org.apache.maven.plugin.MojoExecutionException: [1;31mError while executing jpackage[m
+    [1mat[m org.panteleyev.jpackage.JPackageMojo.execute ([1mJPackageMojo.java:553[m)
+    [1mat[m org.panteleyev.jpackage.JPackageMojo.execute ([1mJPackageMojo.java:492[m)
+    [1mat[m org.apache.maven.plugin.DefaultBuildPluginManager.executeMojo ([1mDefaultBuildPluginManager.java:137[m)
+    [1mat[m org.apache.maven.lifecycle.internal.MojoExecutor.doExecute2 ([1mMojoExecutor.java:370[m)
+    [1mat[m org.apache.maven.lifecycle.internal.MojoExecutor.doExecute ([1mMojoExecutor.java:351[m)
+    [1mat[m org.apache.maven.lifecycle.internal.MojoExecutor.execute ([1mMojoExecutor.java:215[m)
+    [1mat[m org.apache.maven.lifecycle.internal.MojoExecutor.execute ([1mMojoExecutor.java:171[m)
+    [1mat[m org.apache.maven.lifecycle.internal.MojoExecutor.execute ([1mMojoExecutor.java:163[m)
+    [1mat[m org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject ([1mLifecycleModuleBuilder.java:117[m)
+    [1mat[m org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject ([1mLifecycleModuleBuilder.java:81[m)
+    [1mat[m org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder.build ([1mSingleThreadedBuilder.java:56[m)
+    [1mat[m org.apache.maven.lifecycle.internal.LifecycleStarter.execute ([1mLifecycleStarter.java:128[m)
+    [1mat[m org.apache.maven.DefaultMaven.doExecute ([1mDefaultMaven.java:298[m)
+    [1mat[m org.apache.maven.DefaultMaven.doExecute ([1mDefaultMaven.java:192[m)
+    [1mat[m org.apache.maven.DefaultMaven.execute ([1mDefaultMaven.java:105[m)
+    [1mat[m org.apache.maven.cli.MavenCli.execute ([1mMavenCli.java:960[m)
+    [1mat[m org.apache.maven.cli.MavenCli.doMain ([1mMavenCli.java:293[m)
+    [1mat[m org.apache.maven.cli.MavenCli.main ([1mMavenCli.java:196[m)
+    [1mat[m jdk.internal.reflect.NativeMethodAccessorImpl.invoke0 ([1mNative Method[m)
+    [1mat[m jdk.internal.reflect.NativeMethodAccessorImpl.invoke ([1mNativeMethodAccessorImpl.java:77[m)
+    [1mat[m jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke ([1mDelegatingMethodAccessorImpl.java:43[m)
+    [1mat[m java.lang.reflect.Method.invoke ([1mMethod.java:569[m)
+    [1mat[m org.codehaus.plexus.classworlds.launcher.Launcher.launchEnhanced ([1mLauncher.java:283[m)
+    [1mat[m org.codehaus.plexus.classworlds.launcher.Launcher.launch ([1mLauncher.java:226[m)
+    [1mat[m org.codehaus.plexus.classworlds.launcher.Launcher.mainWithExitCode ([1mLauncher.java:407[m)
+    [1mat[m org.codehaus.plexus.classworlds.launcher.Launcher.main ([1mLauncher.java:348[m)
+[[1;31mERROR[m] 
+[[1;31mERROR[m] 
+[[1;31mERROR[m] For more information about the errors and possible solutions, please read the following articles:
+[[1;31mERROR[m] [1m[Help 1][m http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

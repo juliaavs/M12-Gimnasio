@@ -19,7 +19,7 @@ public class ClaseService {
                      "FROM clases c " +
                      "JOIN actividades a ON c.id_actividad = a.id_actividad " +
                      "JOIN instructores i ON c.id_instructor = i.id_instructor " +
-                     "WHERE c.status = 'confirmado'";
+                     "WHERE c.status = 'confirmado' AND a.activo = 1";
 
         try (Connection conn = Database.getConnection();
              Statement stmt = conn.createStatement();
