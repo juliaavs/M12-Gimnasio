@@ -40,6 +40,7 @@ public class ClasesController {
     
     @FXML private Button btnToggleStatus;
     @FXML private TextField txtFiltro;
+    @FXML private Button btnLimpiarSeleccion;
     
     
     private ObservableList<ObservableList<String>> clasesData;
@@ -444,19 +445,24 @@ public void initialize() {
 
     @FXML
     private void handleLimpiar() {
-        if (txtIdClase != null) {
-            txtIdClase.clear();
-            txtIdClase.setVisible(false);
-        }
-        cbDia.getSelectionModel().clearSelection();
+        // 1. Limpiar los campos del formulario
+    
+        // IMPORTANTE: Asegúrate de que 'cbDia' esté inyectado correctamente.
+        // Si cbDia está inyectado, esta línea debería funcionar:
+        cbDia.getSelectionModel().clearSelection(); 
+    
         cbHoraInicio.getSelectionModel().clearSelection();
         cbActividad.getSelectionModel().clearSelection();
         cbInstructor.getSelectionModel().clearSelection();
-        
-        tablaClases.getSelectionModel().clearSelection();
-        selectedClaseData = null;
-        
-        setEstadoFormulario(false);
+    
+        // Limpiar el ID oculto
+        txtIdClase.setText(""); 
+
+        // 2. Limpiar la selección de la tabla
+        tablaClases.getSelectionModel().clearSelection(); 
+
+        // 3. Restaurar el formulario al modo "Crear"
+        setEstadoFormulario(false); 
     }
     
     private void cargarHorariosDisponibles() {
@@ -476,13 +482,17 @@ public void initialize() {
         cbHoraInicio.setItems(horarios);
     }
     
-    private void setEstadoFormulario(boolean isEditing) {
-        if (hboxCrear != null && hboxEditar != null) {
-            hboxCrear.setVisible(!isEditing);
-            hboxCrear.setManaged(!isEditing);
-            hboxEditar.setVisible(isEditing);
-            hboxEditar.setManaged(isEditing);
-        }
+    private void setEstadoFormulario(boolean modoEdicion) {
+        // Si la clase que estás editando está inactiva, puedes deshabilitar la edición de campos
+        // (Ejemplo: cbDia.setDisable(modoEdicion);) 
+    
+        // Ocultar/Mostrar HBox de Crear
+        hboxCrear.setManaged(!modoEdicion);
+        hboxCrear.setVisible(!modoEdicion);
+
+        // Ocultar/Mostrar HBox de Editar (Actualizar, Toggle Status, Limpiar/Eliminar)
+        hboxEditar.setManaged(modoEdicion);
+        hboxEditar.setVisible(modoEdicion);
     }
 
     private void cargarDiasSemana() {
