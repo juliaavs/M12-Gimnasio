@@ -14,6 +14,9 @@ import java.util.HashMap;
 import java.util.Map;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.layout.HBox;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 
 public class ClasesController {
 
@@ -24,6 +27,7 @@ public class ClasesController {
     @FXML private TableColumn<ObservableList<String>, String> colActividad;
     @FXML private TableColumn<ObservableList<String>, String> colIdInstructor;
     @FXML private TableColumn<ObservableList<String>, String> colStatus;
+    
 
     @FXML private ComboBox<String> cbDia;
     @FXML private ComboBox<String> cbHoraInicio;
@@ -34,8 +38,11 @@ public class ClasesController {
     @FXML private HBox hboxCrear;
     @FXML private HBox hboxEditar;
     
-    @FXML private Button btnToggleStatus; 
-
+    @FXML private Button btnToggleStatus;
+    @FXML private TextField txtFiltro;
+    
+    
+    private ObservableList<ObservableList<String>> clasesData;
     private Connection conn;
     private Map<String, Integer> actividadesMap;
     private Map<String, Integer> actividadesDuracionMap;
@@ -49,68 +56,139 @@ public class ClasesController {
     private static final int INTERVALO_MINUTOS = 15;
 
     @FXML
-    public void initialize() {
-        actividadesMap = new HashMap<>();
-        instructoresMap = new HashMap<>();
-        actividadesDuracionMap = new HashMap<>(); 
+public void initialize() {
+    actividadesMap = new HashMap<>();
+    instructoresMap = new HashMap<>();
+    actividadesDuracionMap = new HashMap<>(); 
 
-        colId.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(0)));
-        colDia.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(1)));
-        colHoraInicio.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(2)));
-        colActividad.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(3)));
-        colIdInstructor.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(4)));
-        colStatus.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(5)));
-        colStatus.setCellFactory(column -> {
-            return new TableCell<ObservableList<String>, String>() {
-                @Override
-                protected void updateItem(String item, boolean empty) {
-                    super.updateItem(item, empty);
+    // ... (Tu configuración de setCellValueFactory para todas las columnas) ...
+    colId.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(0)));
+    colDia.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(1)));
+    colHoraInicio.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(2)));
+    colActividad.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(3)));
+    colIdInstructor.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(4)));
+    colStatus.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(5)));
+    
+    // ... (Tu configuración de colStatus.setCellFactory para colores) ...
+    colStatus.setCellFactory(column -> {
+         // ... (código que ya tenías) ...
+         return new TableCell<ObservableList<String>, String>() {
+             @Override
+             protected void updateItem(String item, boolean empty) {
+                 super.updateItem(item, empty);
+                 this.getStyleClass().removeAll("clase-confirmada", "clase-cancelada");
+                 if (empty || item == null) {
+                     setText(null);
+                     setGraphic(null);
+                 } else {
+                     setText(item);
+                     if (item.equalsIgnoreCase("Confirmado")) {
+                         setStyle("-fx-text-fill: green;");
+                     } else if (item.equalsIgnoreCase("Cancelado")) {
+                         setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+                     }
+                 }
+             }
+         };
+    });
+    
+    try {
+        conn = Database.getConnection();
 
-                    
-                    this.getStyleClass().removeAll("clase-confirmada", "clase-cancelada");
-
-                    if (empty || item == null) {
-                        setText(null);
-                        setGraphic(null);
-                    } else {
-                        setText(item); 
-
-                        // Aplica el estilo basado en el valor
-                        if (item.equalsIgnoreCase("Confirmado")) {
-                            setStyle("-fx-text-fill: green;");
-                        } else if (item.equalsIgnoreCase("Cancelado")) {
-                            setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
-                        }
-                    }
-                }
-            };
-        });
+        cargarActividades();
+        cargarInstructores();
+        cargarDiasSemana();
+        cargarHorariosDisponibles();
         
+        // **********************************************
+        // PASO 1: CARGAR Y ASIGNAR DATOS A clasesData
+        // **********************************************
+        // Asumiendo que cargarTabla() ahora devuelve List<ObservableList<String>>
+        clasesData = FXCollections.observableArrayList(cargarTabla()); 
 
-        try {
-            conn = Database.getConnection();
+        // **********************************************
+        // PASO 2: CONFIGURAR EL FILTRO
+        // **********************************************
+        configurarFiltroClases(); 
 
-            cargarActividades();
-            cargarInstructores();
-            cargarDiasSemana();
-            cargarHorariosDisponibles();
-            cargarTabla();
+        tablaClases.getSelectionModel().selectedItemProperty().addListener(
+            (obs, oldSelection, newSelection) -> mostrarDetallesClase(newSelection));
 
-            tablaClases.getSelectionModel().selectedItemProperty().addListener(
-                (obs, oldSelection, newSelection) -> mostrarDetallesClase(newSelection));
+        if (txtIdClase != null) {
+            txtIdClase.setDisable(true);
+            txtIdClase.setVisible(false);
+        }
+        
+        setEstadoFormulario(false);
 
-            if (txtIdClase != null) {
-                txtIdClase.setDisable(true);
-                txtIdClase.setVisible(false);
+    } catch (SQLException e) {
+        e.printStackTrace();
+        mostrarAlerta(Alert.AlertType.ERROR, "Error de Conexión", "No se pudo conectar a la base de datos.");
+    }
+}
+    
+    private void configurarFiltroClases() {
+    // La lista 'clasesData' debe estar inicializada y contener todos los datos.
+    if (clasesData == null) {
+        System.err.println("Error: clasesData no ha sido inicializada.");
+        return;
+    }
+    
+    // 1. Crear FilteredList basada en la lista observable original de clases
+    // Usamos ObservableList<String> para el tipo de elemento
+    FilteredList<ObservableList<String>> filteredData = new FilteredList<>(clasesData, p -> true);
+
+    // 2. Listener para el campo de texto de búsqueda
+    txtFiltro.textProperty().addListener((observable, oldValue, newValue) -> {
+        
+        filteredData.setPredicate(claseRow -> {
+            // claseRow es una ObservableList<String> que representa una fila
+            if (newValue == null || newValue.isEmpty()) {
+                return true;
             }
             
-            setEstadoFormulario(false);
+            String lowerCaseFilter = newValue.toLowerCase();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-            mostrarAlerta(Alert.AlertType.ERROR, "Error de Conexión", "No se pudo conectar a la base de datos.");
-        }
-    }
+            // 3. Lógica de Filtrado usando los índices:
+            
+            // Índice 3: Nombre de Actividad
+            String nombreActividad = claseRow.get(3);
+            if (nombreActividad != null && nombreActividad.toLowerCase().contains(lowerCaseFilter)) {
+                return true;
+            } 
+            
+            // Índice 0: ID de Clase
+            String idClase = claseRow.get(0);
+            if (idClase != null && idClase.contains(lowerCaseFilter)) {
+                return true;
+            }
+            
+            // Índice 1: Día
+            String dia = claseRow.get(1);
+            if (dia != null && dia.toLowerCase().contains(lowerCaseFilter)) {
+                return true;
+            }
+            
+            // Índice 5: Status
+            String status = claseRow.get(5);
+            if (status != null && status.toLowerCase().contains(lowerCaseFilter)) {
+                return true;
+            }
+            
+            // Si no hay coincidencias con ningún criterio
+            return false;
+        });
+    });
+    
+    // 4. Envolver en SortedList 
+    SortedList<ObservableList<String>> sortedData = new SortedList<>(filteredData);
+
+    // 5. Vincular el comparador de la SortedList al comparador de la TableView
+    sortedData.comparatorProperty().bind(tablaClases.comparatorProperty());
+
+    // 6. Asignar la lista ordenada (y filtrada) a la TableView
+    tablaClases.setItems(sortedData);
+}
 
     @FXML
     private void handleGuardar() {
@@ -292,34 +370,45 @@ public class ClasesController {
         }
     }
     
-    @FXML
-    private void cargarTabla() {
-        ObservableList<ObservableList<String>> data = FXCollections.observableArrayList();
-        String sql = "SELECT c.id_clase, c.dia, c.hora_inicio, a.nombre AS nombre_actividad, " +
-                         "CONCAT(i.nombre, ' ', i.apellido) AS instructor_completo, c.status " +
-                         "FROM clases c " +
-                         "JOIN actividades a ON c.id_actividad = a.id_actividad " +
-                         "JOIN instructores i ON c.id_instructor = i.id_instructor";
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                ObservableList<String> row = FXCollections.observableArrayList();
-                row.add(rs.getString("id_clase"));
-                row.add(rs.getString("dia"));
-                row.add(rs.getString("hora_inicio"));
-                row.add(rs.getString("nombre_actividad"));
-                row.add(rs.getString("instructor_completo"));
-                row.add(rs.getString("status"));
-                data.add(row);
-            }
-            if (tablaClases != null) {
-                tablaClases.setItems(data);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo cargar la tabla de clases.");
+    private ObservableList<ObservableList<String>> cargarTabla() {
+    ObservableList<ObservableList<String>> data = FXCollections.observableArrayList();
+    
+    // Consulta SQL: id_clase, dia, hora_inicio, nombre_actividad, instructor_completo, status
+    String sql = "SELECT c.id_clase, c.dia, c.hora_inicio, a.nombre AS nombre_actividad, " +
+                 "CONCAT(i.nombre, ' ', i.apellido) AS instructor_completo, c.status " +
+                 "FROM clases c " +
+                 "JOIN actividades a ON c.id_actividad = a.id_actividad " +
+                 "JOIN instructores i ON c.id_instructor = i.id_instructor";
+    
+    // El try-with-resources asume que 'conn' está inicializado correctamente en initialize()
+    try (Statement stmt = conn.createStatement();
+         ResultSet rs = stmt.executeQuery(sql)) {
+        
+        while (rs.next()) {
+            ObservableList<String> row = FXCollections.observableArrayList();
+            // Índice 0
+            row.add(rs.getString("id_clase"));
+            // Índice 1
+            row.add(rs.getString("dia"));
+            // Índice 2
+            row.add(rs.getString("hora_inicio"));
+            // Índice 3
+            row.add(rs.getString("nombre_actividad"));
+            // Índice 4
+            row.add(rs.getString("instructor_completo"));
+            // Índice 5
+            row.add(rs.getString("status"));
+            
+            data.add(row);
         }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo cargar la tabla de clases.");
     }
+    
+    // ¡Devolver la lista!
+    return data; 
+}
     
     private void mostrarDetallesClase(ObservableList<String> claseData) {
         selectedClaseData = claseData;

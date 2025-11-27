@@ -37,6 +37,7 @@ public class ReservasController implements Initializable {
     @FXML private TableColumn<Reservas, String> statusColumn;
     @FXML private TableColumn<Reservas, LocalDate> diaReservaColumn;
     
+    
     @FXML private TextField txtFiltro;
     
     @FXML private Button toggleStatusButton;

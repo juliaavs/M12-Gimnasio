@@ -16,95 +16,103 @@
 <?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="600.0" prefWidth="950.0" style="-fx-background-color: #f4f4f4;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.proyectogimnasio.Controllers.ClasesController">
-   <children>
-      <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
-         <children>
-            <VBox HBox.hgrow="ALWAYS">
-               <children>
-                  <Label text="Listado de Clases">
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets bottom="10.0" />
-                     </VBox.margin>
-                  </Label>
-                  <TableView fx:id="tablaClases" VBox.vgrow="ALWAYS">
-                     <columns>
-                        <TableColumn fx:id="colId" prefWidth="50.0" text="ID" />
-                        <TableColumn fx:id="colDia" prefWidth="100.0" text="Día" />
-                        <TableColumn fx:id="colHoraInicio" prefWidth="100.0" text="Hora Inicio" />
-                        <TableColumn fx:id="colActividad" prefWidth="150.0" text="Actividad" />
-                        <TableColumn fx:id="colIdInstructor" prefWidth="150.0" text="Instructor" />
-                        <TableColumn fx:id="colStatus" prefWidth="100.0" text="Estado" />
-                     </columns>
-                     <columnResizePolicy>
-                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                     </columnResizePolicy>
-                  </TableView>
-               </children>
-            </VBox>
-            
-            <VBox minWidth="300.0" spacing="15.0" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
-               <children>
-                  <Label text="Detalles de la Clase">
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets bottom="10.0" />
-                     </VBox.margin>
-                  </Label>
-                  
-                  <GridPane hgap="10.0" vgap="10.0">
-                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="80.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                     </columnConstraints>
-                     <rowConstraints>
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                     </rowConstraints>
-                     <children>
-                        <Label text="Día:" GridPane.rowIndex="0" />
-                        <ComboBox fx:id="cbDia" prefWidth="250.0" promptText="Selecciona un día" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+    <children>
+        <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+            <children>
+                
+                <VBox HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label text="Listado de Clases">
+                            <font>
+                                <Font name="System Bold" size="18.0" />
+                            </font>
+                            <VBox.margin>
+                                <Insets bottom="10.0" />
+                            </VBox.margin>
+                        </Label>
                         
-                        <Label text="Hora de Inicio:" GridPane.rowIndex="1" />
-                        <ComboBox fx:id="cbHoraInicio" prefWidth="250.0" promptText="Selecciona una hora" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField fx:id="txtFiltro" promptText="Buscar por Actividad, ID o Día...">
+                            <VBox.margin>
+                                <Insets bottom="10.0" />
+                            </VBox.margin>
+                        </TextField>
                         
-                        <Label text="Actividad:" GridPane.rowIndex="2" />
-                        <ComboBox fx:id="cbActividad" prefWidth="250.0" promptText="Selecciona actividad" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <TableView fx:id="tablaClases" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="colId" prefWidth="50.0" text="ID" />
+                                <TableColumn fx:id="colDia" prefWidth="100.0" text="Día" />
+                                <TableColumn fx:id="colHoraInicio" prefWidth="100.0" text="Hora Inicio" />
+                                <TableColumn fx:id="colActividad" prefWidth="150.0" text="Actividad" />
+                                <TableColumn fx:id="colIdInstructor" prefWidth="150.0" text="Instructor" />
+                                <TableColumn fx:id="colStatus" prefWidth="100.0" text="Estado" />
+                            </columns>
+                            <columnResizePolicy>
+                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                            </columnResizePolicy>
+                        </TableView>
+                    </children>
+                </VBox>
+                
+                <VBox minWidth="300.0" spacing="15.0" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
+                    <children>
+                        <Label text="Detalles de la Clase">
+                            <font>
+                                <Font name="System Bold" size="18.0" />
+                            </font>
+                            <VBox.margin>
+                                <Insets bottom="10.0" />
+                            </VBox.margin>
+                        </Label>
                         
-                        <Label text="Instructor:" GridPane.rowIndex="3" />
-                        <ComboBox fx:id="cbInstructor" prefWidth="250.0" promptText="Selecciona instructor" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <GridPane hgap="10.0" vgap="10.0">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="80.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                            </rowConstraints>
+                            <children>
+                                <Label text="Día:" GridPane.rowIndex="0" />
+                                <ComboBox fx:id="cbDia" prefWidth="250.0" promptText="Selecciona un día" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                
+                                <Label text="Hora de Inicio:" GridPane.rowIndex="1" />
+                                <ComboBox fx:id="cbHoraInicio" prefWidth="250.0" promptText="Selecciona una hora" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                
+                                <Label text="Actividad:" GridPane.rowIndex="2" />
+                                <ComboBox fx:id="cbActividad" prefWidth="250.0" promptText="Selecciona actividad" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                
+                                <Label text="Instructor:" GridPane.rowIndex="3" />
+                                <ComboBox fx:id="cbInstructor" prefWidth="250.0" promptText="Selecciona instructor" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
-                        <TextField fx:id="txtIdClase" visible="false" managed="false" GridPane.rowIndex="4" />
-                     </children>
-                  </GridPane>
-                  
-                  <VBox VBox.vgrow="ALWAYS" />
-                  
-                  <VBox spacing="10.0">
-                     <HBox fx:id="hboxEditar" alignment="CENTER" spacing="10.0">
-                        <children>
-                           <Button fx:id="btnToggleStatus" onAction="#handleToggleStatus" text="Estado" prefWidth="100.0" style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-weight: bold;" />
-                           <Button onAction="#handleEliminar" text="Eliminar" prefWidth="100.0" style="-fx-background-color: #e74c3c; -fx-text-fill: white;" />
-                           <Button onAction="#handleGuardar" text="Actualizar" HBox.hgrow="ALWAYS" maxWidth="Infinity" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold;" />
-                        </children>
-                     </HBox>
-                     <HBox fx:id="hboxCrear" alignment="CENTER" spacing="10.0">
-                        <children>
-                           <Button onAction="#handleLimpiar" text="Limpiar" prefWidth="120.0" style="-fx-background-color: #7f8c8d; -fx-text-fill: white;" />
-                           <Button onAction="#handleGuardar" text="Crear" HBox.hgrow="ALWAYS" maxWidth="Infinity" style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold;" />
-                        </children>
-                     </HBox>
-                  </VBox>
-                  
-               </children>
-            </VBox>
-         </children>
-      </HBox>
-   </children>
+                                <TextField fx:id="txtIdClase" visible="false" managed="false" GridPane.rowIndex="4" />
+                            </children>
+                        </GridPane>
+                        
+                        <VBox VBox.vgrow="ALWAYS" />
+                        
+                        <VBox spacing="10.0">
+                            <HBox fx:id="hboxEditar" alignment="CENTER" spacing="10.0">
+                                <children>
+                                    <Button fx:id="btnToggleStatus" onAction="#handleToggleStatus" text="Estado" prefWidth="100.0" style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-weight: bold;" />
+                                    <Button onAction="#handleEliminar" text="Eliminar" prefWidth="100.0" style="-fx-background-color: #e74c3c; -fx-text-fill: white;" />
+                                    <Button onAction="#handleGuardar" text="Actualizar" HBox.hgrow="ALWAYS" maxWidth="Infinity" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold;" />
+                                </children>
+                            </HBox>
+                            <HBox fx:id="hboxCrear" alignment="CENTER" spacing="10.0">
+                                <children>
+                                    <Button onAction="#handleLimpiar" text="Limpiar" prefWidth="120.0" style="-fx-background-color: #7f8c8d; -fx-text-fill: white;" />
+                                    <Button onAction="#handleGuardar" text="Crear" HBox.hgrow="ALWAYS" maxWidth="Infinity" style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold;" />
+                                </children>
+                            </HBox>
+                        </VBox>
+                        
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+    </children>
 </AnchorPane>
