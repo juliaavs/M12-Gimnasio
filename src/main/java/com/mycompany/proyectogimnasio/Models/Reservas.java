@@ -12,19 +12,19 @@ public class Reservas {
     
     // CAMPOS ADICIONALES (de las tablas relacionadas)
     private final StringProperty nombreClase = new SimpleStringProperty();
-    private final StringProperty nombreCliente = new SimpleStringProperty();
+    private final StringProperty dniCliente = new SimpleStringProperty();
 
     public Reservas() {}
 
     // Nuevo constructor con nombres para usar con el DAO (JOIN)
     public Reservas(int idClase, int idCliente, String status, LocalDate diaReserva, 
-                    String nombreClase, String nombreCliente) {
+                    String nombreClase, String dniCliente) {
         setIdClase(idClase);
         setIdCliente(idCliente);
         setStatus(status);
         setDiaReserva(diaReserva);
         setNombreClase(nombreClase);
-        setNombreCliente(nombreCliente);
+        setDniCliente(dniCliente);
     }
     
     // --- Property Getters ---
@@ -35,7 +35,7 @@ public class Reservas {
     
     // Propiedades de las columnas nuevas
     public StringProperty nombreClaseProperty() { return nombreClase; }
-    public StringProperty nombreClienteProperty() { return nombreCliente; }
+    public StringProperty dniClienteProperty() { return dniCliente; }
 
     // --- Regular Getters and Setters ---
     public int getIdClase() { return idClase.get(); }
@@ -54,8 +54,8 @@ public class Reservas {
     public String getNombreClase() { return nombreClase.get(); }
     public void setNombreClase(String nombreClase) { this.nombreClase.set(nombreClase); }
 
-    public String getNombreCliente() { return nombreCliente.get(); }
-    public void setNombreCliente(String nombreCliente) { this.nombreCliente.set(nombreCliente); }
+    public String getDniCliente() { return dniCliente.get(); }
+    public void setDniCliente(String nombreCliente) { this.dniCliente.set(nombreCliente); }
 
     public boolean isConfirmado() {
         return "confirmado".equalsIgnoreCase(getStatus());

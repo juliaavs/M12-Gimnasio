@@ -33,7 +33,7 @@ public class ReservasController implements Initializable {
     
     // Columnas de datos visibles
     @FXML private TableColumn<Reservas, String> nombreClaseColumn; // Nueva
-    @FXML private TableColumn<Reservas, String> nombreClienteColumn; // Nueva
+    @FXML private TableColumn<Reservas, String> dniClienteColumn; // Nueva
     @FXML private TableColumn<Reservas, String> statusColumn;
     @FXML private TableColumn<Reservas, LocalDate> diaReservaColumn;
     
@@ -51,7 +51,7 @@ public class ReservasController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // 1. Configuración de CellValueFactory para las columnas
         nombreClaseColumn.setCellValueFactory(new PropertyValueFactory<>("nombreClase"));
-        nombreClienteColumn.setCellValueFactory(new PropertyValueFactory<>("nombreCliente"));
+        dniClienteColumn.setCellValueFactory(new PropertyValueFactory<>("dniCliente"));
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
         statusColumn.setCellFactory(column -> {
         return new TableCell<Reservas, String>() {
@@ -106,7 +106,7 @@ public class ReservasController implements Initializable {
             // Comparar la cadena de filtro (en minúsculas) con campos relevantes
             String lowerCaseFilter = newValue.toLowerCase();
 
-            if (reserva.getNombreCliente().toLowerCase().contains(lowerCaseFilter)) {
+            if (reserva.getDniCliente().toLowerCase().contains(lowerCaseFilter)) {
                 return true; // Coincidencia por Nombre de Cliente
             } else if (reserva.getNombreClase().toLowerCase().contains(lowerCaseFilter)) {
                 return true; // Coincidencia por Nombre de Clase
@@ -167,7 +167,7 @@ public class ReservasController implements Initializable {
     String action = isCurrentlyConfirmed ? "CANCELAR" : "CONFIRMAR";
     
     if (!confirmAction("Confirmación de Cambio", 
-                       "¿Deseas realmente " + action + " la reserva de " + selectedReserva.getNombreCliente() + "?")) {
+                       "¿Deseas realmente " + action + " la reserva de " + selectedReserva.getDniCliente() + "?")) {
         return;
     }
     

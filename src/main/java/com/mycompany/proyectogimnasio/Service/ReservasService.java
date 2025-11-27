@@ -57,49 +57,52 @@ public class ReservasService {
         return count;
     }
     
-    public List<Reservas> getAll() {
-        List<Reservas> reservasList = new ArrayList<>();
-        
-        // Consulta SQL compleja usando JOIN para obtener:
-        // 1. Datos de la Inscripción (i)
-        // 2. Nombre de la Actividad (a) a través de la Clase (c)
-        // 3. Nombre del Cliente (cl)
-        String sql = "SELECT " +
-                     "i.id_clase, i.id_cliente, i.status, i.dia_reserva, " +
-                     "a.nombre AS nombre_clase, " + // nombre de la actividad (que es el nombre de la clase)
-                     "cl.nombre AS nombre_cliente " + // nombre del cliente
-                     "FROM inscripciones i " +
-                     // JOIN 1: De inscripciones a Clases
-                     "INNER JOIN clases c ON i.id_clase = c.id_clase " +
-                     // JOIN 2: De Clases a Actividades (para obtener el nombre)
-                     "INNER JOIN actividades a ON c.id_actividad = a.id_actividad " +
-                     // JOIN 3: De inscripciones a Clientes
-                     "INNER JOIN clientes cl ON i.id_cliente = cl.id_cliente";
-        
-        try (Connection conn = Database.getConnection(); 
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+   public List<Reservas> getAll() {
+    List<Reservas> reservasList = new ArrayList<>();
+    
+    // Consulta SQL compleja usando JOIN para obtener:
+    // 1. Datos de la Inscripción (i)
+    // 2. Nombre de la Actividad (a) a través de la Clase (c)
+    // 3. DNI del Cliente (cl) <--- ¡CAMBIADO!
+    String sql = "SELECT " +
+                    "i.id_clase, i.id_cliente, i.status, i.dia_reserva, " +
+                    "a.nombre AS nombre_clase, " + // nombre de la actividad
+                    "cl.dni AS dni_cliente " + // DNI del cliente <--- ¡CAMBIADO!
+                    "FROM inscripciones i " +
+                    // JOIN 1: De inscripciones a Clases
+                    "INNER JOIN clases c ON i.id_clase = c.id_clase " +
+                    // JOIN 2: De Clases a Actividades (para obtener el nombre)
+                    "INNER JOIN actividades a ON c.id_actividad = a.id_actividad " +
+                    // JOIN 3: De inscripciones a Clientes
+                    "INNER JOIN clientes cl ON i.id_cliente = cl.id_cliente";
+    
+    try (Connection conn = Database.getConnection(); 
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql)) {
 
-            while (rs.next()) {
-                int idClase = rs.getInt("id_clase");
-                int idCliente = rs.getInt("id_cliente");
-                String status = rs.getString("status");
-                LocalDate diaReserva = rs.getDate("dia_reserva").toLocalDate(); 
-                
-                // Mapeo de los nombres obtenidos por el JOIN
-                String nombreClase = rs.getString("nombre_clase");
-                String nombreCliente = rs.getString("nombre_cliente");
+        while (rs.next()) {
+            int idClase = rs.getInt("id_clase");
+            int idCliente = rs.getInt("id_cliente");
+            String status = rs.getString("status");
+            // Asegúrate de que el campo 'dia_reserva' en la BD permite obtener un LocalDate.
+            // Si es un SQL DATE, está bien. Si es TIMESTAMP, podrías necesitar .toLocalDateTime().toLocalDate()
+            LocalDate diaReserva = rs.getDate("dia_reserva").toLocalDate(); 
+            
+            // Mapeo de los datos obtenidos por el JOIN
+            String nombreClase = rs.getString("nombre_clase");
+            String dniCliente = rs.getString("dni_cliente"); // <--- ¡CAMBIADO!
 
-                Reservas reserva = new Reservas(idClase, idCliente, status, diaReserva, 
-                                                nombreClase, nombreCliente);
-                reservasList.add(reserva);
-            }
-        } catch (SQLException e) {
-            System.err.println("Error SQL en getAll() con JOIN: " + e.getMessage());
-            e.printStackTrace();
+            // Asegúrate de que el constructor de Reservas se actualice para aceptar el DNI.
+            Reservas reserva = new Reservas(idClase, idCliente, status, diaReserva, 
+                                            nombreClase, dniCliente); // <--- ¡CAMBIADO!
+            reservasList.add(reserva);
         }
-        return reservasList;
+    } catch (SQLException e) {
+        System.err.println("Error SQL en getAll() con JOIN: " + e.getMessage());
+        e.printStackTrace();
     }
+    return reservasList;
+}
     public boolean updateStatus(int idClase, int idCliente, String newStatus) {
     String sql = "UPDATE inscripciones SET status = ? WHERE id_clase = ? AND id_cliente = ?";
     
