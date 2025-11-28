@@ -1,7 +1,7 @@
 package com.mycompany.proyectogimnasio.Controllers;
 
 import com.mycompany.proyectogimnasio.App;
-import com.mycompany.proyectogimnasio.Models.ClaseInfo; 
+import com.mycompany.proyectogimnasio.Models.ClaseInfo;
 import com.mycompany.proyectogimnasio.Service.EstadisticasService;
 import com.mycompany.proyectogimnasio.Service.InstructorService;
 import com.mycompany.proyectogimnasio.Service.ClienteService;
@@ -23,32 +23,27 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableCell;
 import javafx.scene.paint.Color;
 import javafx.beans.property.SimpleStringProperty;
-import java.time.format.DateTimeFormatter; 
-import java.time.LocalTime; // <-- ¡AÑADE ESTA LÍNEA!
+import java.time.format.DateTimeFormatter;
+import java.time.LocalTime;
+// Nuevas importaciones para diagnóstico de fecha
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 public class DashboardController {
     
-    @FXML
-    private BorderPane mainPane; 
-
-    @FXML
-    private Button logoutButton;
-    
-    @FXML
-    private Button btnInstructores; 
-    
+    // ... (Variables FXML no modificadas) ...
+    @FXML private BorderPane mainPane; 
+    @FXML private Button logoutButton;
+    @FXML private Button btnInstructores; 
     @FXML private PieChart clasesPorActividadChart;
-    
     @FXML private BarChart<String, Number> ocupacionChart;
-    
     @FXML private CategoryAxis ocupacionX;
-    
     
     @FXML private Label totalInstructorsLabel;
     @FXML private Label instructorsChangeLabel;
@@ -62,12 +57,11 @@ public class DashboardController {
     @FXML private TableColumn<ClaseInfo, String> colHoyActividad;
     @FXML private TableColumn<ClaseInfo, String> colHoyInstructor;
     
-
-    
     private EstadisticasService estadisticasService;
     private final InstructorService instructorService = new InstructorService();
     private final ClienteService clienteService = new ClienteService();
     private final ReservasService reservasService = new ReservasService(); 
+    
 
     @FXML
     public void initialize() {
@@ -75,12 +69,19 @@ public class DashboardController {
         
         setupScheduleTableColumns();
         
+        // 1. Cargamos todos los datos una sola vez
         loadDashboardData();
         loadOcupacionPorClaseData();
         loadTodaySchedule(); 
     }
     
     private void setupScheduleTableColumns() {
+        // Añadimos una comprobación básica por si acaso, aunque descartamos que sea el problema.
+        if (colHoyHora == null || colHoyInstructor == null || colHoyActividad == null) {
+            System.err.println("ADVERTENCIA FXML: Alguna columna de la tabla de horario es NULL. Esto puede ser un problema de carga de FXML en el JAR.");
+            return;
+        }
+
         colHoyHora.setCellValueFactory(cellData -> {
             LocalTime hora = cellData.getValue().getHoraInicio();
             return new SimpleStringProperty(hora.format(DateTimeFormatter.ofPattern("HH:mm")));
@@ -114,6 +115,7 @@ public class DashboardController {
 
     
     private void loadDashboardData() {
+        // ... (Tu código existente) ...
         try {
             // --- 1. Instructores ---
             int totalInstructores = instructorService.getTotalInstructores();
@@ -149,7 +151,7 @@ public class DashboardController {
                  reservationsChangeLabel.setStyle("-fx-text-fill: black;");
             }
         } catch (Exception e) {
-            System.err.println("Error al cargar datos del Dashboard: " + e.getMessage());
+            System.err.println("Error al cargar datos del Dashboard (etiquetas): " + e.getMessage());
             totalInstructorsLabel.setText("ERROR");
             totalClientsLabel.setText("ERROR");
             todayReservationsLabel.setText("ERROR");
@@ -157,19 +159,42 @@ public class DashboardController {
     }
 
     private void loadTodaySchedule() {
+        if (scheduleTable == null) {
+            System.err.println("ERROR CRÍTICO: La TableView 'scheduleTable' es NULL. (FALLO DE ENLACE FXML/JAR)");
+            return; 
+        }
+        
+        System.out.println("DEBUG: Iniciando carga de horario de clases..."); // DEBUG START
+        
+        // --- DIAGNÓSTICO DE FECHA Y HORA ---
+        DayOfWeek todayDayOfWeek = LocalDate.now().getDayOfWeek();
+        ZoneId currentZone = ZoneId.systemDefault();
+        System.out.println("DIAGNÓSTICO FECHA: Día Java: " + todayDayOfWeek.name());
+        System.out.println("DIAGNÓSTICO ZONA: Zona horaria del sistema: " + currentZone.getId());
+        // El log anterior mostraba "DEBUG: Día de la semana calculado para SQL: Fri". Ahora comparamos con Java.
+        
         try {
             List<ClaseInfo> todayClasses = estadisticasService.getClasesDeHoy();
             
-            if (todayClasses.isEmpty()) {
+            if (todayClasses == null || todayClasses.isEmpty()) {
+                System.out.println("DEBUG: La consulta SQL DEVOLVIÓ CERO clases. Esto es normal si no hay datos.");
                 scheduleTable.setPlaceholder(new Label("No hay clases programadas para hoy."));
             } else {
+                System.out.println("DEBUG: Horario cargado con " + todayClasses.size() + " clases.");
                 ObservableList<ClaseInfo> items = FXCollections.observableArrayList(todayClasses);
                 scheduleTable.setItems(items);
             }
+            
+            System.out.println("DEBUG: Carga de horario finalizada."); // DEBUG END
 
+        } catch (SQLException e) {
+             System.err.println("ERROR SQL CRÍTICO (JAR/DB): Fallo al consultar la base de datos.");
+             System.err.println("MENSAJE SQL: " + e.getMessage());
+             scheduleTable.setPlaceholder(new Label("ERROR DB: " + e.getMessage()));
+             e.printStackTrace();
         } catch (Exception e) {
-             System.err.println("Error al cargar el horario de hoy: " + e.getMessage());
-             scheduleTable.setPlaceholder(new Label("Error al cargar el horario."));
+             System.err.println("ERROR GENERAL (JAR): Fallo inesperado durante la carga del horario.");
+             scheduleTable.setPlaceholder(new Label("ERROR GENERAL: " + e.getMessage()));
              e.printStackTrace();
         }
     }
@@ -183,12 +208,8 @@ public class DashboardController {
         }
     }
     
-    @FXML
-    private void handleDashboard() {
-        showDashboardView();
-    }
-
     private void showDashboardView() {
+        // Mantenemos este método, aunque la navegación principal debe ser a través de App.showDashboard
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/mycompany/proyectogimnasio/dashboard.fxml"));
             Parent root = loader.load();
@@ -201,6 +222,7 @@ public class DashboardController {
     @FXML
     public void handleBtnInstructores() {
         try {
+            // mainPane sigue siendo la referencia al BorderPane que contiene el contenido central del dashboard.fxml
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/mycompany/proyectogimnasio/InstructorView.fxml"));
             Parent vistaInstructores = loader.load(); 
             mainPane.setCenter(vistaInstructores);
@@ -220,7 +242,7 @@ public class DashboardController {
             e.printStackTrace();
         }
     }
-        
+    
     private void loadOcupacionPorClaseData() {
         try {
             Map<String, Map<String, Integer>> data = estadisticasService.getOcupacionPorClase();
@@ -233,9 +255,7 @@ public class DashboardController {
             
             for (Map.Entry<String, Map<String, Integer>> entry : data.entrySet()) {
                 String claveUnica = entry.getKey(); 
-                
                 String etiquetaLimpia = claveUnica.replaceFirst("\\s*\\(ID:\\s*\\d+\\)$", "");
-                
                 Map<String, Integer> ocupacion = entry.getValue();
                 
                 aforoSeries.getData().add(new XYChart.Data<>(etiquetaLimpia, ocupacion.get("AFORO")));
@@ -245,7 +265,6 @@ public class DashboardController {
             ocupacionChart.getData().clear();
             ocupacionChart.getData().addAll(aforoSeries, inscritosSeries);
             ocupacionChart.setTitle("Ocupación de Clases (por Instancia)");
-            
             ocupacionX.setLabel("Actividad");
 
         } catch (SQLException e) {
@@ -253,7 +272,7 @@ public class DashboardController {
         }
     }
     
-    // --- MÉTODOS DE COLOR (Copiados de HorarioController) ---
+    // ... (El resto de tus métodos de color) ...
 
     private Color getColorObject(String activityName) {
         switch (activityName.toLowerCase()) {

@@ -105,7 +105,7 @@ public class EstadisticasController {
 
         ocupacionChart.getData().clear();
         ocupacionChart.getData().addAll(aforoSeries, inscritosSeries);
-        ocupacionChart.setTitle("Ocupación de Clases (por Instancia)");
+        ocupacionChart.setTitle("Ocupación de Clases");
         
         // Ajustamos la etiqueta del eje X para reflejar la simplificación
         ocupacionX.setLabel("Actividad");

@@ -1,4 +1,3 @@
-
 package com.mycompany.proyectogimnasio;
 
 import javafx.application.Application;
@@ -63,20 +62,23 @@ public class App extends Application {
     
     /** ================================
      * Inicializar la ventana principal con Sidebar
+     * NOTA: Este método ahora crea el BorderPane principal programáticamente
+     * para evitar cargar dashboard.fxml como estructura y como contenido.
      * ================================ */
     private static void initRootWithSidebar() throws Exception {
         if (root == null) {
-            // Cargamos el layout principal (dashboard.fxml con BorderPane vacío)
-            FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/dashboard.fxml"));
-            root = loader.load();
+            // 1. Crear el BorderPane principal (la estructura) sin cargar ningún FXML.
+            root = new BorderPane(); 
 
-            // Cargar Sidebar solo una vez
+            // 2. Cargar Sidebar solo una vez
             FXMLLoader sidebarLoader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/sidebar.fxml"));
             VBox sidebar = sidebarLoader.load();
             sidebarController = sidebarLoader.getController();
 
+            // 3. Establecer el Sidebar a la izquierda
             root.setLeft(sidebar);
 
+            // 4. Configurar y mostrar la escena principal
             Scene scene = new Scene(root, 1400, 900);
             primaryStage.setScene(scene);
             primaryStage.setTitle("FitGym Pro");
@@ -91,12 +93,17 @@ public class App extends Application {
         usuarioActual = usuario;
         rolActual = rol;
 
+        // 1. Asegura que la estructura principal (root BorderPane) con el sidebar exista.
         initRootWithSidebar();
-        sidebarController.setUser(usuario, rol); // Esto sí actualiza el sidebar
+        // 2. Actualiza los datos del usuario en el sidebar.
+        sidebarController.setUser(usuario, rol); 
 
+        // 3. Carga SOLO el contenido del dashboard (esto es lo que contiene las gráficas/tablas).
+        // NOTA: Esta es ahora la ÚNICA vez que se carga dashboard.fxml.
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/dashboard.fxml"));
         Parent center = loader.load();
 
+        // 4. Coloca ese contenido en el centro del BorderPane principal.
         root.setCenter(center);
         primaryStage.setTitle("Dashboard - FitGym Pro");
     }
@@ -119,30 +126,27 @@ public class App extends Application {
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/ClientesView.fxml"));
         Parent center = loader.load();
 
-        // No es necesario pasarle el usuario al ClientesController,
-        // ya que la gestión de clientes no depende del usuario logueado.
-
         // Coloca la vista de clientes en el centro de la ventana principal
         root.setCenter(center);
         primaryStage.setTitle("Gestión de Clientes - FitGym Pro");
     }
 
 
-   
+    
     public static void showClases(String usuario, String rol) throws Exception{
         usuarioActual=usuario;
         rolActual=rol;
-       
+        
         initRootWithSidebar();
         sidebarController.setUser(usuario, rol); // Esto actualiza los labels del sidebar
-       
+        
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/ClasesView.fxml"));
         Parent center = loader.load();
-       
+        
         root.setCenter(center);
         primaryStage.setTitle("Clases - FitGym Pro");
     }
-   
+    
     /** ================================
      * INSTRUCTORES
      * ================================ */
@@ -155,10 +159,6 @@ public class App extends Application {
 
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/InstructorView.fxml"));
         Parent center = loader.load();
-
-
-        InstructorController controller = loader.getController();
-        // controller.setUser(usuario, rol); // ← Eliminar esta línea
 
         root.setCenter(center);
         primaryStage.setTitle("Instructores - FitGym Pro");
@@ -176,15 +176,13 @@ public class App extends Application {
 
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/ActividadesView.fxml"));
         Parent center = loader.load();
-
-        // El ActividadesController no necesita los datos del usuario, por lo que no se los pasamos.
         
         root.setCenter(center);
         primaryStage.setTitle("Actividades - FitGym Pro");
     }
 
 
-   
+    
     /** ================================
      * RESERVAS
      * ================================ */
@@ -231,9 +229,6 @@ public class App extends Application {
 
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/proyectogimnasio/HorarioView.fxml"));
         Parent center = loader.load();
-
-        HorarioController controller = loader.getController();
-        //controller.setUser(usuario, rol);
 
         root.setCenter(center);
         primaryStage.setTitle("Horario - FitGym Pro");

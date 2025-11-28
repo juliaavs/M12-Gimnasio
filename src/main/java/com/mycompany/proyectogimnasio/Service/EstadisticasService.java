@@ -3,38 +3,49 @@ package com.mycompany.proyectogimnasio.Service;
 import com.mycompany.proyectogimnasio.Database;
 import java.sql.*;
 import com.mycompany.proyectogimnasio.Models.ClaseInfo;
-import java.time.LocalDate; // <-- IMPORTAR
-import java.time.format.TextStyle; // <-- IMPORTAR
-import java.util.ArrayList; // <-- IMPORTAR
+// import com.mycompany.proyectogimnasio.Utils.DateUtils; // Se elimina dependencia de DateUtils
+import java.time.LocalDate;
+import java.time.format.TextStyle; // Se re-importa para la localización
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List; // <-- IMPORTAR
-import java.util.Locale; // <-- IMPORTAR
+import java.util.List;
+import java.util.Locale; // Se re-importa para la localización
 import java.util.Map;
 
 public class EstadisticasService {
     
     /**
-     * MÉTODO NUEVO
-     * Obtiene las clases programadas para el día de hoy.
+     * Obtiene las clases programadas para el día de hoy, asegurando que el nombre del día
+     * se obtenga en español (por ejemplo, "viernes") independientemente de la Locale del JAR.
      */
     public List<ClaseInfo> getClasesDeHoy() throws SQLException {
         List<ClaseInfo> clasesHoy = new ArrayList<>();
         
-        LocalDate today = LocalDate.now();
-        String diaSemana = today.getDayOfWeek().getDisplayName(TextStyle.FULL, new Locale("es", "ES"));
-        diaSemana = diaSemana.substring(0, 1).toUpperCase() + diaSemana.substring(1);
-
-        if ("Miercoles".equals(diaSemana)) {
-            diaSemana = "Miércoles";
-        }
-
+        // ----------------------------------------------------------------------
+        // CORRECCIÓN FINAL: Forzamos el nombre completo del día en español y en minúsculas
+        // para evitar el error 'fri' y asegurar la coincidencia con la BD.
+        // ----------------------------------------------------------------------
+        String diaSemana = LocalDate.now().getDayOfWeek()
+                                    .getDisplayName(TextStyle.FULL, new Locale("es", "ES"))
+                                    .toLowerCase();
+        
+        // ** DEBUGGING **: Imprimimos el día calculado para verificar el encoding en el ejecutable
+        System.out.println("DEBUG: Día de la semana calculado para SQL: " + diaSemana);
+        
         String sql = "SELECT c.id_clase, a.nombre AS actividad, i.nombre AS instructor, " +
-                     "       c.hora_inicio, a.duracion " +
+                     "c.hora_inicio, a.duracion " +
                      "FROM clases c " +
                      "JOIN actividades a ON c.id_actividad = a.id_actividad " +
                      "JOIN instructores i ON c.id_instructor = i.id_instructor " +
                      "WHERE c.dia = ? AND c.status = 'confirmado' " +
                      "ORDER BY c.hora_inicio";
+
+        // ----------------------------------------------------------------------
+        // DEBUG: Sustituir manualmente el '?' para ver la query completa
+        // ----------------------------------------------------------------------
+        String debugSql = sql.replaceFirst("\\?", "'" + diaSemana + "'");
+        System.out.println("DEBUG: Query SQL completa (estimada): " + debugSql);
+
 
         try (Connection conn = Database.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -47,7 +58,7 @@ public class EstadisticasService {
                     rs.getInt("id_clase"),
                     rs.getString("actividad"),
                     rs.getString("instructor"),
-                    diaSemana, 
+                    diaSemana,
                     rs.getTime("hora_inicio").toLocalTime(),
                     rs.getInt("duracion")
                 ));
@@ -75,19 +86,19 @@ public class EstadisticasService {
     Map<String, Integer> data = new HashMap<>();
     
     String SQL = "SELECT status, COUNT(status) AS count " +
-                 "FROM inscripciones " + // Asumiendo que se llama 'inscripciones'
+                 "FROM inscripciones " + 
                  "GROUP BY status"; 
     
     try (Connection conn = Database.getConnection();
-         Statement stmt = conn.createStatement();
-         ResultSet rs = stmt.executeQuery(SQL)) {
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(SQL)) {
         
         while (rs.next()) {
             data.put(rs.getString("status"), rs.getInt("count"));
         }
     }
     return data;
-}
+    }
 
     public Map<String, Integer> getClasesPorInstructor() throws SQLException {
         Map<String, Integer> data = new HashMap<>();
@@ -111,7 +122,6 @@ public class EstadisticasService {
     public Map<String, Map<String, Integer>> getOcupacionPorClase() throws SQLException {
         Map<String, Map<String, Integer>> data = new HashMap<>();
 
-        // Esta consulta asume 'inscripciones' y 'status'
         String SQL = "SELECT " +
                      "c.id_clase, " +
                      "a.nombre AS nombre_actividad, " +
