@@ -5,17 +5,22 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Database {
-    // URL corregida para evitar el error SSLHandshakeException:
-    private static final String URL = "jdbc:mysql://gondola.proxy.rlwy.net:51831/railway?useSSL=false";
+    
+    // --- NUEVA CONFIGURACIÓN ---
+    // Host: trolley.proxy.rlwy.net
+    // Puerto: 54218
+    // Base de datos: railway
+    private static final String URL = "jdbc:mysql://trolley.proxy.rlwy.net:54218/railway?useSSL=false&allowPublicKeyRetrieval=true";
     private static final String USER = "root";
-    private static final String PASSWORD = "dZLeazCTzEKkPnAQFANrKCxyZlNywudL";
+    private static final String PASSWORD = "UQxVNYImcDLrjLUdXHwfVYynPLWtxoxz";
 
     static {
-        // Mantenemos la carga explícita, ya que ayudó a avanzar en el diagnóstico.
         try {
+            // Carga del driver MySQL
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             System.err.println("Error: Driver MySQL no encontrado.");
+            e.printStackTrace();
         }
     }
     

@@ -102,6 +102,11 @@
                                             <TextField fx:id="txtNieLetra" editable="false" focusTraversable="false" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" style="-fx-background-color: #ecf0f1; -fx-font-weight: bold; -fx-alignment: CENTER;" />
                                          </children>
                                       </HBox>
+                                      <HBox fx:id="panePasaporte" alignment="CENTER_LEFT" managed="false" visible="false">
+                                         <children>
+                                            <TextField fx:id="txtPasaporte" promptText="ABC1234" HBox.hgrow="ALWAYS" />
+                                         </children>
+                                       </HBox>
                                    </children>
                                 </StackPane>
 

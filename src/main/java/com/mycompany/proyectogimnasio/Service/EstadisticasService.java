@@ -3,34 +3,48 @@ package com.mycompany.proyectogimnasio.Service;
 import com.mycompany.proyectogimnasio.Database;
 import java.sql.*;
 import com.mycompany.proyectogimnasio.Models.ClaseInfo;
-// import com.mycompany.proyectogimnasio.Utils.DateUtils; // Se elimina dependencia de DateUtils
 import java.time.LocalDate;
-import java.time.format.TextStyle; // Se re-importa para la localización
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale; // Se re-importa para la localización
+import java.util.Locale;
 import java.util.Map;
+import java.time.DayOfWeek;
 
 public class EstadisticasService {
     
-    /**
-     * Obtiene las clases programadas para el día de hoy, asegurando que el nombre del día
-     * se obtenga en español (por ejemplo, "viernes") independientemente de la Locale del JAR.
-     */
     public List<ClaseInfo> getClasesDeHoy() throws SQLException {
         List<ClaseInfo> clasesHoy = new ArrayList<>();
         
-        // ----------------------------------------------------------------------
-        // CORRECCIÓN FINAL: Forzamos el nombre completo del día en español y en minúsculas
-        // para evitar el error 'fri' y asegurar la coincidencia con la BD.
-        // ----------------------------------------------------------------------
-        String diaSemana = LocalDate.now().getDayOfWeek()
-                                    .getDisplayName(TextStyle.FULL, new Locale("es", "ES"))
-                                    .toLowerCase();
+        DayOfWeek dayOfWeek = LocalDate.now().getDayOfWeek();
+        String diaSemana = "";
+
+        switch (dayOfWeek) {
+            case MONDAY:
+                diaSemana = "lunes";
+                break;
+            case TUESDAY:
+                diaSemana = "martes";
+                break;
+            case WEDNESDAY:
+                diaSemana = "miercoles";
+                break;
+            case THURSDAY:
+                diaSemana = "jueves";
+                break;
+            case FRIDAY:
+                diaSemana = "viernes";
+                break;
+            case SATURDAY:
+                diaSemana = "sabado";
+                break;
+            case SUNDAY:
+                diaSemana = "domingo";
+                break;
+        }
         
-        // ** DEBUGGING **: Imprimimos el día calculado para verificar el encoding en el ejecutable
-        System.out.println("DEBUG: Día de la semana calculado para SQL: " + diaSemana);
+        System.out.println("DEBUG: Día de la semana calculado (Switch Manual): " + diaSemana);
         
         String sql = "SELECT c.id_clase, a.nombre AS actividad, i.nombre AS instructor, " +
                      "c.hora_inicio, a.duracion " +
@@ -40,12 +54,9 @@ public class EstadisticasService {
                      "WHERE c.dia = ? AND c.status = 'confirmado' " +
                      "ORDER BY c.hora_inicio";
 
-        // ----------------------------------------------------------------------
-        // DEBUG: Sustituir manualmente el '?' para ver la query completa
-        // ----------------------------------------------------------------------
+        // DEBUG SQL
         String debugSql = sql.replaceFirst("\\?", "'" + diaSemana + "'");
-        System.out.println("DEBUG: Query SQL completa (estimada): " + debugSql);
-
+        System.out.println("DEBUG: Query SQL completa: " + debugSql);
 
         try (Connection conn = Database.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
