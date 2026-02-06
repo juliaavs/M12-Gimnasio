@@ -1,0 +1,20 @@
+# Maven
+target/
+*.iml
+*.class
+nbproject/private/
+nbuild/
+build/
+dist/
+*.nbattrs
+lib/
+
+
+# IDE
+.idea/
+.nb-ide/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
